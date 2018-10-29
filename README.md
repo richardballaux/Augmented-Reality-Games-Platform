@@ -1,1 +1,2 @@
-# final-project-argamescorp-v2
+# Augmented Reality Games Platform
+## @Authors: Richard Ballaux, Viktor Deturck, Leon Santen
