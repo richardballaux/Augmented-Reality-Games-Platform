@@ -159,9 +159,9 @@ class ArPongModel():
         self.paddleGroup.add(self.rightPaddle)
 
         #Initialize the sounds
-        self.boundarySound = pygame.mixer.Sound("boundaryBounce.wav")
-        self.paddleSound = pygame.mixer.Sound("paddleBounce.wav")
-        self.deathSound = pygame.mixer.Sound("death.wav")
+        self.boundarySound = pygame.mixer.Sound("/home/richard/FinalProject/boundaryBounce.wav")
+        self.paddleSound = pygame.mixer.Sound("/home/richard/FinalProject/paddleBounce.wav")
+        self.deathSound = pygame.mixer.Sound("/home/richard/FinalProject/death.wav")
 
     def update(self):
         """updates all the components the model has dependent on what state menu.state is in"""
