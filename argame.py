@@ -1,7 +1,6 @@
 """
 Software Design Mini Project 4:
 AR Game file
-Last updated: 10/25/18
 @authors: Richard Ballaux, Viktor Deturck, Leon Santen"""
 
 # Necessary libraries
@@ -11,10 +10,11 @@ import time
 import ObjectRecogImplementation as OR
 from PIL import Image
 import numpy as np
+import os
 
 class PlayboardWindowView():
     """this board includes the outlines, the ball, the paddles and the goals"""
-    def __init__(self,model,screen_size, menu):
+    def __init__(self,model,screen_size, Organizer):
         self.model=model
         self.screen_size = screen_size
         self.screen = pygame.display.set_mode(screen_size)
@@ -34,9 +34,9 @@ class PlayboardWindowView():
         pygame.display.update()
 
     def draw(self):
-        """draws corresponding to the state of menu.state the different menu settings or game"""
+        """draws corresponding to the state of Organizer.state the different Organizer settings or game"""
 
-        if menu.state == "menu": # Draw start screen
+        if Organizer.state == "menu": # Draw start screen
             self._draw_background()
             pygame.draw.rect(self.screen, (250,250,0), pygame.Rect(50, model.height/2-50, 200,200))
             menutext = self.myfont.render("Keep your cursor in the square to start the game", 1, self.ColorGreen)
@@ -44,7 +44,7 @@ class PlayboardWindowView():
             self.model.cursor.draw(self.screen)
             pygame.display.update()
 
-        if menu.state == "select_speed":
+        if Organizer.state == "select_speed":
             self._draw_background((255, 224, 254))
             menutext = self.myfont.render("Select a speed by hovering over the desired speed", 1, self.ColorBlack) # Message for menu to select speed
             self.screen.blit(menutext, (50,50))
@@ -73,18 +73,18 @@ class PlayboardWindowView():
             self.model.cursor.draw(self.screen)
             pygame.display.update()
 
-        if menu.state == "game":
+        if Organizer.state == "pong_game":
             self._draw_background()
             for component in self.model.components:
                  component.draw(self.screen)
             pygame.display.update()
 
-        if menu.state == "endgame":
+        if Organizer.state == "endgame":
             self._draw_background()
             pygame.draw.rect(self.screen, (150,150,0), pygame.Rect(int((model.width/6)), int(model.height/2)-50, int(model.width*4/6),150))
-            if menu.winner ==1:
+            if Organizer.winner ==1:
                 player = self.myfont.render("LEFT PLAYER WON", 1, self.ColorBlack)
-            if menu.winner ==2:
+            if Organizer.winner ==2:
                 player = self.myfont.render("RIGHT PLAYER WON", 1, self.ColorBlack)
             self.screen.blit(player, (int((model.width/6)*2),model.height/2))
 
@@ -94,16 +94,16 @@ class PlayboardWindowView():
             self.model.cursor.draw(self.screen)
             pygame.display.update()
 
-class Menu():
+class Organizer():
     """State machine that regulates whether or not we see the menu or the game
     The different states are:
     - "menu"
     - "select_speed"
-    - "game"
+    - "pong_game"
     - "endgame"
 
     Instruction for adding a state:
-    - You don't need to add a state in the Menu() class. Just update the docstring to keep the documentation updated
+    - You don't need to add a state in the Organizer() class. Just update the docstring to keep the documentation updated
     - Add an if-statement with the state name to the draw() function in the class PlayboardWindowView()
     - Add an if-statement with the state name t0 the handle_event() function in the class ArPongMouseController()
     """
@@ -159,23 +159,24 @@ class ArPongModel():
         self.paddleGroup.add(self.rightPaddle)
 
         #Initialize the sounds
-        self.boundarySound = pygame.mixer.Sound("/home/richard/FinalProject/boundaryBounce.wav")
-        self.paddleSound = pygame.mixer.Sound("/home/richard/FinalProject/paddleBounce.wav")
-        self.deathSound = pygame.mixer.Sound("/home/richard/FinalProject/death.wav")
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        self.boundarySound = pygame.mixer.Sound(dir_path+"/boundaryBounce.wav")
+        self.paddleSound = pygame.mixer.Sound(dir_path+"/paddleBounce.wav")
+        self.deathSound = pygame.mixer.Sound(dir_path+"/death.wav")
 
     def update(self):
-        """updates all the components the model has dependent on what state menu.state is in"""
-        if menu.state == "menu":
-            self.triggerarea1.areaSurveillance(self.cursor, "select_speed", menu, "state", "select_speed")
+        """updates all the components the model has dependent on what state Organizer.state is in"""
+        if Organizer.state == "menu":
+            self.triggerarea1.areaSurveillance(self.cursor, "select_speed", Organizer, "state", "select_speed")
 
-        if menu.state == "select_speed": # Set 5 areas to click on, each mapped to a different ball speed
-            self.triggerNumber1.areaSurveillance(self.cursor, "game", menu, "settings_ballSpeed", 5)
-            self.triggerNumber2.areaSurveillance(self.cursor, "game", menu, "settings_ballSpeed", 10)
-            self.triggerNumber3.areaSurveillance(self.cursor, "game", menu, "settings_ballSpeed", 15)
-            self.triggerNumber4.areaSurveillance(self.cursor, "game", menu, "settings_ballSpeed", 22)
-            self.triggerNumber5.areaSurveillance(self.cursor, "game", menu, "settings_ballSpeed", 28)
+        if Organizer.state == "select_speed": # Set 5 areas to click on, each mapped to a different ball speed
+            self.triggerNumber1.areaSurveillance(self.cursor, "pong_game", Organizer, "settings_ballSpeed", 5)
+            self.triggerNumber2.areaSurveillance(self.cursor, "pong_game", Organizer, "settings_ballSpeed", 10)
+            self.triggerNumber3.areaSurveillance(self.cursor, "pong_game", Organizer, "settings_ballSpeed", 15)
+            self.triggerNumber4.areaSurveillance(self.cursor, "pong_game", Organizer, "settings_ballSpeed", 22)
+            self.triggerNumber5.areaSurveillance(self.cursor, "pong_game", Organizer, "settings_ballSpeed", 28)
 
-        if menu.state == "game":
+        if Organizer.state == "pong_game":
             self.ball.update()
             #first update the position of the ball and then check if there has been a collision
             boundaryBounce = pygame.sprite.spritecollide(self.ball,self.boundaryGroup,False)
@@ -206,8 +207,8 @@ class ArPongModel():
                 self.ball.rect.y = self.ball.y
                 self.ball.movingDirection=[-1,1]
 
-        if menu.state == "endgame": #this state is entered when one of the players reaches 5 points
-            self.triggerNumber5.areaSurveillance(self.cursor, "menu", menu, "state", "menu")
+        if Organizer.state == "endgame": #this state is entered when one of the players reaches 5 points
+            self.triggerNumber5.areaSurveillance(self.cursor, "menu", Organizer, "state", "menu")
             self.score.reset()
 
 class ArPongMouseController():
@@ -217,10 +218,10 @@ class ArPongMouseController():
 
     def handle_event(self,event):
         if event.type == MOUSEMOTION:
-            if menu.state == "menu" or "select_speed" or "endgame":
+            if Organizer.state == "menu" or "select_speed" or "endgame":
                 self.model.cursor.update(event.pos[0], event.pos[1])
 
-            if menu.state == "game":
+            if Organizer.state == "pong_game":
                 self.model.rightPaddle.update(event.pos[1]-self.model.rightPaddle.height/2.0)
                 self.model.leftPaddle.update(event.pos[0]-self.model.leftPaddle.height/2.0)
 
@@ -264,11 +265,11 @@ class Ball(pygame.sprite.Sprite):
 
     def update(self):
         """after one loop has gone by, move the ball in the movingDirection of the movement
-        This function uses menu.settings_ballSpeed to as the speed parameter. This ensures that it can be changed by the areaSurveillance method"""
-        self.x=self.x + self.movingDirection[0]*menu.settings_ballSpeed # To move, add movingDirection times the ball speed by the previous coordinate, movingDirection gets updated after a bounce
-        self.rect.x = self.rect.x + self.movingDirection[0]*menu.settings_ballSpeed
-        self.y = self.y + self.movingDirection[1]*menu.settings_ballSpeed
-        self.rect.y = self.rect.y + self.movingDirection[1]*menu.settings_ballSpeed
+        This function uses Organizer.settings_ballSpeed to as the speed parameter. This ensures that it can be changed by the areaSurveillance method"""
+        self.x=self.x + self.movingDirection[0]*Organizer.settings_ballSpeed # To move, add movingDirection times the ball speed by the previous coordinate, movingDirection gets updated after a bounce
+        self.rect.x = self.rect.x + self.movingDirection[0]*Organizer.settings_ballSpeed
+        self.y = self.y + self.movingDirection[1]*Organizer.settings_ballSpeed
+        self.rect.y = self.rect.y + self.movingDirection[1]*Organizer.settings_ballSpeed
 
     def draw(self,screen):
         """draw the ball on its new position"""
@@ -341,11 +342,11 @@ class Score():
         if player == 1:
             self.player2 +=1
         if self.player1>4:
-            menu.state = "endgame"
-            menu.winner = 1
+            Organizer.state = "endgame"
+            Organizer.winner = 1
         if self.player2>4:
-            menu.state = "endgame"
-            menu.winner = 2
+            Organizer.state = "endgame"
+            Organizer.winner = 2
 
     def reset(self):
         self.player1 = 0
@@ -364,7 +365,7 @@ class Cursor():
 
     def draw(self, screen):
         #print(self.x, self.y)
-        pygame.draw.circle(screen, menu.settings_cursorColor, (self.x,self.y), self.radius)
+        pygame.draw.circle(screen, Organizer.settings_cursorColor, (self.x,self.y), self.radius)
 
     def update(self, x, y):
         self.x = x
@@ -404,7 +405,7 @@ class CursorRecognition():
 
         # when counter limit reached do the following changes
         if self.counter == self.limit:
-            menu.state = change_state_to
+            Organizer.state = change_state_to
             setattr(object_to_change, attribute_of_object, change_attribute_to) #changes an attribute (attribute_of_object) of an object (object_to_change) to a value (change_attribute_to)
 
 
@@ -416,11 +417,13 @@ def Main(model,view,controller):
     """
     running = True
     while running:
+        if 0xFF == ord('q'):
+            running = False
         for event in pygame.event.get():
             if event.type is pygame.QUIT:
                 running = False
-            #controller.handle_event(event)
-        controller.update()
+            controller.handle_event(event)
+        #controller.update()
         model.update()
         view.draw()
         clock.tick(fps)
@@ -433,13 +436,13 @@ if __name__ == '__main__':
     fps = 60
     screenSize = [1850,1080]
     camera = OR.setup(screenSize)
-    menu = Menu()
-    #We start the game in the menu state
-    menu.state = "menu"
+    Organizer = Organizer()
+    #We start the game in the Organizer state
+    Organizer.state = "menu"
     #arguments are screenSize, the BoundaryOffset, BoundaryThickness, ballRadius, ballSpeed
     model = ArPongModel(screenSize,(50,50),10,camera)
-    view = PlayboardWindowView(model,screenSize, menu)
+    view = PlayboardWindowView(model,screenSize, Organizer)
     view._draw_background()
-    #controller = ArPongMouseController(model)
-    controller = ArPongObjectRecogController(model)
+    controller = ArPongMouseController(model)
+    #controller = ArPongObjectRecogController(model)
     Main(model,view,controller)
