@@ -27,13 +27,21 @@ class Player:
         """shoot bullet from the place where it is at the moment"""
         #create bullet object and make it go upwards
         ## TODO: bullet
-class Enemy(player):
+        bullet = Playerbullet(self.x,self.y,5)
+        #add bullet to screen or list of stuff in the screen
+
+class Enemy(Player):
     """this is the class of all the enemies (3 different levels)"""
     def __init__(self,aliveImage):
         super(Player,self).__init__(aliveImage)
         self.aliveImage = pygame.load(aliveImage)
         self.deathImage = pygame.load(deathImage)
         self.killSound = pygame.mixer.Sound(dir_path+"/death.wav")
+
+    def update(self):
+        #update the enemy
+    def move(self):
+
 
 class EnemyLevel1(Enemy):
     def __init__(self, aliveImage):
@@ -51,15 +59,21 @@ class EnemyLevel3(Enemy): # (this is the fast moving satelite at the top)
         self.received_points_when_killed = 15
 
 class Bullet():
-    def __init__(self,speed,direction):
+    def __init__(self,speed,direction,x,y):
         self.speed=speed
         self.direction = direction
-
+        self.image = pygame.load("/data/bullet.jpg")
+        self.x = x
+        self.y = y
+    def move(self):
+        self.y = self.y +self.direction*self.speed
     #-collision(with enemy or player    or     with other bullet)
+    def update(self):
+        self.move()
 
 class Playerbullet(Bullet):
-    def __init__(self,speed):
-        super(Bullet,self).__init__(speed,1)
+    def __init__(self,x,y,speed):
+        super(Bullet,self).__init__(speed,1,x,y)
         #direction is by default upwards
 
 class EnemyBullet(bullet):
