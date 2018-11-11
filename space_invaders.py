@@ -13,12 +13,14 @@ class Player:
 """this is the class of the spaceship"""
     # TODOcounter between shooting times (can only shoot once every 2 seconds for instance)
 
-    def __init__(self,image):
+    def __init__(self,x,y,image):
             self.speed = 10
             self.direction = -1 #negative or positive
             self.image = pygame.image.load(image) #"spaceship.png"
-            self.x = 10
-            self.y =10
+            self.x = x
+            self.y =y
+            self.rect = self.image.get_rect()
+            self.rect.center = [self.x,self.y]
     def move(self,direction):
         """moves the spaceship with one times the speed"""
         self.x = self.x+self.speed
@@ -32,10 +34,10 @@ class Player:
 
 class Enemy(Player):
     """this is the class of all the enemies (3 different levels)"""
-    def __init__(self,aliveImage):
-        super(Player,self).__init__(aliveImage)
+    def __init__(self,x,yaliveImage):
+        super(Player,self).__init__(x,y,aliveImage)
         self.aliveImage = pygame.load(aliveImage)
-        self.deathImage = pygame.load(deathImage)
+        self.deathImage = pygame.load(dir_path+"/New Pixel.png")
         self.killSound = pygame.mixer.Sound(dir_path+"/death.wav")
 
     def update(self):
@@ -65,6 +67,8 @@ class Bullet():
         self.image = pygame.load("/data/bullet.jpg")
         self.x = x
         self.y = y
+        self.rect.x = x
+        self.rect.y = y
     def move(self):
         self.y = self.y +self.direction*self.speed
     #-collision(with enemy or player    or     with other bullet)

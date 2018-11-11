@@ -6,6 +6,9 @@ class View():
         pygame.display.set_caption = ("AR-Arcade")
 
     def draw(model,organizer):
-        self.model
+        self.model=model
         if self.organizer.state == "pong":
             #draw everything the pong needs
+            pass
+        if self.organizer.state == "spaceinvaders":
+            pass
