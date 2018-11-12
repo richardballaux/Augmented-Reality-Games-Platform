@@ -1,3 +1,4 @@
+"""this file contains everything concerning the objectrecognition"""
 import cv2
 cv2.__version__
 import numpy as np

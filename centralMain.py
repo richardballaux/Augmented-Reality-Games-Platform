@@ -1,3 +1,5 @@
+"""This is the file that is ran when you want to start the full AR arcade"""
+
 from view import View
 from overallModel import OverallModel
 from pong import PongView, PongModel, PongMouseController, PongObjectRecogController
@@ -10,12 +12,32 @@ import numpy as np
 import os
 from cursor import Cursor, CursorRecognition
 
-def Main(model,view,controller):
+class OverallModel():
+    def __init__(self,organizer):
+        pass
+
+
+def Main():
     """Update graphics and check for pygame events.
     model -- an object of the type ArPongModel()
     view -- an object of the type PlayboardWindowView()
     controller -- an object ArPongMouseController()
     """
+    pygame.init()
+    pygame.mixer.init() #the mixer is for the playing the music
+    clock = pygame.time.Clock()
+    fps = 60
+    screenSize = [1850,1080]
+    camera = OR.setup(screenSize)
+    organizer = Organizer()
+    #We start the game in the organizer state
+    organizer.state = "menu"
+    #arguments are screenSize, the BoundaryOffset, BoundaryThickness, ballRadius, ballSpeed
+
+    #initalize all the main classes
+    mainModel = OverallModel(organizer)
+    mainView = View(screenSize, organizer,mainModel)
+    mainController = OverallController(mainModel)
     running = True
     while running:
         if 0xFF == ord('q'):
@@ -24,9 +46,9 @@ def Main(model,view,controller):
             if event.type is pygame.QUIT:
                 running = False
             #controller.handle_event(event)
-        controller.update()
-        model.update()
-        view.draw()
+        mainController.update()
+        mainModel.update()
+        mainView.draw()
         clock.tick(fps)
 
 class Organizer():
@@ -48,20 +70,10 @@ class Organizer():
         self.settings_cursorColor = (255, 20, 147)
 
 if __name__ == '__main__':
-    pygame.init()
-    #the mixer is for the playing the music
-    pygame.mixer.init()
-    clock = pygame.time.Clock()
-    fps = 60
-    screenSize = [1850,1080]
-    camera = OR.setup(screenSize)
-    organizer = Organizer()
-    #We start the game in the Organizer state
-    organizer.state = "menu"
-    #arguments are screenSize, the BoundaryOffset, BoundaryThickness, ballRadius, ballSpeed
-    model = PongModel(screenSize,(50,50),10,camera,organizer)
-    view = PongView(model,screenSize, organizer)
-    view._draw_background()
-    #controller = PongMouseController(model)
-    controller = PongObjectRecogController(model)
-    Main(model,view,controller)
+    Main()
+    # model = PongModel(screenSize,(50,50),10,camera,organizer)
+    # view = PongView(model,screenSize, organizer)
+    # view._draw_background()
+    # #controller = PongMouseController(model)
+    # controller = PongObjectRecogController(model)
+    # Main(model,view,controller)

@@ -6,13 +6,40 @@ https://www.youtube.com/watch?v=D1jZaIPeD5w
 PIXELART generator :
 https://www.piskelapp.com/p/agxzfnBpc2tlbC1hcHByEwsSBlBpc2tlbBiAgKDwzZSzCww/edit
 """
-
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-class Player:
-"""this is the class of the spaceship"""
-    # TODOcounter between shooting times (can only shoot once every 2 seconds for instance)
+class SpaceInvadersModel():
+    def __init__(self):
+        self.enemystartxcoord = 100
+        self.distanceBetweenEnemiesx = 50
+        self.enemystartycoord = 100
+        self.distanceBetweenEnemiesy = 50
+        self.enemies = [][]
+        for i in range(10):
+            self.enemies[i][0]= EnemyLevel3(enemystartxcoord+distanceBetweenEnemiesx*i,enemystartycoord,dir_path+"/data/level3monster.png")
+        for i in range(10):
+            self.enemies[i][1] = EnemyLevel2(enemystartxcoord+distanceBetweenEnemiesx*i,enemystartycoord+distanceBetweenEnemiesy,dir_path+"/data/level2monster.png")
+        for i in range(10):
+            for j in range(2,3):
+                self.enemies[i][j] = EnemyLevel1(enemystartxcoord+distanceBetweenEnemiesx*i,enemystartycoord+distanceBetweenEnemiesy*j,dir_path+"/data/level1monster.png")
 
+        self.obstructions = []
+        for i in range(3):
+            self.obstructions[i] = Obstruction(450*i,800)
+        self.player = Player(900,900,dir_path+"/data/spaceship.png")
+
+        self.components = [self.enemies,self.obstructions,self.player]
+
+        
+
+    def update(self):
+        for component in self.components:
+            component.update()
+
+
+
+class Player():
+    """this is the class of the spaceship"""
     def __init__(self,x,y,image):
             self.speed = 10
             self.direction = -1 #negative or positive
@@ -31,10 +58,11 @@ class Player:
         ## TODO: bullet
         bullet = Playerbullet(self.x,self.y,5)
         #add bullet to screen or list of stuff in the screen
+        pass
 
 class Enemy(Player):
     """this is the class of all the enemies (3 different levels)"""
-    def __init__(self,x,yaliveImage):
+    def __init__(self,x,y,aliveImage):
         super(Player,self).__init__(x,y,aliveImage)
         self.aliveImage = pygame.load(aliveImage)
         self.deathImage = pygame.load(dir_path+"/New Pixel.png")
@@ -42,7 +70,9 @@ class Enemy(Player):
 
     def update(self):
         #update the enemy
+        pass
     def move(self):
+        pass
 
 
 class EnemyLevel1(Enemy):
