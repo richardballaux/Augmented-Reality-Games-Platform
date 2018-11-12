@@ -1,7 +1,6 @@
 """This is the file that is ran when you want to start the full AR arcade"""
 
 from view import View
-from overallModel import OverallModel
 from pong import PongView, PongModel, PongMouseController, PongObjectRecogController
 import pygame
 from pygame.locals import *
@@ -10,7 +9,6 @@ import ObjectRecogImplementation as OR
 from PIL import Image
 import numpy as np
 import os
-from cursor import Cursor, CursorRecognition
 
 def Main():
     """Update graphics and check for pygame events.
@@ -27,7 +25,6 @@ def Main():
     organizer = Organizer()
     #We start the game in the organizer state
     organizer.state = "menu"
-    #arguments are screenSize, the BoundaryOffset, BoundaryThickness, ballRadius, ballSpeed
 
     #initalize all the main classes
     mainModel = OverallModel(organizer)
