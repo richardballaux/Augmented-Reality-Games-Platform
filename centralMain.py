@@ -12,11 +12,6 @@ import numpy as np
 import os
 from cursor import Cursor, CursorRecognition
 
-class OverallModel():
-    def __init__(self,organizer):
-        pass
-
-
 def Main():
     """Update graphics and check for pygame events.
     model -- an object of the type ArPongModel()

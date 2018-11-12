@@ -1,3 +1,4 @@
+"""this file is the first stage to make a function in the arcade where you can choose the color of you controller"""
 import cv2
 import numpy as np
 import time
