@@ -38,7 +38,7 @@ class OverallModel():
             self.pongPhaseKeeper.state = "menu"
             self.pongModel = PongModel(self.screenSize,self.camera,self.pongPhaseKeeper)
             #TODO give existing screen to newly initialized view, because i think pygame can't handle multiple screens
-            self.pongView = PongView(self.pongModel,self.screenSize,self.pongPhaseKeeper,self.screen)
+            self.pongView = PongView(self.pongModel,self.screenSize,self.pongPhaseKeeper)
             self.pongController = PongObjectRecogController(self.pongModel)
             running = True
             while running:

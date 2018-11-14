@@ -39,6 +39,6 @@ def calibrateColor(resolution):
     return colorRange
 
 if __name__ == '__main__':
-    res = [340,220]
+    res = [900,400]
     range = calibrateColor(res)
     print(range)

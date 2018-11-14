@@ -17,6 +17,7 @@ def setup(resolution):
     global upperBound
     upperBound=np.array([102,255,255])
 
+
     # Defining screen resolution
     global horRes
     horRes = resolution[0]
@@ -86,7 +87,7 @@ def getCoords(cam):
     for i in range(len(conts)):
         x,y,w,h=cv2.boundingRect(conts[i])  #Draws rectangle around contours
         #(x,y),rad = cv2.minEnclosingCircle(conts[i])       # draws circle instead of rectangle (slower)
-        center = (int(width_ratio*x),int(height_ratio*(y)))
+        center = (int(width_ratio*x+width_ratio*w/2),int(height_ratio*y+height_ratio*h/2))
         coords.append(center)
         widthList.append(w)
         i = 0
