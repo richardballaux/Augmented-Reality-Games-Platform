@@ -30,11 +30,13 @@ class SpaceInvadersModel():
 
         self.components = [self.enemies,self.obstructions,self.player]
 
-        
-
     def update(self):
         for component in self.components:
             component.update()
+
+class SpaceInvadersView():
+    def __init__(self):
+        pass
 
 
 
@@ -58,6 +60,9 @@ class Player():
         ## TODO: bullet
         bullet = Playerbullet(self.x,self.y,5)
         #add bullet to screen or list of stuff in the screen
+        pass
+
+    def update(self):
         pass
 
 class Enemy(Player):

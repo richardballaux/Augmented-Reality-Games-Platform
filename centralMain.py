@@ -9,6 +9,92 @@ import ObjectRecogImplementation as OR
 from PIL import Image
 import numpy as np
 import os
+from cursor import Cursor, CursorRecognition
+import ObjectRecogImplementation as OR
+
+
+
+class OverallModel():
+    def __init__(self, organizer,screenSize,camera,clock,fps):
+        self.organizer = organizer
+        self.screenSize = screenSize
+        self.width = screenSize[0]
+        self.height = screenSize[1]
+        self.clock = clock
+        self.fps = fps
+        self.cursor = Cursor(0,0,20,self.organizer)
+        self.pongButton = CursorRecognition(30, [50, self.height/2-50, 200,200],self.organizer)
+        self.spaceInvadersButton = CursorRecognition(30, [300, self.height/2-50, 200,200],self.organizer)
+        self.camera = camera
+        self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera)
+
+    def update(self):
+        if self.organizer.state == "homeScreen":
+            self.pongButton.areaSurveillance(self.cursor, "pong", self.organizer, "state", "pong")
+            self.spaceInvadersButton.areaSurveillance(self.cursor, "spaceInvaders", self.organizer, "state", "spaceInvaders")
+
+        if self.organizer.state == "pong":
+            self.pongPhaseKeeper = Organizer()  #create state machine for inside the pong game
+            self.pongPhaseKeeper.state = "menu"
+            self.pongModel = PongModel(self.screenSize,self.camera,self.pongPhaseKeeper)
+            #TODO give existing screen to newly initialized view, because i think pygame can't handle multiple screens
+            self.pongView = PongView(self.pongModel,self.screenSize,self.pongPhaseKeeper,self.screen)
+            self.pongController = PongObjectRecogController(self.pongModel)
+            running = True
+            while running:
+                for event in pygame.event.get():
+                    if event.type is pygame.QUIT:
+                        running = False
+                    #controller.handle_event(event)
+                self.pongController.update()
+                self.pongModel.update()
+                self.pongView.draw()
+                self.clock.tick(self.fps/2)
+
+        if self.organizer.state == "spaceInvaders":
+            self.spaceInvadersPhaseKeeper = Organizer() #create state machine for inside the pong game
+            self.spaceInvadersPhaseKeeper.state = "menu"
+            self.spaceInvadersModel = SpaceInvadersModel()
+            self.spaceInvadersView = SpaceInvadersView()
+
+class MouseController():
+    """handles input from the mouse"""
+    def __init__(self,model):
+        self.model = model
+
+    def handle_event(self,event):
+        if event.type == MOUSEMOTION:
+            if self.model.organizer.state == "homeScreen":
+                self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera)
+                self.model.cursor.update(event.pos[0], event.pos[1])
+
+class ObjectRecogController():
+    """handles the input from the camera"""
+    def __init__(self,model):
+        self.model = model
+
+    def update(self):
+        self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera)
+        if self.model.objectCoordinates[1][0]== -1:
+            self.model.cursor.update(self.model.objectCoordinates[0][0],self.model.objectCoordinates[0][1])
+        else: #if the first controller has -1 as values, the controller is changed two the controller on the right side of the screen
+            self.model.cursor.update(self.model.objectCoordinates[1][0],self.model.objectCoordinates[1][1])
+        # If coordinates are -1, no object has been detected
+
+class Organizer():
+    """State machine that regulates whether or not we see the menu or the game
+    The different states are:
+
+
+    Instruction for adding a state:
+    - You don't need to add a state in the Organizer() class. Just update the docstring to keep the documentation updated
+    - Add an if-statement with the state name to the draw() function in the class PlayboardWindowView()
+    - Add an if-statement with the state name t0 the handle_event() function in the class ArPongMouseController()
+    """
+    def __init__(self):
+        self.state = "menu"
+        self.settings_ballSpeed = 5
+        self.settings_cursorColor = (255, 20, 147)
 
 def Main():
     """Update graphics and check for pygame events.
@@ -24,48 +110,23 @@ def Main():
     camera = OR.setup(screenSize)
     organizer = Organizer()
     #We start the game in the organizer state
-    organizer.state = "menu"
-
+    organizer.state = "homeScreen"
     #initalize all the main classes
-    mainModel = OverallModel(organizer)
-    mainView = View(screenSize, organizer,mainModel)
-    mainController = OverallController(mainModel)
+    mainModel = OverallModel(organizer,screenSize,camera,clock,fps)
+    mainView = View(screenSize, mainModel)
+    #mainController = Controller(mainModel)
+    #this is the mouse controller
+    fakeObject = ObjectRecogController(mainModel)
     running = True
     while running:
-        if 0xFF == ord('q'):
-            running = False
         for event in pygame.event.get():
             if event.type is pygame.QUIT:
                 running = False
-            #controller.handle_event(event)
-        mainController.update()
+            #fakeObject.handle_event(event)
+        fakeObject.update()
         mainModel.update()
         mainView.draw()
         clock.tick(fps)
 
-class Organizer():
-    """State machine that regulates whether or not we see the menu or the game
-    The different states are:
-    - "menu"
-    - "select_speed"
-    - "pong_game"
-    - "endgame"
-
-    Instruction for adding a state:
-    - You don't need to add a state in the Organizer() class. Just update the docstring to keep the documentation updated
-    - Add an if-statement with the state name to the draw() function in the class PlayboardWindowView()
-    - Add an if-statement with the state name t0 the handle_event() function in the class ArPongMouseController()
-    """
-    def __init__(self):
-        self.state = "menu"
-        self.settings_ballSpeed = 5
-        self.settings_cursorColor = (255, 20, 147)
-
 if __name__ == '__main__':
     Main()
-    # model = PongModel(screenSize,(50,50),10,camera,organizer)
-    # view = PongView(model,screenSize, organizer)
-    # view._draw_background()
-    # #controller = PongMouseController(model)
-    # controller = PongObjectRecogController(model)
-    # Main(model,view,controller)

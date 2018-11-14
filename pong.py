@@ -14,16 +14,17 @@ from cursor import Cursor, CursorRecognition
 
 class PongView():
     """this board includes the outlines, the ball, the paddles and the goals"""
-    def __init__(self,model,screen_size, organizer):
+    def __init__(self,model,screenSize, organizer):
         self.model=model
-        self.screen_size = screen_size
-        self.screen = pygame.display.set_mode(screen_size)
+        self.screenSize = screenSize
+        self.screen = pygame.display.set_mode(screenSize)
         pygame.display.set_caption = ("Pong-AR-Game")
         self.myfont = pygame.font.SysFont("monospace", 42) #Font that is used in states "game" and "select_speed" to prompt the user
         self.numberfont = pygame.font.SysFont("monospace", 85, bold=True) #font is used for numbers in "select_speed" state
         self.ColorGreen = (0,250,0)
         self.ColorBlack = (0,0,0)
         self.organizer = organizer
+
 
     def _draw_background(self, color = (0,0,0)):
         """draw background with plain Color
@@ -95,23 +96,23 @@ class PongView():
             self.model.cursor.draw(self.screen)
             pygame.display.update()
 
-# class Organizer():
-#     """State machine that regulates whether or not we see the menu or the game
-#     The different states are:
-#     - "menu"
-#     - "select_speed"
-#     - "pong_game"
-#     - "endgame"
-#
-#     Instruction for adding a state:
-#     - You don't need to add a state in the organizer() class. Just update the docstring to keep the documentation updated
-#     - Add an if-statement with the state name to the draw() function in the class PlayboardWindowView()
-#     - Add an if-statement with the state name t0 the handle_event() function in the class ArPongMouseController()
-#     """
-#     def __init__(self):
-#         self.state = "menu"
-#         self.settings_ballSpeed = 5
-#         self.settings_cursorColor = (255, 20, 147)
+class Organizer():
+    """State machine that regulates whether or not we see the menu or the game
+    The different states are:
+    - "menu"
+    - "select_speed"
+    - "pong_game"
+    - "endgame"
+
+    Instruction for adding a state:
+    - You don't need to add a state in the organizer() class. Just update the docstring to keep the documentation updated
+    - Add an if-statement with the state name to the draw() function in the class PlayboardWindowView()
+    - Add an if-statement with the state name t0 the handle_event() function in the class ArPongMouseController()
+    """
+    def __init__(self):
+        self.state = "menu"
+        self.settings_ballSpeed = 5
+        self.settings_cursorColor = (255, 20, 147)
 
 class PongModel():
     """encodes a model of the game state
@@ -120,7 +121,9 @@ class PongModel():
     boundaryThickness --  This is the thickness of the boundary in pixels
     camera --   This is a VideoCapture-object that the getCoords-function needs as input
     """
-    def __init__(self,windowSize,boundaryOffset, boundaryThickness,camera,organizer):
+    def __init__(self,windowSize,camera,organizer):
+        boundaryOffset = [50,50]
+        boundaryThickness = 10
         self.width = windowSize[0]
         self.height = windowSize[1]
         boundaryLength = self.width-2*boundaryOffset[0]
@@ -220,9 +223,11 @@ class PongMouseController():
     def handle_event(self,event):
         if event.type == MOUSEMOTION:
             if organizer.state == "menu" or "select_speed" or "endgame":
+                self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera)
                 self.model.cursor.update(event.pos[0], event.pos[1])
 
             if organizer.state == "pong_game":
+                self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera)
                 self.model.rightPaddle.update(event.pos[1]-self.model.rightPaddle.height/2.0)
                 self.model.leftPaddle.update(event.pos[0]-self.model.leftPaddle.height/2.0)
 
@@ -355,65 +360,6 @@ class Score():
         self.player2 = 0
 
 
-class Cursor():
-    """Cursor representation for navigating through the settings
-    x -- initial x coordinate of the cursor
-    y -- initial y coordinate of the cursor
-    radius -- radius of the cursor
-    """
-    def __init__(self, x, y, radius, organizer):
-        self.x = x
-        self.y = y
-        self.radius = radius
-        self.organizer = organizer
-
-    def draw(self, screen):
-        #print(self.x, self.y)
-        pygame.draw.circle(screen, self.organizer.settings_cursorColor, (self.x,self.y), self.radius)
-
-    def update(self, x, y):
-        self.x = x
-        self.y = y
-
-class CursorRecognition():
-    """Recognizes a cursor that hovers over an area and triggers a change of an attribute of an object_to_change.
-    counts up every loop the XY object is still in the same area.
-
-    counter_limit -- int, the limit for when "something" should be triggered
-    area -- list of form: same as pygame draw rectangle - [upper left corner x, upper left corner y, length in x direction, length in y direction]
-    """
-    def __init__(self, counter_limit, area,organizer):
-        self.counter = 0 #Counter for area
-        self.limit = counter_limit
-        self.input = area
-        self.triggerArea = [self.input[0], self.input[1]+self.input[3], self.input[0]+self.input[2], self.input[1]]
-        self.organizer = organizer
-
-    def areaSurveillance(self, cursor,change_state_to, object_to_change, attribute_of_object, change_attribute_to):
-        """With a specific cursor as an input, change the attribute of an object to a specific value
-
-        cursor -- cursor.x should be x coordinate, cursor.y should be y coordinate
-        change_state_to -- changes state of game. To stay in same state just input the same state here
-        object_to_change -- pass in the class object to change
-        attribute_of_object -- as a string, pass in the attribute of the corresponding class object to change
-        change_attribute_to -- pass in the value object.attribute needs to be changed to when triggered
-        """
-        #checks if coordinates of cursor are in the recatangle from the area input (self.triggerArea)
-        if int(cursor.x) in range(int(self.triggerArea[0]), int(self.triggerArea[2]+1)):
-            if int(cursor.y) in range(int(self.triggerArea[3]+1), int(self.triggerArea[1])):  # y-coordinates flipped since y coordinates are upside down
-                self.counter += 1 #inrement counter by one if hovered over areaSurveillance area and set back two zero when not hoverd over it
-            else:
-                self.counter = 0 #set cpunter back to 0 when not hovered over self.triggerArea - this is for y coordiantes
-        else:
-            self.counter = 0 #set cpunter back to 0 when not hovered over self.triggerArea - this is for x coordiantes
-
-        # when counter limit reached do the following changes
-        if self.counter == self.limit:
-            self.organizer.state = change_state_to
-            setattr(object_to_change, attribute_of_object, change_attribute_to) #changes an attribute (attribute_of_object) of an object (object_to_change) to a value (change_attribute_to)
-
-
-
 def Main(model,view,controller):
     """Update graphics and check for pygame events.
     model -- an object of the type ArPongModel()
@@ -422,8 +368,6 @@ def Main(model,view,controller):
     """
     running = True
     while running:
-        if 0xFF == ord('q'):
-            running = False
         for event in pygame.event.get():
             if event.type is pygame.QUIT:
                 running = False
@@ -445,7 +389,7 @@ if __name__ == '__main__':
     #We start the game in the Organizer state
     organizer.state = "menu"
     #arguments are screenSize, the BoundaryOffset, BoundaryThickness, ballRadius, ballSpeed
-    model = PongModel(screenSize,(50,50),10,camera,organizer)
+    model = PongModel(screenSize,camera,organizer)
     view = PongView(model,screenSize, organizer)
     view._draw_background()
     #controller = PongMouseController(model)
