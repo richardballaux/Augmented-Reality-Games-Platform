@@ -14,9 +14,11 @@ class View():
     def draw(self):
         if self.model.organizer.state == "pong":
             #we will probably not use this
+            pygame.display.update()
             pass
         if self.model.organizer.state == "spaceInvaders":
             #we will probably not use this
+            pygame.display.update()
             pass
 
         if self.model.organizer.state == "homeScreen":

@@ -6,6 +6,7 @@ https://www.youtube.com/watch?v=D1jZaIPeD5w
 PIXELART generator :
 https://www.piskelapp.com/p/agxzfnBpc2tlbC1hcHByEwsSBlBpc2tlbBiAgKDwzZSzCww/edit
 """
+import os
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 class SpaceInvadersModel():
@@ -14,25 +15,30 @@ class SpaceInvadersModel():
         self.distanceBetweenEnemiesx = 50
         self.enemystartycoord = 100
         self.distanceBetweenEnemiesy = 50
-        self.enemies = [][]
+        self.enemies = []
         for i in range(10):
-            self.enemies[i][0]= EnemyLevel3(enemystartxcoord+distanceBetweenEnemiesx*i,enemystartycoord,dir_path+"/data/level3monster.png")
+            enemy = EnemyLevel3(enemystartxcoord+distanceBetweenEnemiesx*i,enemystartycoord,dir_path+"/data/level3monster.png")
+            list = []
+            self.enemies[0].append(enemy)
         for i in range(10):
-            self.enemies[i][1] = EnemyLevel2(enemystartxcoord+distanceBetweenEnemiesx*i,enemystartycoord+distanceBetweenEnemiesy,dir_path+"/data/level2monster.png")
+            enemy = EnemyLevel2(enemystartxcoord+distanceBetweenEnemiesx*i,enemystartycoord+distanceBetweenEnemiesy,dir_path+"/data/level2monster.png")
+            self.enemies[1].append(enemy)
         for i in range(10):
             for j in range(2,3):
-                self.enemies[i][j] = EnemyLevel1(enemystartxcoord+distanceBetweenEnemiesx*i,enemystartycoord+distanceBetweenEnemiesy*j,dir_path+"/data/level1monster.png")
+                enemy = EnemyLevel1(enemystartxcoord+distanceBetweenEnemiesx*i,enemystartycoord+distanceBetweenEnemiesy*j,dir_path+"/data/level1monster.png")
+                self.enemies[i].append(enemy)
 
         self.obstructions = []
         for i in range(3):
             self.obstructions[i] = Obstruction(450*i,800)
         self.player = Player(900,900,dir_path+"/data/spaceship.png")
 
-        self.components = [self.enemies,self.obstructions,self.player]
+        self.components = [self.enemies,self.obstructions,self.player] #TODO enemies doesn't have a .update()-function because it is a list.
 
     def update(self):
-        for component in self.components:
-            component.update()
+        for enemyRow in self.enemies:
+            for enemy in enemyRow:
+                enemy.update()
 
 class SpaceInvadersView():
     def __init__(self):
@@ -115,12 +121,12 @@ class Playerbullet(Bullet):
         super(Bullet,self).__init__(speed,1,x,y)
         #direction is by default upwards
 
-class EnemyBullet(bullet):
+class EnemyBullet(Bullet):
     def __init__(self,speed):
         super(Bullet,self).__init__(speed,-1)
         #direction is downwards by default
 
-class Obstruction:
+class Obstruction():
     def __init__(self,x,y):
         self.x = x
         self.y = y
