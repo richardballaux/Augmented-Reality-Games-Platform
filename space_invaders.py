@@ -1,6 +1,5 @@
 """Space invaders file
 
-This game need to have:
 This is all based on this video:
 https://www.youtube.com/watch?v=D1jZaIPeD5w
 PIXELART generator :
@@ -8,9 +7,11 @@ https://www.piskelapp.com/p/agxzfnBpc2tlbC1hcHByEwsSBlBpc2tlbBiAgKDwzZSzCww/edit
 """
 import os
 import pygame
+from cursor import Cursor, CursorRecognition
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 class SpaceInvadersModel():
+    """This is the model for the space invaders game"""
     def __init__(self,screen,organizer):
         self.screen = screen
         self.organizer = organizer
@@ -42,26 +43,43 @@ class SpaceInvadersModel():
         self.score = Score()
         self.components = [self.enemies,self.obstructions,self.player,self.score] #TODO enemies doesn't have a .update()-function because it is a list.
 
+        self.cursor = Cursor(0,0,20,self.organizer)
+        self.startGameButton = CursorRecognition(30, [200, 200, 200,200],self.organizer) #Triggerare in state "menu" - yellow square
+
     def update(self):
+        """update all the components of the model:
+        - player
+        - all the enemies
+        - all the obstructions
+        - the score
+        """
         if self.organizer.state == "game":
             self.player.update()
             for enemyRow in self.enemies:
                 for enemy in enemyRow:
                     enemy.update()
             #check for all the collisions
+
         if self.organizer.state == "menu":
             #areaSurveillance over the start button of the game
-            pass
+            self.startGameButton = areaSurveillance(self.cursor, "game", self.organizer, "state", "game")
+
         if self.organizer.state == "endgame":
             #areaSurveillance over the "restart button" of the game
             #areaSurveillance over the "go back to homeScreen button"
             pass
 
 class SpaceInvadersView():
+    """This is the view class for the space invaders game"""
     def __init__(self,model):
         self.model = model
+    self.myfont = pygame.font.SysFont("monospace", 42) #Font that is used in states "game" and "select_speed" to prompt the user
+    self.numberfont = pygame.font.SysFont("monospace", 85, bold=True) #font is used for numbers in "select_speed" state
+    self.ColorGreen = (0,250,0)
+    self.ColorBlack = (0,0,0)
 
     def draw():
+        """draws the corresponding state of the spaceInvadersPhaseKeeper of the game to the screen"""
         self.draw_background(self.model.screen) #always draw the background first
 
         if self.organizer.state == "game":
@@ -73,10 +91,19 @@ class SpaceInvadersView():
                 obstruction.draw(self.model.screen)
             for bullet in self.model.bulletCollisionGroup:
                 bullet.draw(self.model.screen)
+
         if self.organizer.state == "menu":
             #draw instructions to play the Game
+            #draw button to start the game
             #maybe also draw the highscore would be cool
-            pass
+            pygame.draw.rect(self.screen, (250,250,0), pygame.Rect(200, 200, 200,200))
+            menutext = self.myfont.render("Keep your cursor in the square to start the game", 1, self.ColorGreen)
+            self.screen.blit(menutext, (50,50))
+            pygame.draw.rect(self.screen, (250,250,0), pygame.Rect(200, 200, 200,200))
+            menutext = self.myfont.render("Instructions: ", 1, self.ColorGreen)
+            self.screen.blit(menutext, (100,100))
+            self.model.cursor.draw(self.screen)
+
         if self.organizer.state == "endgame":
             #draw the final score
             #draw the two buttons
@@ -91,6 +118,7 @@ class SpaceInvadersView():
 
 class SpaceInvadersController():
     def __init__(self):
+        #from the camera we need the x coordinate for the player and
         pass
 
 class Player():
