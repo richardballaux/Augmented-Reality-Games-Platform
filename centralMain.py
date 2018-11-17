@@ -2,6 +2,7 @@
 
 from view import View
 from pong import PongView, PongModel, PongMouseController, PongObjectRecogController
+from space_invaders import SpaceInvadersView, SpaceInvadersModel, SpaceInvadersController
 import pygame
 from pygame.locals import *
 import time
@@ -10,7 +11,6 @@ from PIL import Image
 import numpy as np
 import os
 from cursor import Cursor, CursorRecognition
-import ObjectRecogImplementation as OR
 
 
 
@@ -38,7 +38,7 @@ class OverallModel():
             self.pongPhaseKeeper.state = "menu"
             self.pongModel = PongModel(self.screenSize,self.camera,self.pongPhaseKeeper)
             #TODO give existing screen to newly initialized view, because i think pygame can't handle multiple screens
-            self.pongView = PongView(self.pongModel,self.screenSize,self.pongPhaseKeeper)
+            self.pongView = PongView(self.pongModel,self.screenSize)
             self.pongController = PongObjectRecogController(self.pongModel)
             running = True
             while running:
@@ -54,8 +54,19 @@ class OverallModel():
         if self.organizer.state == "spaceInvaders":
             self.spaceInvadersPhaseKeeper = Organizer() #create state machine for inside the pong game
             self.spaceInvadersPhaseKeeper.state = "menu"
-            self.spaceInvadersModel = SpaceInvadersModel()
-            self.spaceInvadersView = SpaceInvadersView()
+            self.spaceInvadersModel = SpaceInvadersModel(self.screenSize,self.camera,self.spaceInvadersPhaseKeeper)
+            self.spaceInvadersView = SpaceInvadersView(self.spaceInvadersModel)
+            self.spaceInvadersController = SpaceInvadersController(self.spaceInvadersModel)
+            running = True
+            while running:
+                for event in pygame.event.get():
+                    if event.type is pygame.QUIT:
+                        running = False
+                    #controller.handle_event(event)
+                self.spaceInvadersController.update()
+                self.spaceInvadersModel.update()
+                self.spaceInvadersView.draw()
+                self.clock.tick(self.fps/2)
 
 class MouseController():
     """handles input from the mouse"""

@@ -14,16 +14,15 @@ from cursor import Cursor, CursorRecognition
 
 class PongView():
     """this board includes the outlines, the ball, the paddles and the goals"""
-    def __init__(self,model,screenSize, organizer):
+    def __init__(self,model,screenSize):
         self.model=model
         self.screenSize = screenSize
         self.screen = pygame.display.set_mode(screenSize)
-        pygame.display.set_caption = ("Pong-AR-Game")
+        #pygame.display.set_caption = ("Pong-AR-Game")
         self.myfont = pygame.font.SysFont("monospace", 42) #Font that is used in states "game" and "select_speed" to prompt the user
         self.numberfont = pygame.font.SysFont("monospace", 85, bold=True) #font is used for numbers in "select_speed" state
         self.ColorGreen = (0,250,0)
         self.ColorBlack = (0,0,0)
-        self.organizer = organizer
 
 
     def _draw_background(self, color = (0,0,0)):
@@ -38,7 +37,7 @@ class PongView():
     def draw(self):
         """draws corresponding to the state of organizer.state the different organizer settings or game"""
 
-        if self.organizer.state == "menu": # Draw start screen
+        if self.model.organizer.state == "menu": # Draw start screen
             self._draw_background()
             pygame.draw.rect(self.screen, (250,250,0), pygame.Rect(50, self.model.height/2-50, 200,200))
             menutext = self.myfont.render("Keep your cursor in the square to start the game", 1, self.ColorGreen)
@@ -46,7 +45,7 @@ class PongView():
             self.model.cursor.draw(self.screen)
             pygame.display.update()
 
-        if self.organizer.state == "select_speed":
+        if self.model.organizer.state == "select_speed":
             self._draw_background((255, 224, 254))
             menutext = self.myfont.render("Select a speed by hovering over the desired speed", 1, self.ColorBlack) # Message for menu to select speed
             self.screen.blit(menutext, (50,50))
@@ -75,18 +74,18 @@ class PongView():
             self.model.cursor.draw(self.screen)
             pygame.display.update()
 
-        if self.organizer.state == "pong_game":
+        if self.model.organizer.state == "pong_game":
             self._draw_background()
             for component in self.model.components:
                  component.draw(self.screen)
             pygame.display.update()
 
-        if self.organizer.state == "endgame":
+        if self.model.organizer.state == "endgame":
             self._draw_background()
             pygame.draw.rect(self.screen, (150,150,0), pygame.Rect(int((model.width/6)), int(model.height/2)-50, int(model.width*4/6),150))
-            if self.organizer.winner ==1:
+            if self.model.organizer.winner ==1:
                 player = self.myfont.render("LEFT PLAYER WON", 1, self.ColorBlack)
-            if self.organizer.winner ==2:
+            if self.model.organizer.winner ==2:
                 player = self.myfont.render("RIGHT PLAYER WON", 1, self.ColorBlack)
             self.screen.blit(player, (int((model.width/6)*2),model.height/2))
 
@@ -96,23 +95,23 @@ class PongView():
             self.model.cursor.draw(self.screen)
             pygame.display.update()
 
-class Organizer():
-    """State machine that regulates whether or not we see the menu or the game
-    The different states are:
-    - "menu"
-    - "select_speed"
-    - "pong_game"
-    - "endgame"
-
-    Instruction for adding a state:
-    - You don't need to add a state in the organizer() class. Just update the docstring to keep the documentation updated
-    - Add an if-statement with the state name to the draw() function in the class PlayboardWindowView()
-    - Add an if-statement with the state name t0 the handle_event() function in the class ArPongMouseController()
-    """
-    def __init__(self):
-        self.state = "menu"
-        self.settings_ballSpeed = 5
-        self.settings_cursorColor = (255, 20, 147)
+# class Organizer():
+#     """State machine that regulates whether or not we see the menu or the game
+#     The different states are:
+#     - "menu"
+#     - "select_speed"
+#     - "pong_game"
+#     - "endgame"
+#
+#     Instruction for adding a state:
+#     - You don't need to add a state in the organizer() class. Just update the docstring to keep the documentation updated
+#     - Add an if-statement with the state name to the draw() function in the class PlayboardWindowView()
+#     - Add an if-statement with the state name t0 the handle_event() function in the class ArPongMouseController()
+#     """
+#     def __init__(self):
+#         self.state = "menu"
+#         self.settings_ballSpeed = 5
+#         self.settings_cursorColor = (255, 20, 147)
 
 class PongModel():
     """encodes a model of the game state

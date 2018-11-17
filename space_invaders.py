@@ -7,15 +7,21 @@ PIXELART generator :
 https://www.piskelapp.com/p/agxzfnBpc2tlbC1hcHByEwsSBlBpc2tlbBiAgKDwzZSzCww/edit
 """
 import os
+import pygame
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 class SpaceInvadersModel():
-    def __init__(self):
+    def __init__(self,screen,organizer):
+        self.screen = screen
+        self.organizer = organizer
         self.enemystartxcoord = 100
         self.distanceBetweenEnemiesx = 50
         self.enemystartycoord = 100
         self.distanceBetweenEnemiesy = 50
         self.enemies = []
+        self.enemiesXposition = 0 #this keeps track of the current left or right movement of the enemies
+        self.enemiesXMovement = 5 #this is the max number of horizontal movement
+        self.enemiesYPosition = 0 #this keeps track of the current vertical movement of the enemies
         for i in range(10):
             enemy = EnemyLevel3(enemystartxcoord+distanceBetweenEnemiesx*i,enemystartycoord,dir_path+"/data/level3monster.png")
             list = []
@@ -31,20 +37,61 @@ class SpaceInvadersModel():
         self.obstructions = []
         for i in range(3):
             self.obstructions[i] = Obstruction(450*i,800)
-        self.player = Player(900,900,dir_path+"/data/spaceship.png")
 
-        self.components = [self.enemies,self.obstructions,self.player] #TODO enemies doesn't have a .update()-function because it is a list.
+        self.player = Player(900,900,dir_path+"/data/spaceship.png")
+        self.score = Score()
+        self.components = [self.enemies,self.obstructions,self.player,self.score] #TODO enemies doesn't have a .update()-function because it is a list.
 
     def update(self):
-        for enemyRow in self.enemies:
-            for enemy in enemyRow:
-                enemy.update()
+        if self.organizer.state == "game":
+            self.player.update()
+            for enemyRow in self.enemies:
+                for enemy in enemyRow:
+                    enemy.update()
+            #check for all the collisions
+        if self.organizer.state == "menu":
+            #areaSurveillance over the start button of the game
+            pass
+        if self.organizer.state == "endgame":
+            #areaSurveillance over the "restart button" of the game
+            #areaSurveillance over the "go back to homeScreen button"
+            pass
 
 class SpaceInvadersView():
+    def __init__(self,model):
+        self.model = model
+
+    def draw():
+        self.draw_background(self.model.screen) #always draw the background first
+
+        if self.organizer.state == "game":
+            self.model.player.draw(self.model.screen)
+            for enemyRow in self.model.enemies:
+                for enemy in enemyRow:
+                    enemy.draw(self.model.screen)
+            for obstruction in self.model.obstructions:
+                obstruction.draw(self.model.screen)
+            for bullet in self.model.bulletCollisionGroup:
+                bullet.draw(self.model.screen)
+        if self.organizer.state == "menu":
+            #draw instructions to play the Game
+            #maybe also draw the highscore would be cool
+            pass
+        if self.organizer.state == "endgame":
+            #draw the final score
+            #draw the two buttons
+            #draw the highscore of other people
+            pass
+
+    def draw_background(screen):
+        self.screen.fill((0,0,0))
+        newSurface = pygame.surfarray.make_surface(self.model.cameraImage) # Reads the stored camera image and makes a surface out of it
+        self.screen.blit(newSurface,(0,0)) # Make background of the sufrace (so it becomes live video)
+        pygame.display.update()
+
+class SpaceInvadersController():
     def __init__(self):
         pass
-
-
 
 class Player():
     """this is the class of the spaceship"""
@@ -66,9 +113,12 @@ class Player():
         ## TODO: bullet
         bullet = Playerbullet(self.x,self.y,5)
         #add bullet to screen or list of stuff in the screen
-        pass
 
     def update(self):
+        self.move()
+
+    def draw(self,screen):
+        #draw image on the screen
         pass
 
 class Enemy(Player):
@@ -81,9 +131,16 @@ class Enemy(Player):
 
     def update(self):
         #update the enemy
+        #kill enemy if shot, give player score
+        #move enemy
         pass
     def move(self):
-        pass
+        if self.enemiesXposition >= self.enemiesXMovement:
+            self.x = self.x-25
+        else:
+            self.x = self.x+25
+        if self.enemiesXposition == self.enemiesXMovement:
+            self.y = self.y + 25
 
 
 class EnemyLevel1(Enemy):
@@ -110,11 +167,18 @@ class Bullet():
         self.y = y
         self.rect.x = x
         self.rect.y = y
+
     def move(self):
         self.y = self.y +self.direction*self.speed
+        self.rect.y = self.rect.y+self.direction*self.speed
     #-collision(with enemy or player    or     with other bullet)
+
     def update(self):
         self.move()
+
+    def draw(self,screen):
+        pygame.draw.rect(screen, (250,250,250), pygame.Rect(self.x,self.y,20,100))
+
 
 class Playerbullet(Bullet):
     def __init__(self,x,y,speed):
@@ -136,3 +200,36 @@ class Obstruction():
         self.halfHealth = pygame.image.load()
         self.quarterHealth = pygame.image.load()
         self.noHealth = pygame.image.load()
+        self.healthImages = [self.noHealth,self.quarterHealth,self.halfHealth,self.threequarterHealth,self.fullHealth]
+
+    def update():
+        # do nothing for now
+        pass
+
+    def draw(self,screen):
+        #draw image: self.healthImages[healthLevel-1]
+        pass
+
+class Score():
+    """this is the class that keeps track of the score"""
+
+    def __init__(self):
+        self.totalPoints = 0
+
+    def update(self):
+        #add the points from the killed enemies to the score
+        pass
+
+    def draw(self,screen):
+        #draw a number to the screen
+        pass
+
+# class Organizer():
+#     """
+#     possible states of the organizer in space_invaders:
+#     - menu
+#     - game
+#     - endgame
+#     """
+#     def __init__(self):
+#         self.state = "menu"
