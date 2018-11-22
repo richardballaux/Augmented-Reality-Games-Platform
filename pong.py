@@ -125,6 +125,7 @@ class PongModel():
         boundaryThickness = 10
         self.width = windowSize[0]
         self.height = windowSize[1]
+        self.backToHomeScreen = False
         boundaryLength = self.width-2*boundaryOffset[0]
         self.upperboundary = Boundary(boundaryOffset[0],boundaryOffset[1],boundaryThickness,boundaryLength)
         self.lowerboundary = Boundary(boundaryOffset[0],self.height-boundaryOffset[1],boundaryThickness,boundaryLength)
@@ -212,6 +213,7 @@ class PongModel():
 
         if self.organizer.state == "endgame": #this state is entered when one of the players reaches 5 points
             self.triggerNumber5.areaSurveillance(self.cursor, "menu", self.organizer, "state", "menu")
+            #TODO add go back to homeScreen
             self.score.reset()
 
 class PongMouseController():

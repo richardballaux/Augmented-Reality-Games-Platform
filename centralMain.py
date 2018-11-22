@@ -46,10 +46,13 @@ class OverallModel():
                     if event.type is pygame.QUIT:
                         running = False
                     #controller.handle_event(event)
-                self.pongController.update()
-                self.pongModel.update()
-                self.pongView.draw()
-                self.clock.tick(self.fps/2)
+                if self.pongModel.backToHomeScreen == False:
+                    self.pongController.update()
+                    self.pongModel.update()
+                    self.pongView.draw()
+                    self.clock.tick(self.fps/2)
+                else:
+                    self.organizer.state == "homeScreen"
 
         if self.organizer.state == "spaceInvaders":
             self.spaceInvadersPhaseKeeper = Organizer() #create state machine for inside the pong game
@@ -63,10 +66,13 @@ class OverallModel():
                     if event.type is pygame.QUIT:
                         running = False
                     #controller.handle_event(event)
-                self.spaceInvadersController.update()
-                self.spaceInvadersModel.update()
-                self.spaceInvadersView.draw()
-                self.clock.tick(self.fps/2)
+                if self.spaceInvadersModel.backToHomeScreen ==False:
+                    self.spaceInvadersController.update()
+                    self.spaceInvadersModel.update()
+                    self.spaceInvadersView.draw()
+                    self.clock.tick(self.fps/2)
+                else:
+                    self.organizer.state == "homeScreen"
 
 class MouseController():
     """handles input from the mouse"""
