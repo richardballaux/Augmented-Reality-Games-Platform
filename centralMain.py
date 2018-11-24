@@ -23,8 +23,8 @@ class OverallModel():
         self.clock = clock
         self.fps = fps
         self.cursor = Cursor(0,0,20,self.organizer)
-        self.pongButton = CursorRecognition(30, [50, self.height/2-50, 200,200],self.organizer)
-        self.spaceInvadersButton = CursorRecognition(30, [300, self.height/2-50, 200,200],self.organizer)
+        self.pongButton = CursorRecognition(30, [100, 200, 200,200],self.organizer)
+        self.spaceInvadersButton = CursorRecognition(30, [500,200, 200,200],self.organizer)
         self.camera = camera
         self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera)
 
@@ -36,7 +36,7 @@ class OverallModel():
         if self.organizer.state == "pong":
             self.pongPhaseKeeper = Organizer()  #create state machine for inside the pong game
             self.pongPhaseKeeper.state = "menu"
-            self.pongModel = PongModel(self.screenSize,self.camera,self.pongPhaseKeeper)
+            self.pongModel = PongModel(self.screen,self.camera,self.pongPhaseKeeper)
             #TODO give existing screen to newly initialized view, because i think pygame can't handle multiple screens
             self.pongView = PongView(self.pongModel,self.screenSize)
             self.pongController = PongObjectRecogController(self.pongModel)
@@ -52,12 +52,13 @@ class OverallModel():
                     self.pongView.draw()
                     self.clock.tick(self.fps/2)
                 else:
+                    running = False
                     self.organizer.state == "homeScreen"
 
         if self.organizer.state == "spaceInvaders":
             self.spaceInvadersPhaseKeeper = Organizer() #create state machine for inside the pong game
             self.spaceInvadersPhaseKeeper.state = "menu"
-            self.spaceInvadersModel = SpaceInvadersModel(self.screenSize,self.camera,self.spaceInvadersPhaseKeeper)
+            self.spaceInvadersModel = SpaceInvadersModel(self.screen,self.camera,self.spaceInvadersPhaseKeeper)
             self.spaceInvadersView = SpaceInvadersView(self.spaceInvadersModel)
             self.spaceInvadersController = SpaceInvadersController(self.spaceInvadersModel)
             running = True
@@ -66,13 +67,15 @@ class OverallModel():
                     if event.type is pygame.QUIT:
                         running = False
                     #controller.handle_event(event)
-                if self.spaceInvadersModel.backToHomeScreen ==False:
+                if self.spaceInvadersModel.backToHomeScreen == False:
                     self.spaceInvadersController.update()
                     self.spaceInvadersModel.update()
                     self.spaceInvadersView.draw()
                     self.clock.tick(self.fps/2)
                 else:
+                    running = False
                     self.organizer.state == "homeScreen"
+
 
 class MouseController():
     """handles input from the mouse"""

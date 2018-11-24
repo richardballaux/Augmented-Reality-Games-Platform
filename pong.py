@@ -16,9 +16,7 @@ class PongView():
     """this board includes the outlines, the ball, the paddles and the goals"""
     def __init__(self,model,screenSize):
         self.model=model
-        self.screenSize = screenSize
-        self.screen = pygame.display.set_mode(screenSize)
-        #pygame.display.set_caption = ("Pong-AR-Game")
+        self.screen=self.model.screen
         self.myfont = pygame.font.SysFont("monospace", 42) #Font that is used in states "game" and "select_speed" to prompt the user
         self.numberfont = pygame.font.SysFont("monospace", 85, bold=True) #font is used for numbers in "select_speed" state
         self.ColorGreen = (0,250,0)
