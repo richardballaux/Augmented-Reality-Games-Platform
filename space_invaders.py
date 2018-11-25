@@ -17,11 +17,11 @@ class SpaceInvadersModel():
         self.camera = camera
         self.screen = screen
         self.organizer = organizer
-        self.backToHomeScreen = False
+        self.backToHomeScreen = False  #If this goes to True, the while loop in which this game runs breaks.
         self.enemystartxcoord = 100
-        self.distanceBetweenEnemiesx = 50
+        self.distanceBetweenEnemiesx = 200
         self.enemystartycoord = 100
-        self.distanceBetweenEnemiesy = 50
+        self.distanceBetweenEnemiesy = 220
         self.enemySpriteGroup = pygame.sprite.Group()
         self.enemyBulletSpriteGroup = pygame.sprite.Group()
         self.playerBulletSpriteGroup = pygame.sprite.Group()
@@ -47,8 +47,8 @@ class SpaceInvadersModel():
         self.score = Score()
 
         self.cursor = Cursor(0,0,20,self.organizer)
-        self.startGameButton = CursorRecognition(30, [500, 500, 200,200],self.organizer) #Triggerare in state "menu" - yellow square
-        self.homeScreenButton = CursorRecognition(30, [500,500, 150,150],self.organizer) # Number 1 to 5: square to select speed in state "select_speed"
+        self.startGameButton = CursorRecognition(30, [500, 500, 200,200],self.organizer)
+        self.homeScreenButton = CursorRecognition(30, [500,500, 150,150],self.organizer)
         self.restartButton = CursorRecognition(30, [500,700, 150,150],self.organizer) # Triggers square to repeat the game in state "endgame"
 
 
@@ -95,6 +95,8 @@ class SpaceInvadersView():
 
         if self.model.organizer.state == "game":
             self.model.player.draw(self.model.screen)
+            for enemy in self.model.enemySpriteGroup:
+                enemy.draw(self.model.screen)
 
 
         if self.model.organizer.state == "menu":
@@ -109,8 +111,10 @@ class SpaceInvadersView():
             self.model.screen.blit(instructions, (100,100))
             self.model.cursor.draw(self.model.screen)
 
+
         if self.model.organizer.state == "endgame":
             #draw the final score
+
             #draw the two buttons
             pygame.draw.rect(self.model.screen, (0,150,0), pygame.Rect(500,500, 150,150)) # the way to set boundaries is same as setting areaSurveillance boundaries
             restartButtonText = self.myfont.render("Restart", 1, self.ColorBlack)
@@ -119,6 +123,8 @@ class SpaceInvadersView():
             backButtonText = self.myfont.render("Back to \nHome Screen", 1, self.ColorBlack) # Message for menu to select speed
             self.model.screen.blit(backButtonText, (int((self.model.width/6)*5),self.model.height/2-115))
             #draw the highscore of other people
+
+        pygame.display.update()
 
 
     def draw_background(self,screen):
@@ -134,16 +140,24 @@ class SpaceInvadersController():
 
     def update(self):
         self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera)
-        if self.model.objectCoordinates[1][0]== -1:
-            if self.model.objectCoordinates[0][0]<self.model.player.x:
-                self.model.player.direction = -1
+        if self.model.organizer.state == "game":
+            if self.model.objectCoordinates[1][0]== -1:
+                if self.model.objectCoordinates[0][0]<self.model.player.x:
+                    self.model.player.direction = -1
+                else:
+                    self.model.player.direction = 1
             else:
-                self.model.player.direction = 1
-        else:
-            if self.model.objectCoordinates[0][0]<self.model.player.x:
-                self.model.player.direction = -1
-            else:
-                self.model.player.direction = 1
+                if self.model.objectCoordinates[0][0]<self.model.player.x:
+                    self.model.player.direction = -1
+                else:
+                    self.model.player.direction = 1
+
+        if self.model.organizer.state == "menu":
+            if self.model.objectCoordinates[1][0]== -1:
+                self.model.cursor.update(self.model.objectCoordinates[0][0],self.model.objectCoordinates[0][1])
+            else: #if the first controller has -1 as values, the controller is changed two the controller on the right side of the screen
+                self.model.cursor.update(self.model.objectCoordinates[1][0],self.model.objectCoordinates[1][1])
+            # If coordinates are -1, no object has been detected
 
 class Player(pygame.sprite.Sprite):
     """this is the class of the spaceship"""
@@ -151,12 +165,12 @@ class Player(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.speed = 10
         self.direction = -1 #negative or positive
-        self.image = pygame.image.load(image).convert() #"spaceship.png"
+        self.image = pygame.transform.scale(pygame.image.load(image),(100,120)) #"spaceship.png"
         self.x = x
         self.y =y
         self.rect = self.image.get_rect()
         self.rect.center = [self.x,self.y]
-    def move(self,direction):
+    def move(self):
         """moves the spaceship with one times the speed"""
         self.x = self.x+self.speed*self.direction
 
@@ -167,21 +181,21 @@ class Player(pygame.sprite.Sprite):
         bullet = Playerbullet(self.x,self.y,5)
         #add bullet to screen or list of stuff in the screen
 
-    def update(self,direction):
-        self.move(direction)
+    def update(self):
+        self.move()
 
     def draw(self,screen):
         #draw image on the screen
+        screen.blit(self.image,(self.x,self.y))
         pass
 
 class Enemy(Player):
     """this is the class of all the enemies (3 different levels)"""
     def __init__(self,x,y,aliveImage):
         super(Player,self).__init__(x,y,aliveImage)
-        self.aliveImage = pygame.load(aliveImage)
-        self.deathImage = pygame.load(dir_path+"/New Pixel.png")
+        self.aliveImage = pygame.transform.scale(pygame.load(dir_path+aliveImage),(100,120))
+        self.deathImage = pygame.transform.scale(pygame.load(dir_path+"/New Pixel.png"),(100,120))
         self.killSound = pygame.mixer.Sound(dir_path+"/death.wav")
-
 
 
     def update(self):
@@ -200,6 +214,10 @@ class Enemy(Player):
         if self.enemiesXposition == self.enemiesXMovement:
             self.y = self.y + 25
             self.rect.y = self.rect.y + 25
+
+    def die(self):
+        #play deathSound
+        pass
 
 
 class EnemyLevel1(Enemy):
