@@ -21,7 +21,6 @@ Should database be online or local? We do not know if it is feasible to create a
 
 How to check if the cursor is working after you set the color. <br/><br/>
 
-We would need to know how to rescale pictures in the window so they all fit on the screen. <br/><br/>
 ## Agenda For Technical Review Session
 - Go over architectural changes and bring audience up to date <br/>
 - Show difficulties regarding:<br/>
