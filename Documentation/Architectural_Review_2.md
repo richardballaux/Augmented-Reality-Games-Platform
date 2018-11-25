@@ -1,4 +1,4 @@
-# AR-Games Corp
+# Augmented Reality Games Platform
 
 Richard Ballaux<br/>
 Viktor Deturck<br/>
