@@ -146,12 +146,12 @@ class SpaceInvadersController():
             if self.model.objectCoordinates[1][0]== -1:
                 if self.model.objectCoordinates[0][0]<self.model.player.x:
                     self.model.player.direction = -1
-                else:
+                elif self.model.objectCoordinates[0][0]>self.model.player.x:
                     self.model.player.direction = 1
             else:
                 if self.model.objectCoordinates[1][0]<self.model.player.x:
                     self.model.player.direction = -1
-                else:
+                elif self.model.objectCoordinates[0][0]>self.model.player.x:
                     self.model.player.direction = 1
             for event in pygame.event.get():
                 if event.type is pygame.MOUSEBUTTONDOWN:
@@ -290,8 +290,8 @@ class Obstruction(pygame.sprite.Sprite):
         # self.quarterHealth = pygame.image.load()
         # self.noHealth = pygame.image.load()
         # self.healthImages = [self.noHealth,self.quarterHealth,self.halfHealth,self.threequarterHealth,self.fullHealth]
-        self.rect = self.image.get_rect()
-        self.rect.center = [self.x,self.y]
+        # self.rect = self.image.get_rect()
+        # self.rect.center = [self.x,self.y]
 
     def update():
         # change the healthLevel when shot

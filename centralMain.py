@@ -56,7 +56,7 @@ class OverallModel():
 
         if self.organizer.state == "spaceInvaders":
             self.spaceInvadersPhaseKeeper = Organizer() #create state machine for inside the pong game
-            self.spaceInvadersPhaseKeeper.state = "game"
+            self.spaceInvadersPhaseKeeper.state = "menu"
             self.spaceInvadersModel = SpaceInvadersModel(self.screen,self.camera,self.spaceInvadersPhaseKeeper)
             self.spaceInvadersView = SpaceInvadersView(self.spaceInvadersModel)
             self.spaceInvadersController = SpaceInvadersController(self.spaceInvadersModel)
@@ -132,7 +132,7 @@ def Main():
     camera = OR.setup(screenSize)
     organizer = Organizer()
     #We start the game in the organizer state
-    organizer.state = "spaceInvaders"
+    organizer.state = "homeScreen"
     #initalize all the main classes
     mainModel = OverallModel(organizer,screenSize,camera,clock,fps)
     mainView = View(screenSize, mainModel)
