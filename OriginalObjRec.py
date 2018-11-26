@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import SetColorTest as sct
 
-bounds = np.asarray(sct.calibrateColor([340,220]))
+bounds = np.asarray(sct.calibrateColor([800,400]))
 lowerBound=bounds[0:3]
 upperBound=bounds[3:6]
 
@@ -13,7 +13,7 @@ kernelClose=np.ones((20,20))
 
 while True:
     ret, img=cam.read()
-    img=cv2.resize(img,(340,220))
+    img=cv2.resize(img,(800,400))
 
     #convert BGR to HSV
     imgHSV= cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
