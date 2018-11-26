@@ -25,7 +25,7 @@ class View():
             newSurface = pygame.surfarray.make_surface(self.model.cameraImage) # Reads the stored camera image and makes a surface out of it
             self.model.screen.blit(newSurface,(0,0)) # Make background of the sufrace (so it becomes live video)
             #draw squares for buttons for pong and spaceinvaders
-            pygame.draw.rect(self.model.screen, (250,250,0), pygame.Rect(100, 200, 200,200))
-            pygame.draw.rect(self.model.screen, (250,250,0), pygame.Rect(500, 200, 200,200))
+            self.model.pongButton.draw(self.model.screen)
+            self.model.spaceInvadersButton.draw(self.model.screen)
             self.model.cursor.draw(self.model.screen)
             pygame.display.update()
