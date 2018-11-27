@@ -81,6 +81,7 @@ class OverallModel():
                     running = False
                     self.organizer.state == "homeScreen"
 
+    
 
 class MouseController():
     """handles input from the mouse"""
