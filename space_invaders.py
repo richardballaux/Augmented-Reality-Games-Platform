@@ -141,7 +141,7 @@ class SpaceInvadersController():
         self.model = model
 
     def update(self):
-        self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera)
+        self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera,0) # Get the coords of controller '0'
         if self.model.organizer.state == "game":
             if self.model.objectCoordinates[1][0]== -1:
                 if self.model.objectCoordinates[0][0]<self.model.player.x:

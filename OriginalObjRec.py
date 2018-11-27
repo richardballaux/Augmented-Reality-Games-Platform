@@ -2,11 +2,12 @@ import cv2
 import numpy as np
 import SetColorTest as sct
 
-bounds = np.asarray(sct.calibrateColor([800,400]))
+cam= cv2.VideoCapture(0)
+bounds = np.asarray(sct.calibrateColor([800,400],cam))
 lowerBound=bounds[0:3]
 upperBound=bounds[3:6]
 
-cam= cv2.VideoCapture(0)
+
 kernelOpen=np.ones((5,5))
 kernelClose=np.ones((20,20))
 

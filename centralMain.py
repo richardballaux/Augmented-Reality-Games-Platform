@@ -22,11 +22,13 @@ class OverallModel():
         self.height = screenSize[1]
         self.clock = clock
         self.fps = fps
-        self.cursor = Cursor(0,0,20,self.organizer)
-        self.pongButton = CursorRecognition(30, [100, 200, 200,200],self.organizer)
+        self.cursor = Cursor(0,0,20,self.organizer) # Initialize a cursor in coord (0,0) with radius 20
+        self.pongButton = CursorRecognition(30, [100, 200, 200,200],self.organizer) # Make a button for the areaSurveillance with left corner coords (100,200) & length/width = 200
         self.spaceInvadersButton = CursorRecognition(30, [500,200, 200,200],self.organizer)
         self.camera = camera
-        self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera)
+        OR.calibrate(screenSize, self.camera, 0) # Initialize the color for controller '0'
+        self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera,0)  # Get the coordinates for controller '0'
+
 
     def update(self):
         if self.organizer.state == "homeScreen":
@@ -35,22 +37,23 @@ class OverallModel():
 
         if self.organizer.state == "pong":
             self.pongPhaseKeeper = Organizer()  #create state machine for inside the pong game
-            self.pongPhaseKeeper.state = "menu"
+            self.pongPhaseKeeper.state = "menu" # First phase of the game in the state machine is the menu
             self.pongModel = PongModel(self.screen,self.camera,self.pongPhaseKeeper)
             #TODO give existing screen to newly initialized view, because i think pygame can't handle multiple screens
+            #TODO Kill the old screen?
             self.pongView = PongView(self.pongModel,self.screenSize)
             self.pongController = PongObjectRecogController(self.pongModel)
             running = True
-            while running:
+            while running: # The program will stay in this while loop while running pong, until it gets closed
                 for event in pygame.event.get():
                     if event.type is pygame.QUIT:
                         running = False
-                if self.pongModel.backToHomeScreen == False:
+                if self.pongModel.backToHomeScreen == False: # If backToHomeScreen is false (game is still running), update everything
                     self.pongController.update()
                     self.pongModel.update()
                     self.pongView.draw()
                     self.clock.tick(self.fps/2)
-                else:
+                else:                                   # if backToHomeScreen is true (game ended, program got closed), stop the while loop and go back to the homeScreen state
                     running = False
                     self.organizer.state == "homeScreen"
 
@@ -87,7 +90,7 @@ class MouseController():
     def handle_event(self,event):
         if event.type == MOUSEMOTION:
             if self.model.organizer.state == "homeScreen":
-                self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera)
+                self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera,0)
                 self.model.cursor.update(event.pos[0], event.pos[1])
 
 class ObjectRecogController():
@@ -96,7 +99,7 @@ class ObjectRecogController():
         self.model = model
 
     def update(self):
-        self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera)
+        self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera,0)
         if self.model.objectCoordinates[1][0]== -1:
             self.model.cursor.update(self.model.objectCoordinates[0][0],self.model.objectCoordinates[0][1])
         else: #if the first controller has -1 as values, the controller is changed two the controller on the right side of the screen
@@ -129,8 +132,8 @@ def Main():
     clock = pygame.time.Clock()
     fps = 60
     screenSize = [1850,1080]
-    camera = OR.setup(screenSize)
-    organizer = Organizer()
+    camera = OR.setup(screenSize) # Initialize a camera via the object recognition in openCV
+    organizer = Organizer() # initialize an Organizer object
     #We start the game in the organizer state
     organizer.state = "homeScreen"
     #initalize all the main classes

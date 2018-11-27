@@ -12,7 +12,7 @@ class Cursor():
         self.radius = radius
         self.organizer = organizer
 
-    def draw(self, screen):
+    def draw(self, screen): #Draws a representation of the cursor (purple circle)
         #print(self.x, self.y)
         pygame.draw.circle(screen, self.organizer.settings_cursorColor, (self.x,self.y), self.radius)
 
@@ -28,8 +28,8 @@ class CursorRecognition():
     area -- list of form: same as pygame draw rectangle - [upper left corner x, upper left corner y, length in x direction, length in y direction]
     """
     def __init__(self, counter_limit, area,organizer):
-        self.counter = 0 #Counter for area
-        self.limit = counter_limit
+        self.counter = 0 #Counter for areaSurveillance
+        self.limit = counter_limit  # Time it should take to trigger (?)
         self.input = area
         self.triggerArea = [self.input[0], self.input[1]+self.input[3], self.input[0]+self.input[2], self.input[1]]
         self.organizer = organizer
