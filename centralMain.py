@@ -41,7 +41,7 @@ class OverallModel():
             self.pongModel = PongModel(self.screen,self.camera,self.pongPhaseKeeper)
             #TODO give existing screen to newly initialized view, because i think pygame can't handle multiple screens
             #TODO Kill the old screen?
-            self.pongView = PongView(self.pongModel,self.screenSize)
+            self.pongView = PongView(self.pongModel)
             self.pongController = PongObjectRecogController(self.pongModel)
             running = True
             while running: # The program will stay in this while loop while running pong, until it gets closed
@@ -59,7 +59,7 @@ class OverallModel():
 
         if self.organizer.state == "spaceInvaders":
             self.spaceInvadersPhaseKeeper = Organizer() #create state machine for inside the pong game
-            self.spaceInvadersPhaseKeeper.state = "game"
+            self.spaceInvadersPhaseKeeper.state = "menu"
             self.spaceInvadersModel = SpaceInvadersModel(self.screen,self.camera,self.spaceInvadersPhaseKeeper)
             self.spaceInvadersView = SpaceInvadersView(self.spaceInvadersModel)
             self.spaceInvadersController = SpaceInvadersController(self.spaceInvadersModel)
@@ -81,7 +81,7 @@ class OverallModel():
                     running = False
                     self.organizer.state == "homeScreen"
 
-    
+
 
 class MouseController():
     """handles input from the mouse"""
@@ -136,7 +136,7 @@ def Main():
     camera = OR.setup(screenSize) # Initialize a camera via the object recognition in openCV
     organizer = Organizer() # initialize an Organizer object
     #We start the game in the organizer state
-    organizer.state = "spaceInvaders"
+    organizer.state = "homeScreen"
     #initalize all the main classes
     mainModel = OverallModel(organizer,screenSize,camera,clock,fps)
     mainView = View(screenSize, mainModel)

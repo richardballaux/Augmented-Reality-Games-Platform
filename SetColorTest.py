@@ -11,7 +11,7 @@ def calibrateColor(resolution, camera):
     """
     cam = camera
     colorRange = [255,255,255,0,0,0]
-    rectangle = [(int(resolution[0]/2-resolution[0]/50),int(resolution[1]/2-resolution[1]/50)),(int(resolution[0]/2+resolution[0]/50),int(resolution[1]/2+resolution[1]/50))]
+    rectangle = [(int(resolution[0]/2-resolution[0]/100),int(resolution[1]/2-resolution[1]/100)),(int(resolution[0]/2+resolution[0]/100),int(resolution[1]/2+resolution[1]/100))]
     startTime = time.time() # Saves the time the program started
     running = True
     font = cv2.FONT_HERSHEY_COMPLEX_SMALL  # font for the timer

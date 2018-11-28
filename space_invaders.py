@@ -85,7 +85,7 @@ class SpaceInvadersModel():
 
     def playerShoot(self):
         bullet = Playerbullet(self.player.x,self.player.y,5)
-        self.playerBulletSpriteGroup.add(bullet)
+        bullet.add(self.playerBulletSpriteGroup)
 
 class SpaceInvadersView():
     """This is the view class for the space invaders game"""
@@ -160,7 +160,7 @@ class SpaceInvadersController():
                     self.model.player.direction = 1
             for event in pygame.event.get():
                 if event.type is pygame.MOUSEBUTTONDOWN:
-                    self.model.playerShoot()
+                    self.model.backToHomeScreen = True
 
         if self.model.organizer.state == "menu":
             if self.model.objectCoordinates[1][0]== -1:
@@ -168,6 +168,10 @@ class SpaceInvadersController():
             else: #if the first controller has -1 as values, the controller is changed two the controller on the right side of the screen
                 self.model.cursor.update(self.model.objectCoordinates[1][0],self.model.objectCoordinates[1][1])
             # If coordinates are -1, no object has been detected
+        if self.model.organizer.state == "endgame":
+            self.homeScreenButton.draw(self.model.screen)
+            self.restartButton.draw(self.model.screen)
+
 
 class Player(pygame.sprite.Sprite):
     """this is the class of the spaceship"""
@@ -246,7 +250,7 @@ class Bullet(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.speed=speed
         self.direction = direction
-        self.image = pygame.transform.scale(pygame.load("/data/bullet.jpg"),(60,80))
+        self.image = pygame.transform.scale(pygame.load(dir_path+"/data/bullet.jpg"),(60,80))
         self.x = x
         self.y = y
         self.rect =self.image.get_rect()
@@ -255,10 +259,10 @@ class Bullet(pygame.sprite.Sprite):
     def move(self):
         self.y = self.y -self.direction*self.speed
         self.rect.y = self.rect.y-self.direction*self.speed
-    #-collision(with enemy or player    or     with other bullet)
+    #-collision(with enemy or player    or  with other bullet)
 
-    def update(self):
-        self.move()
+    # def update(self):
+    #     self.move()
 
     def draw(self,screen):
         if self.direction == 1:
@@ -270,10 +274,12 @@ class Playerbullet(Bullet):
     def __init__(self,x,y,speed):
         super(Bullet,self).__init__(speed,1,x,y)
         #direction is by default upwards
+    def update(self):
+        pass
 
 class EnemyBullet(Bullet):
-    def __init__(self,speed):
-        super(Bullet,self).__init__(speed,-1)
+    def __init__(self,x,y,speed):
+        super(Bullet,self).__init__(speed,-1,x,y)
         #direction is downwards by default
 
 class Obstruction(pygame.sprite.Sprite):
