@@ -4,9 +4,7 @@ Viktor Deturck <br/>
 Leon Santen <br/>
 
 ## Feedback And Decisions
-_“ Based upon your notes from the technical review, synthesize the feedback you received addressing your key questions. How do you plan to incorporate it going forward? What new questions did you generate?”_<br/>
-
-(We think that we are already in a relatively far state in our project so that the real questions we are having are already pretty technical and specific so that it wouldn’t make a whole lot of sense to ask them in our presentation. We defined our architecture and only have smaller) 
+_“ Based upon your notes from the technical review, synthesize the feedback you received addressing your key questions. How do you plan to incorporate it going forward? What new questions did you generate?”_<br/> 
 
 We received feedback via some smaller group discussions in class and through an online survey with more technical questions. As we are in a relatively farther state with our project, it wouldn’t make sense to ask very technical questions. Instead we decided to focus on some user design aspects in our platform for this design review. 
 
@@ -25,6 +23,7 @@ The other ideas were less popular and also a bit more cumbersome as it would req
 ### How to check if the cursor is working after you set your color? 
 Ideas included:<br/>
 - Player has to hover over two boxes within 20 seconds. If the player cannot activate the two boxes, the color recognition will reset automatically.
+- Maze that the player has to go through to proof that their controller is working
 - Include tips on what color to choose and where to play the game (background)
 
 By talking about this issue in depth with our classmates, we realized that it is very crucial to implement a color check. The game would not be playable otherwise. Furthermore, we learned that we should probably include instructions on how to choose a controller and what to consider for playing the game in general. 
