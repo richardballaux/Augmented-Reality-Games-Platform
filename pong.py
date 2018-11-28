@@ -149,7 +149,7 @@ class PongModel():
         self.triggerNumber5 = CursorRecognition(30, [int((self.width/6)*5)-50, int(self.height/2)-150, 150,150],self.organizer) # Triggers square to repeat the game in state "endgame"
 
         self.camera = camera
-        self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera) #gets coordinates of two green objects from the python file ObjectRecogImplementation.py
+        self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera[0]) #gets coordinates of two green objects from the python file ObjectRecogImplementation.py
 
         #initialize the sprite groups for collision detection
         self.boundaryGroup = pygame.sprite.Group()
@@ -222,11 +222,11 @@ class PongMouseController():
     def handle_event(self,event):
         if event.type == MOUSEMOTION:
             if organizer.state == "menu" or "select_speed" or "endgame":
-                self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera)
+                self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera,0)
                 self.model.cursor.update(event.pos[0], event.pos[1])
 
             if organizer.state == "pong_game":
-                self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera)
+                self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera,0)
                 self.model.rightPaddle.update(event.pos[1]-self.model.rightPaddle.height/2.0)
                 self.model.leftPaddle.update(event.pos[0]-self.model.leftPaddle.height/2.0)
 
@@ -237,7 +237,7 @@ class PongObjectRecogController():
         self.model = model
 
     def update(self):
-        self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera)
+        self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera,0)
         if self.model.objectCoordinates[1][0]== -1:
             self.model.cursor.update(self.model.objectCoordinates[0][0],self.model.objectCoordinates[0][1])
         else: #if the first controller has -1 as values, the controller is changed two the controller on the right side of the screen

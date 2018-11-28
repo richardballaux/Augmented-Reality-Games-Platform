@@ -60,6 +60,8 @@ class SpaceInvadersModel():
         """
         if self.organizer.state == "game":
             self.player.update()
+            for bullet in self.playerBulletSpriteGroup:
+                bullet.update()
             # for enemy in self.enemySpriteGroup:
             #     enemy.update()
 
@@ -81,6 +83,9 @@ class SpaceInvadersModel():
             #areaSurveillance over the "restart button" of the game
             #areaSurveillance over the "go back to homeScreen button"
 
+    def playerShoot(self):
+        bullet = Playerbullet(self.player.x,self.player.y,5)
+        self.playerBulletSpriteGroup.add(bullet)
 
 class SpaceInvadersView():
     """This is the view class for the space invaders game"""
@@ -141,7 +146,7 @@ class SpaceInvadersController():
         self.model = model
 
     def update(self):
-        self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera)
+        self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera,0) # Get the coords of controller '0'
         if self.model.organizer.state == "game":
             if self.model.objectCoordinates[1][0]== -1:
                 if self.model.objectCoordinates[0][0]<self.model.player.x:
@@ -155,7 +160,7 @@ class SpaceInvadersController():
                     self.model.player.direction = 1
             for event in pygame.event.get():
                 if event.type is pygame.MOUSEBUTTONDOWN:
-                    self.model.player.shoot()
+                    self.model.playerShoot()
 
         if self.model.organizer.state == "menu":
             if self.model.objectCoordinates[1][0]== -1:
@@ -174,17 +179,10 @@ class Player(pygame.sprite.Sprite):
         self.x = x
         self.y =y
         self.rect = self.image.get_rect()
-        self.rect.center = [self.x,self.y]
+        self.rect.center = [self.x+50,self.y+60]
     def move(self):
         """moves the spaceship with one times the speed"""
         self.x = self.x+self.speed*self.direction
-
-    def shoot(self):
-        """shoot bullet from the place where it is at the moment"""
-        #create bullet object and make it go upwards
-        ## TODO: bullet
-        bullet = Playerbullet(self.x,self.y,5)
-        #add bullet to playerBulletSpriteGroup
 
     def update(self):
         self.move()
@@ -248,11 +246,11 @@ class Bullet(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.speed=speed
         self.direction = direction
-        self.image = pygame.transform.scale(pygame.load("/data/bullet.jpg"))
+        self.image = pygame.transform.scale(pygame.load("/data/bullet.jpg"),(60,80))
         self.x = x
         self.y = y
-        self.rect.x = x
-        self.rect.y = y
+        self.rect =self.image.get_rect()
+        self.rect.center = [self.x-30,self.y-40]
 
     def move(self):
         self.y = self.y -self.direction*self.speed
