@@ -22,6 +22,7 @@ class SpaceInvadersModel():
         self.distanceBetweenEnemiesx = 200
         self.enemystartycoord = 100
         self.distanceBetweenEnemiesy = 220
+        #initialization of the sprite groups. These will contain all the sprite so they can generate collisions
         self.enemySpriteGroup = pygame.sprite.Group()
         self.enemyBulletSpriteGroup = pygame.sprite.Group()
         self.playerBulletSpriteGroup = pygame.sprite.Group()
@@ -29,6 +30,7 @@ class SpaceInvadersModel():
         self.enemiesXposition = 0 #this keeps track of the current left or right movement of the enemies
         self.enemiesXMovement = 5 #this is the max number of horizontal movement
         self.enemiesYPosition = 0 #this keeps track of the current vertical movement of the enemies
+        #initialization of all the enemies and adding them to their respective spriteGroups
         for i in range(10):
             enemy = EnemyLevel3(self.enemystartxcoord+self.distanceBetweenEnemiesx*i,self.enemystartycoord,dir_path+"/data/level3monster.png")
             self.enemySpriteGroup.add(enemy)
@@ -47,6 +49,7 @@ class SpaceInvadersModel():
         self.score = Score()
 
         self.cursor = Cursor(0,0,20,self.organizer)
+        #creating the buttons that this game will have
         self.startGameButton = CursorRecognition(30, [500, 500, 200,200],self.organizer)
         self.homeScreenButton = CursorRecognition(30, [500,500, 500,150],self.organizer)
         self.restartButton = CursorRecognition(30, [500,700, 150,150],self.organizer) # Triggers square to repeat the game in state "endgame"
@@ -73,7 +76,7 @@ class SpaceInvadersModel():
             bulletAndPlayerCollideDict = pygame.sprite.spritecollide(self.player,self.enemyBulletSpriteGroup,True)
             # TODO: substact lives from the player
 
-        if self.organizer.state == "menu":
+        if self.organizer.state == "menu": #this state is the first state when we enter this game
             #areaSurveillance over the start button of the game
             self.startGameButton.areaSurveillance(self.cursor, "game", self.organizer, "state", "game")
 
@@ -134,13 +137,14 @@ class SpaceInvadersView():
         pygame.display.update()
 
 
-    def draw_background(self,screen):
+    def draw_background(self,screen): # draw the camera image to the background
         self.model.screen.fill(self.ColorBlack)
         newSurface = pygame.surfarray.make_surface(self.model.cameraImage) # Reads the stored camera image and makes a surface out of it
         self.model.screen.blit(newSurface,(0,0)) # Make background of the sufrace (so it becomes live video)
         pygame.display.update()
 
 class SpaceInvadersController():
+    """This is the controller for the spaceInvaders game"""
     def __init__(self,model):
         #from the camera we need the x coordinate for the player and another way to know when the player shoots bullet
         self.model = model
@@ -192,7 +196,7 @@ class Player(pygame.sprite.Sprite):
         self.move()
 
     def draw(self,screen):
-        #draw image on the screen
+        """draw image on the screen"""
         screen.blit(self.image,(self.x,self.y))
 
 class Enemy(Player):
