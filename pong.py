@@ -73,7 +73,6 @@ class PongView():
             self.screen.blit(playertext, (int((self.model.width/6)*2),self.model.height/2))
 
             self.model.restartButton.draw(self.screen)
-            replayText = self.myfont.render("Replay", 1, self.ColorBlack)
             self.screen.blit(replayText, (int((self.model.width/6)*5),int((self.model.width/6)*2)))
             self.model.homeScreenButton.draw(self.screen)
             self.model.cursor.draw(self.screen)
@@ -135,8 +134,8 @@ class PongModel():
         self.speedThreeButton = CursorRecognition("3",30, [int((self.width/6)*3)-50, int(self.height/2)-150, 150,150],self.organizer)
         self.speedFourButton = CursorRecognition("4",30, [int((self.width/6)*4)-50, int(self.height/2)+150, 150,150],self.organizer)
         self.speedFiveButton = CursorRecognition("5",30, [int((self.width/6)*5)-50, int(self.height/2)-150, 150,150],self.organizer) # Triggers square to repeat the game in state "endgame"
-        self.restartButton = CursorRecognition("Restart", 30,[int((self.width/6)*5),int((self.width/6)*2),150,200],self.organizer)
-        self.homeScreenButton = CursorRecognition("Home screen", 30,[int((self.width/6)*1),int((self.width/6)*2),150,250],self.organizer)
+        self.restartButton = CursorRecognition("Restart", 30,[int((self.width/6)*5),int((self.width/6)*2),200,150],self.organizer)
+        self.homeScreenButton = CursorRecognition("Home screen", 30,[int((self.width/6)*1),int((self.width/6)*2),250,150],self.organizer)
         #camera and objectrecognition
         self.camera = camera
         OR.calibrate([self.width, self.height], self.camera, 1) # Initialize the color for controller '1'
