@@ -6,6 +6,7 @@ import cv2
 cv2.__version__
 import numpy as np
 import SetColor as sct
+centerCoords = (0,0)
 
 def calibrate(resolution, cam, controller):
     global lowerBoundZero
@@ -47,6 +48,8 @@ def setup(resolution):
     global height_ratio
     height_ratio = vertRes/analyze_res_height
 
+
+
     # Make a VideoCapture object (camera)
     cam= cv2.VideoCapture(0)
     return cam
@@ -65,19 +68,15 @@ def getCoords(cam,controller):
     kernelOpen=np.ones((5,5))
     kernelClose=np.ones((20,20))
 
-    # Main loop
-
     # Get the video data
     ret, orImg=cam.read()
 
     # Resize the frame, to have not too many pixels and flip the image.
     orImg=cv2.resize(orImg,(horRes,vertRes))
     global img
+    global centerCoords
     img = cv2.flip(orImg, 1)
     backGroundImage = cv2.cvtColor(np.rot90(orImg),cv2.COLOR_BGR2RGB)
-
-    #backGroundImage = img
-
 
     #resize image to analyze
     resized_img = cv2.resize(img,(analyze_res_width,analyze_res_height))
@@ -99,31 +98,19 @@ def getCoords(cam,controller):
     im2, conts,h=cv2.findContours(maskFinal.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE) # Finds contours of the object
     coords = []
     widthList = []
-    centerCoords = [(-1,-1),(-1,-1)] # Initialize the coordinates list
-
     for i in range(len(conts)):
         x,y,w,h=cv2.boundingRect(conts[i])  #Draws rectangle around contours
         #(x,y),rad = cv2.minEnclosingCircle(conts[i])       # draws circle instead of rectangle (slower)
         center = (int(width_ratio*x+width_ratio*w/2),int(height_ratio*y+height_ratio*h/2))
         coords.append(center)
         widthList.append(w)
-        i = 0
-    if len(widthList) > 0: #If there is more than 1 object detected
-        while i < 2:    # Searches for the 2 biggest objects and stores them right or left in the list, according to the place of the object
-            center = coords[widthList.index(max(widthList))]
-            if center[0] < horRes/2:
-                centerCoords[0] = center
-            else:
-                centerCoords[1] = center
-            coords.remove(center)
-            width = max(widthList)
-            widthList.remove(max(widthList))
-            #cv2.circle(img,center,int(rad),(0,22,0),2)
-            if i == len(widthList):
-                break
-            i +=1
-
-    return centerCoords,backGroundImage
+    if len(widthList) > 0:
+        centerCoords = coords[widthList.index(max(widthList))]
+    #cv2.circle(img,center,int(rad),(0,22,0),2)
+    if controller == 0:
+        return centerCoords,backGroundImage  # return coords and camera image for the main Controller
+    else:
+        return centerCoords #return just the coords, camera is provided via the first controller
 
 
 # test code to see if the functions work

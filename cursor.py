@@ -63,7 +63,7 @@ class CursorRecognition():
             self.organizer.state = change_state_to
             setattr(object_to_change, attribute_of_object, change_attribute_to) #changes an attribute (attribute_of_object) of an object (object_to_change) to a value (change_attribute_to)
 
-    def draw(self,screen,color = self.ColorYellow):
+    def draw(self,screen,color = (250,250,0)):
         #create a button with areaSurveillance and give it a draw function so it is easier to draw it on the same position and witht the same size
         pygame.draw.rect(screen,color,pygame.Rect(self.input[0],self.input[1],self.input[2],self.input[3]))
         textMaker = self.myfont.render(self.text, 1, self.ColorGreen)

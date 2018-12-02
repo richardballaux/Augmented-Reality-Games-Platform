@@ -83,7 +83,7 @@ class OverallModel():
                     self.organizer.state == "homeScreen"
 
         if self.organizer.state == "calibrationTest":
-            self.calibrationModel 
+            self.calibrationModel
 
 
 class MouseController():
@@ -104,10 +104,7 @@ class ObjectRecogController():
 
     def update(self):
         self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera,0)
-        if self.model.objectCoordinates[1][0]== -1:
-            self.model.cursor.update(self.model.objectCoordinates[0][0],self.model.objectCoordinates[0][1])
-        else: #if the first controller has -1 as values, the controller is changed two the controller on the right side of the screen
-            self.model.cursor.update(self.model.objectCoordinates[1][0],self.model.objectCoordinates[1][1])
+        self.model.cursor.update(self.model.objectCoordinates[0],self.model.objectCoordinates[1])
         # If coordinates are -1, no object has been detected
 
 class Organizer():

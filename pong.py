@@ -109,6 +109,7 @@ class PongModel():
         self.screen = screen
         self.width = screen.get_width()
         self.height = screen.get_height()
+
         self.backToHomeScreen = False
         boundaryLength = self.width-2*boundaryOffset[0]
         self.upperboundary = Boundary(boundaryOffset[0],boundaryOffset[1],boundaryThickness,boundaryLength)
@@ -139,7 +140,8 @@ class PongModel():
 
         #camera and objectrecognition
         self.camera = camera
-        self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera[0],0) #gets coordinates of two green objects from the python file ObjectRecogImplementation.py
+        OR.calibrate([self.width, self.height], self.camera, 1) # Initialize the color for controller '1'
+        self.objectCoordinatesRight, self.cameraImage = OR.getCoords(self.camera,0) #gets coordinates of the two objects from the python file ObjectRecogImplementation.py
 
         #initialize the sprite groups for collision detection
         self.boundaryGroup = pygame.sprite.Group()
@@ -212,11 +214,11 @@ class PongMouseController():
     def handle_event(self,event):
         if event.type == MOUSEMOTION:
             if organizer.state == "menu" or "select_speed" or "endgame":
-                self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera,0)
+                self.model.objectCoordinatesRight, self.model.cameraImage = OR.getCoords(self.model.camera,0)
                 self.model.cursor.update(event.pos[0], event.pos[1])
 
             if organizer.state == "pong_game":
-                self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera,0)
+                self.model.objectCoordinatesRight, self.model.cameraImage = OR.getCoords(self.model.camera,0)
                 self.model.rightPaddle.update(event.pos[1]-self.model.rightPaddle.height/2.0)
                 self.model.leftPaddle.update(event.pos[0]-self.model.leftPaddle.height/2.0)
 
@@ -227,16 +229,14 @@ class PongObjectRecogController():
         self.model = model
 
     def update(self):
-        self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera,0)
-        if self.model.objectCoordinates[1][0]== -1:
-            self.model.cursor.update(self.model.objectCoordinates[0][0],self.model.objectCoordinates[0][1])
-        else: #if the first controller has -1 as values, the controller is changed two the controller on the right side of the screen
-            self.model.cursor.update(self.model.objectCoordinates[1][0],self.model.objectCoordinates[1][1])
+        self.model.objectCoordinatesRight, self.model.cameraImage = OR.getCoords(self.model.camera,0)
+        self.model.cursor.update(self.model.objectCoordinatesRight[0],self.model.objectCoordinatesRight[1])
+
+        self.model.objectCoordinatesLeft = OR.getCoords(self.model.camera,1)
+        self.model.cursor.update(self.model.objectCoordinatesLeft[0],self.model.objectCoordinatesLeft[1])
         # If coordinates are -1, no object has been detected
-        if self.model.objectCoordinates[0][0] != -1:
-            self.model.leftPaddle.update(self.model.objectCoordinates[0][1]-self.model.leftPaddle.height/2.0)
-        if self.model.objectCoordinates[1][0] != -1:
-            self.model.rightPaddle.update(self.model.objectCoordinates[1][1]-self.model.rightPaddle.height/2.0)
+        self.model.leftPaddle.update(self.model.objectCoordinatesLeft[1]-self.model.leftPaddle.height/2.0)
+        self.model.rightPaddle.update(self.model.objectCoordinatesRight[1]-self.model.rightPaddle.height/2.0)
 
 
 class Ball(pygame.sprite.Sprite):
