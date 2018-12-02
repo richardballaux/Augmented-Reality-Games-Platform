@@ -21,7 +21,8 @@ class SpaceInvadersModel():
         self.enemystartxcoord = 100
         self.distanceBetweenEnemiesx = 200
         self.enemystartycoord = 100
-        self.distanceBetweenEnemiesy = 220
+        self.distanceBetweenEnemiesy = 150
+        #initialization of the sprite groups. These will contain all the sprite so they can generate collisions
         self.enemySpriteGroup = pygame.sprite.Group()
         self.enemyBulletSpriteGroup = pygame.sprite.Group()
         self.playerBulletSpriteGroup = pygame.sprite.Group()
@@ -29,6 +30,7 @@ class SpaceInvadersModel():
         self.enemiesXposition = 0 #this keeps track of the current left or right movement of the enemies
         self.enemiesXMovement = 5 #this is the max number of horizontal movement
         self.enemiesYPosition = 0 #this keeps track of the current vertical movement of the enemies
+        #initialization of all the enemies and adding them to their respective spriteGroups
         for i in range(10):
             enemy = EnemyLevel3(self.enemystartxcoord+self.distanceBetweenEnemiesx*i,self.enemystartycoord,dir_path+"/data/level3monster.png")
             self.enemySpriteGroup.add(enemy)
@@ -36,17 +38,18 @@ class SpaceInvadersModel():
             enemy = EnemyLevel2(self.enemystartxcoord+self.distanceBetweenEnemiesx*i,self.enemystartycoord+self.distanceBetweenEnemiesy,dir_path+"/data/level2monster.png")
             self.enemySpriteGroup.add(enemy)
         for i in range(10):
-            for j in range(2,3):
+            for j in range(2,4):
                 enemy = EnemyLevel1(self.enemystartxcoord+self.distanceBetweenEnemiesx*i,self.enemystartycoord+self.distanceBetweenEnemiesy*j,dir_path+"/data/level1monster.png")
                 self.enemySpriteGroup.add(enemy)
         for i in range(3):
-            obstruction = Obstruction(450*i,800)
+            obstruction = Obstruction(300+500*i,700)
             self.obstructionSpriteGroup.add(obstruction)
 
         self.player = Player(900,900,dir_path+"/data/spaceship.png")
         self.score = Score()
 
         self.cursor = Cursor(0,0,20,self.organizer)
+        #creating the buttons that this game will have
         self.startGameButton = CursorRecognition(30, [500, 500, 200,200],self.organizer)
         self.homeScreenButton = CursorRecognition(30, [500,500, 500,150],self.organizer)
         self.restartButton = CursorRecognition(30, [500,700, 150,150],self.organizer) # Triggers square to repeat the game in state "endgame"
@@ -62,18 +65,24 @@ class SpaceInvadersModel():
             self.player.update()
             for bullet in self.playerBulletSpriteGroup:
                 bullet.update()
+            for obstr in self.obstructionSpriteGroup:
+                obstr.update()
             # for enemy in self.enemySpriteGroup:
             #     enemy.update()
 
             bulletbulletCollideDict = pygame.sprite.groupcollide(self.enemyBulletSpriteGroup,self.playerBulletSpriteGroup,True,True)
-            bulletAndEnemyCollideDict = pygame.sprite.groupcollide(self.playerBulletSpriteGroup,self.enemySpriteGroup,True,False)
+            bulletAndEnemyCollideDict = pygame.sprite.groupcollide(self.playerBulletSpriteGroup,self.enemySpriteGroup,True,True)
             # TODO: change the picture of the enemy to dead for some amount of loops
             bulletAndObstructionCollideDict = pygame.sprite.groupcollide(self.enemyBulletSpriteGroup,self.obstructionSpriteGroup,True,False)
-            # TODO: change the picture of the obstruction to one level lower
+            for element in bulletAndObstructionCollideDict:
+                bulletAndObstructionCollideDict[element][0].shot()
+            playerBulletAndObstructionCollideDict = pygame.sprite.groupcollide(self.playerBulletSpriteGroup,self.obstructionSpriteGroup,True,False)
+            for element in playerBulletAndObstructionCollideDict:
+                playerBulletAndObstructionCollideDict[element][0].shot()
             bulletAndPlayerCollideDict = pygame.sprite.spritecollide(self.player,self.enemyBulletSpriteGroup,True)
             # TODO: substact lives from the player
 
-        if self.organizer.state == "menu":
+        if self.organizer.state == "menu": #this state is the first state when we enter this game
             #areaSurveillance over the start button of the game
             self.startGameButton.areaSurveillance(self.cursor, "game", self.organizer, "state", "game")
 
@@ -84,8 +93,9 @@ class SpaceInvadersModel():
             #areaSurveillance over the "go back to homeScreen button"
 
     def playerShoot(self):
-        bullet = Playerbullet(self.player.x,self.player.y,5)
-        self.playerBulletSpriteGroup.add(bullet)
+        playerbullet = Bullet(10,1,self.player.x,self.player.y)
+        playerbullet.add(self.playerBulletSpriteGroup)
+
 
 class SpaceInvadersView():
     """This is the view class for the space invaders game"""
@@ -104,6 +114,10 @@ class SpaceInvadersView():
             self.model.player.draw(self.model.screen)
             for enemy in self.model.enemySpriteGroup:
                 enemy.draw(self.model.screen)
+            for bullet in self.model.playerBulletSpriteGroup:
+                bullet.draw(self.model.screen)
+            for obstruction in self.model.obstructionSpriteGroup:
+                obstruction.draw(self.model.screen)
 
 
         if self.model.organizer.state == "menu":
@@ -134,13 +148,14 @@ class SpaceInvadersView():
         pygame.display.update()
 
 
-    def draw_background(self,screen):
+    def draw_background(self,screen): # draw the camera image to the background
         self.model.screen.fill(self.ColorBlack)
         newSurface = pygame.surfarray.make_surface(self.model.cameraImage) # Reads the stored camera image and makes a surface out of it
         self.model.screen.blit(newSurface,(0,0)) # Make background of the sufrace (so it becomes live video)
         pygame.display.update()
 
 class SpaceInvadersController():
+    """This is the controller for the spaceInvaders game"""
     def __init__(self,model):
         #from the camera we need the x coordinate for the player and another way to know when the player shoots bullet
         self.model = model
@@ -168,6 +183,10 @@ class SpaceInvadersController():
             else: #if the first controller has -1 as values, the controller is changed two the controller on the right side of the screen
                 self.model.cursor.update(self.model.objectCoordinates[1][0],self.model.objectCoordinates[1][1])
             # If coordinates are -1, no object has been detected
+        if self.model.organizer.state == "endgame":
+            self.homeScreenButton.draw(self.model.screen)
+            self.restartButton.draw(self.model.screen)
+
 
 class Player(pygame.sprite.Sprite):
     """this is the class of the spaceship"""
@@ -188,25 +207,20 @@ class Player(pygame.sprite.Sprite):
         self.move()
 
     def draw(self,screen):
-        #draw image on the screen
+        """draw image on the screen"""
         screen.blit(self.image,(self.x,self.y))
 
 class Enemy(Player):
     """this is the class of all the enemies (3 different levels)"""
     def __init__(self,x,y,aliveImage):
+        self.deathImage = pygame.transform.scale(pygame.image.load(dir_path+"/data/New Pixel.png"),(80,100))
+        self.killSound = pygame.mixer.Sound(dir_path+"/data/death.wav")
         super(Player,self).__init__(x,y,aliveImage)
         #is aliveImage the same as image
-        self.aliveImage = pygame.transform.scale(pygame.load(dir_path+aliveImage),(100,120))
-        self.deathImage = pygame.transform.scale(pygame.load(dir_path+"/New Pixel.png"),(100,120))
-        self.killSound = pygame.mixer.Sound(dir_path+"/death.wav")
 
 
     def update(self):
-        #update the enemy
-        #kill enemy if shot, give player score
-        #move enemy
         self.move()
-
 
     def move(self):
         # TODO: give the following attributes of the model to the enemy
@@ -224,7 +238,6 @@ class Enemy(Player):
         #play deathSound
         #remove the enemy from the spriteGroup
         pass
-
 
 class EnemyLevel1(Enemy):
     def __init__(self,x,y, aliveImage):
@@ -246,7 +259,7 @@ class Bullet(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.speed=speed
         self.direction = direction
-        self.image = pygame.transform.scale(pygame.load("/data/bullet.jpg"),(60,80))
+        self.image = pygame.transform.scale(pygame.image.load(dir_path+"/data/bullet.jpg"),(60,80))
         self.x = x
         self.y = y
         self.rect =self.image.get_rect()
@@ -255,49 +268,46 @@ class Bullet(pygame.sprite.Sprite):
     def move(self):
         self.y = self.y -self.direction*self.speed
         self.rect.y = self.rect.y-self.direction*self.speed
-    #-collision(with enemy or player    or     with other bullet)
+    #-collision(with enemy or player    or  with other bullet)
 
     def update(self):
         self.move()
 
     def draw(self,screen):
-        if self.direction == 1:
-            screen.blit(pygame.transform.rotate(self.image,180),self.x,self.y)
+        if self.direction == -1:
+            screen.blit(pygame.transform.rotate(self.image,180),(self.x,self.y))
         else:
-            screen.blit(self.image,self.x,self.y)
-
-class Playerbullet(Bullet):
-    def __init__(self,x,y,speed):
-        super(Bullet,self).__init__(speed,1,x,y)
-        #direction is by default upwards
-
-class EnemyBullet(Bullet):
-    def __init__(self,speed):
-        super(Bullet,self).__init__(speed,-1)
-        #direction is downwards by default
+            screen.blit(self.image,(self.x,self.y))
 
 class Obstruction(pygame.sprite.Sprite):
     def __init__(self,x,y):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
-        self.healthLevel = 5 #this goes down everytime the obstruction gets shot
-        # self.fullHealth = pygame.image.load()
-        # self.threequarterHealth = pygame.image.load()
-        # self.halfHealth = pygame.image.load()
-        # self.quarterHealth = pygame.image.load()
-        # self.noHealth = pygame.image.load()
-        # self.healthImages = [self.noHealth,self.quarterHealth,self.halfHealth,self.threequarterHealth,self.fullHealth]
-        # self.rect = self.image.get_rect()
-        # self.rect.center = [self.x,self.y]
+        self.healthLevel = 4 #this goes down everytime the obstruction gets shot
+        self.fullHealth = pygame.transform.scale(pygame.image.load(dir_path+"/data/fullHealthObstruction.png"),(150,250))
+        self.fourHealth = pygame.transform.scale(pygame.image.load(dir_path+"/data/4HealthObstruction.png"),(150,250))
+        self.threeHealth = pygame.transform.scale(pygame.image.load(dir_path+"/data/3HealthObstruction.png"),(150,250))
+        self.twoHealth = pygame.transform.scale(pygame.image.load(dir_path+"/data/2HealthObstruction.png"),(150,250))
+        self.oneHealth = pygame.transform.scale(pygame.image.load(dir_path+"/data/1HealthObstruction.png"),(150,250))
+        self.healthImages = [self.oneHealth,self.twoHealth,self.threeHealth,self.fourHealth,self.fullHealth]
+        self.image = self.healthImages[self.healthLevel]
+        self.rect = self.image.get_rect()
+        self.rect.center = [self.x,self.y]
 
-    def update():
-        # change the healthLevel when shot
-        pass
+    def update(self):
+        self.image = self.healthImages[self.healthLevel]
+        self.rect = self.image.get_rect()
+        self.rect.center = [self.x,self.y]
+
+    def shot(self):
+        self.healthLevel = self.healthLevel - 1
+        if self.healthLevel == 0:
+            self.kill()
 
     def draw(self,screen):
-        #screen.blit(self.healthImages[self.healthLevel],self.)
-        pass
+        screen.blit(self.healthImages[self.healthLevel],(self.x,self.y))
+
 
 class Score():
     """this is the class that keeps track of the score"""

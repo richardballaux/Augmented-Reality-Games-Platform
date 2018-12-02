@@ -14,7 +14,7 @@ from cursor import Cursor, CursorRecognition
 
 class PongView():
     """this board includes the outlines, the ball, the paddles and the goals"""
-    def __init__(self,model,screenSize):
+    def __init__(self,model):
         self.model=model
         self.screen=self.model.screen
         self.myfont = pygame.font.SysFont("monospace", 42) #Font that is used in states "game" and "select_speed" to prompt the user
@@ -49,23 +49,23 @@ class PongView():
             self.screen.blit(menutext, (50,50))
             # DRAW SQUARES TO CHANGE SPEED OF BALL
             #Square 1
-            pygame.draw.rect(self.screen, (0,150,0), pygame.Rect(int((self.model.width/6)*1)-50, int(self.model.height/2)-150, 150,150)) # the way to set boundaries is same as setting areaSurveillance boundaries
+            self.model.speedOneButton.draw(self.screen)
             number = self.numberfont.render("1", 1, self.ColorBlack)
             self.screen.blit(number, (int((self.model.width/6)*1),self.model.height/2-115))
             #Square 2
-            pygame.draw.rect(self.screen, (0,150,0), pygame.Rect(int((self.model.width/6)*2)-50, int(self.model.height/2)+150, 150,150))
+            self.model.speedTwoButton.draw(self.screen)
             number = self.numberfont.render("2", 1, self.ColorBlack)
             self.screen.blit(number, (int((self.model.width/6)*2),self.model.height/2+185))
             #Square 3
-            pygame.draw.rect(self.screen, (0,150,0), pygame.Rect(int((self.model.width/6)*3)-50, int(self.model.height/2)-150, 150,150))
+            self.model.speedThreeButton.draw(self.screen)
             number = self.numberfont.render("3", 1, self.ColorBlack)
             self.screen.blit(number, (int((self.model.width/6)*3),self.model.height/2-115))
             #Square 4
-            pygame.draw.rect(self.screen, (0,150,0), pygame.Rect(int((self.model.width/6)*4)-50, int(self.model.height/2)+150, 150,150))
+            self.model.speedFourButton.draw(self.screen)
             number = self.numberfont.render("4", 1, self.ColorBlack)
             self.screen.blit(number, (int((self.model.width/6)*4),self.model.height/2+185))
             #Square 5
-            pygame.draw.rect(self.screen, (0,150,0), pygame.Rect(int((self.model.width/6)*5)-50, int(self.model.height/2)-150, 150,150))
+            self.model.speedFiveButton.draw(self.screen)
             number = self.numberfont.render("5", 1, self.ColorBlack)
             self.screen.blit(number, (int((self.model.width/6)*5),self.model.height/2-115))
 
@@ -80,16 +80,17 @@ class PongView():
 
         if self.model.organizer.state == "endgame":
             self._draw_background()
-            pygame.draw.rect(self.screen, (150,150,0), pygame.Rect(int((model.width/6)), int(model.height/2)-50, int(model.width*4/6),150))
+            pygame.draw.rect(self.screen, (150,150,0), pygame.Rect(int((self.model.width/6)), int(self.model.height/2)-50, int(self.model.width*4/6),150))
             if self.model.organizer.winner ==1:
-                player = self.myfont.render("LEFT PLAYER WON", 1, self.ColorBlack)
+                playertext = self.myfont.render("LEFT PLAYER WON", 1, self.ColorBlack)
             if self.model.organizer.winner ==2:
-                player = self.myfont.render("RIGHT PLAYER WON", 1, self.ColorBlack)
-            self.screen.blit(player, (int((model.width/6)*2),model.height/2))
+                playertext = self.myfont.render("RIGHT PLAYER WON", 1, self.ColorBlack)
+            self.screen.blit(playertext, (int((self.model.width/6)*2),self.model.height/2))
 
-            pygame.draw.rect(self.screen, (0,150,0), pygame.Rect(int((model.width/6)*5)-50, int(model.height/2)-150, 150,150))
-            number = self.myfont.render("Replay", 1, self.ColorBlack)
-            self.screen.blit(number, (int((model.width/6)*5-50),model.height/2-115))
+            self.model.restartButton.draw(self.screen)
+            replayText = self.myfont.render("Replay", 1, self.ColorBlack)
+            self.screen.blit(replayText, (int((self.model.width/6)*5),int((self.model.width/6)*2)))
+            self.model.homeScreenButton.draw(self.screen)
             self.model.cursor.draw(self.screen)
             pygame.display.update()
 
@@ -118,11 +119,12 @@ class PongModel():
     boundaryThickness --  This is the thickness of the boundary in pixels
     camera --   This is a VideoCapture-object that the getCoords-function needs as input
     """
-    def __init__(self,windowSize,camera,organizer):
+    def __init__(self,screen,camera,organizer):
         boundaryOffset = [50,50]
         boundaryThickness = 10
-        self.width = windowSize[0]
-        self.height = windowSize[1]
+        self.screen = screen
+        self.width = screen.get_width()
+        self.height = screen.get_height()
         self.backToHomeScreen = False
         boundaryLength = self.width-2*boundaryOffset[0]
         self.upperboundary = Boundary(boundaryOffset[0],boundaryOffset[1],boundaryThickness,boundaryLength)
@@ -140,14 +142,16 @@ class PongModel():
         self.components = (self.upperboundary,self.lowerboundary,self.ball,self.leftPaddle,self.rightPaddle,self.score)
 
         self.cursor = Cursor(int(self.width/2),int(self.height/2), cursorRadius,self.organizer)
-        #Trigger areas
-        self.triggerarea1 = CursorRecognition(30, [50, self.height/2-50, 200,200],self.organizer) #Triggerare in state "menu" - yellow square
-        self.triggerNumber1 = CursorRecognition(30, [int((self.width/6)*1)-50, int(self.height/2)-150, 150,150],self.organizer) # Number 1 to 5: square to select speed in state "select_speed"
-        self.triggerNumber2 = CursorRecognition(30, [int((self.width/6)*2)-50, int(self.height/2)+150, 150,150],self.organizer)
-        self.triggerNumber3 = CursorRecognition(30, [int((self.width/6)*3)-50, int(self.height/2)-150, 150,150],self.organizer)
-        self.triggerNumber4 = CursorRecognition(30, [int((self.width/6)*4)-50, int(self.height/2)+150, 150,150],self.organizer)
-        self.triggerNumber5 = CursorRecognition(30, [int((self.width/6)*5)-50, int(self.height/2)-150, 150,150],self.organizer) # Triggers square to repeat the game in state "endgame"
-
+        #Buttons
+        self.selectSpeedButton = CursorRecognition(30, [50, self.height/2-50, 200,200],self.organizer) #Triggerare in state "menu" - yellow square
+        self.speedOneButton = CursorRecognition(30, [int((self.width/6)*1)-50, int(self.height/2)-150, 150,150],self.organizer) # Number 1 to 5: square to select speed in state "select_speed"
+        self.speedTwoButton = CursorRecognition(30, [int((self.width/6)*2)-50, int(self.height/2)+150, 150,150],self.organizer)
+        self.speedThreeButton = CursorRecognition(30, [int((self.width/6)*3)-50, int(self.height/2)-150, 150,150],self.organizer)
+        self.speedFourButton = CursorRecognition(30, [int((self.width/6)*4)-50, int(self.height/2)+150, 150,150],self.organizer)
+        self.speedFiveButton = CursorRecognition(30, [int((self.width/6)*5)-50, int(self.height/2)-150, 150,150],self.organizer) # Triggers square to repeat the game in state "endgame"
+        self.restartButton = CursorRecognition(30,[int((self.width/6)*5),int((self.width/6)*2),150,150],self.organizer)
+        self.homeScreenButton = CursorRecognition(30,[int((self.width/6)*1),int((self.width/6)*2),150,150],self.organizer)
+        #camera and objectrecognition
         self.camera = camera
         self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera[0],0) #gets coordinates of two green objects from the python file ObjectRecogImplementation.py
 
@@ -169,14 +173,14 @@ class PongModel():
     def update(self):
         """updates all the components the model has dependent on what state Organizer.state is in"""
         if self.organizer.state == "menu":
-            self.triggerarea1.areaSurveillance(self.cursor, "select_speed", self.organizer, "state", "select_speed")
+            self.selectSpeedButton.areaSurveillance(self.cursor, "select_speed", self.organizer, "state", "select_speed")
 
         if self.organizer.state == "select_speed": # Set 5 areas to click on, each mapped to a different ball speed
-            self.triggerNumber1.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 5)
-            self.triggerNumber2.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 10)
-            self.triggerNumber3.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 15)
-            self.triggerNumber4.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 22)
-            self.triggerNumber5.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 28)
+            self.speedOneButton.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 5)
+            self.speedTwoButton.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 10)
+            self.speedThreeButton.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 15)
+            self.speedFourButton.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 22)
+            self.speedFiveButton.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 28)
 
         if self.organizer.state == "pong_game":
             self.ball.update(self.organizer)
@@ -210,8 +214,8 @@ class PongModel():
                 self.ball.movingDirection=[-1,1]
 
         if self.organizer.state == "endgame": #this state is entered when one of the players reaches 5 points
-            self.triggerNumber5.areaSurveillance(self.cursor, "menu", self.organizer, "state", "menu")
-            #TODO add go back to homeScreen
+            self.restartButton.areaSurveillance(self.cursor, "menu", self.organizer, "state", "menu")
+            self.homeScreenButton.areaSurveillance(self.cursor, "True",self, "backToHomeScreen","True")
             self.score.reset()
 
 class PongMouseController():
@@ -348,11 +352,11 @@ class Score():
         if player == 1:
             self.player2 +=1
         if self.player1>4:
-            organizer.state = "endgame"
-            organizer.winner = 1
+            self.model.organizer.state = "endgame"
+            self.model.organizer.winner = 1
         if self.player2>4:
-            organizer.state = "endgame"
-            organizer.winner = 2
+            self.model.organizer.state = "endgame"
+            self.model.organizer.winner = 2
 
     def reset(self):
         self.player1 = 0
