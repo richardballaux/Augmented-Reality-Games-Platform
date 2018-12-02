@@ -149,7 +149,7 @@ class PongModel():
         self.triggerNumber5 = CursorRecognition(30, [int((self.width/6)*5)-50, int(self.height/2)-150, 150,150],self.organizer) # Triggers square to repeat the game in state "endgame"
 
         self.camera = camera
-        self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera[0]) #gets coordinates of two green objects from the python file ObjectRecogImplementation.py
+        self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera[0],0) #gets coordinates of two green objects from the python file ObjectRecogImplementation.py
 
         #initialize the sprite groups for collision detection
         self.boundaryGroup = pygame.sprite.Group()

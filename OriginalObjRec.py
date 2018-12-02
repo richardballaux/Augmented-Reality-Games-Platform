@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import SetColorTest as sct
+import SetColor as sct
 
 cam= cv2.VideoCapture(0)
 bounds = np.asarray(sct.calibrateColor([800,400],cam))
