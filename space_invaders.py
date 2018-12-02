@@ -9,6 +9,7 @@ import os
 import pygame
 from cursor import Cursor, CursorRecognition
 import ObjectRecogImplementation as OR
+import random
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 class SpaceInvadersModel():
@@ -32,6 +33,8 @@ class SpaceInvadersModel():
         self.enemiesXMovement = 5 #this is the max number of horizontal movement
         self.moveRight = True
         self.enemyMoveLooper = 0
+
+        self.enemyShootLooper = 0
         #initialization of all the enemies and adding them to their respective spriteGroups
         for i in range(10):
             enemy = EnemyLevel3(self.enemystartxcoord+self.distanceBetweenEnemiesx*i,self.enemystartycoord,dir_path+"/data/level3monster.png")
@@ -73,6 +76,9 @@ class SpaceInvadersModel():
             for obstr in self.obstructionSpriteGroup:
                 obstr.update()
             self.moveEnemies()
+            self.enemyShoot()
+            for bullet in self.enemyBulletSpriteGroup:
+                bullet.update()
 
 
             #In this sectin we look for collisions between the spriteGroups
@@ -105,17 +111,17 @@ class SpaceInvadersModel():
             #areaSurveillance over the "go back to homeScreen button"
 
     def playerShoot(self):
-    """This makes the player shoot from its current position
-    """
+        """This makes the player shoot from its current position
+        """
         playerbullet = Bullet(10,1,self.player.x,self.player.y)
         playerbullet.add(self.playerBulletSpriteGroup)
 
     def moveEnemies(self):
-    """this function makes the enemies move accros the screen starting from left to right and then down
-    The enemies are only moved once every 10 loops. So the first thing the function does is checking if the looper is 10.
-    If so then it moves the enemies. If not then it increments the looper by one.
-    So the enemies move left and right for 5 steps (self.enemiesXMovement) of 10 pixels each.
-    """
+        """this function makes the enemies move accros the screen starting from left to right and then down
+        The enemies are only moved once every 10 loops. So the first thing the function does is checking if the looper is 10.
+        If so then it moves the enemies. If not then it increments the looper by one.
+        So the enemies move left and right for 5 steps (self.enemiesXMovement) of 10 pixels each.
+        """
         if self.enemyMoveLooper == 10:
             if self.moveRight:
                 self.enemiesXposition +=1
@@ -139,6 +145,17 @@ class SpaceInvadersModel():
         else:
             self.enemyMoveLooper +=1
 
+    def enemyShoot(self):
+        if self.enemyShootLooper == 20:
+            enemyList = self.enemySpriteGroup.sprites()
+            randomEnemy = random.choice(enemyList)
+            enemyBullet = Bullet(10,-1,randomEnemy.x,randomEnemy.y)
+            enemyBullet.add(self.enemyBulletSpriteGroup)
+            self.enemyShootLooper = 0
+            pass
+        else:
+            self.enemyShootLooper +=1
+
 
 class SpaceInvadersView():
     """This is the view class for the space invaders game"""
@@ -158,6 +175,8 @@ class SpaceInvadersView():
             for enemy in self.model.enemySpriteGroup:
                 enemy.draw(self.model.screen)
             for bullet in self.model.playerBulletSpriteGroup:
+                bullet.draw(self.model.screen)
+            for bullet in self.model.enemyBulletSpriteGroup:
                 bullet.draw(self.model.screen)
             for obstruction in self.model.obstructionSpriteGroup:
                 obstruction.draw(self.model.screen)
@@ -251,9 +270,9 @@ class Player(pygame.sprite.Sprite):
 class Enemy(Player):
     """this is the class of all the enemies (3 different levels)"""
     def __init__(self,x,y,aliveImage):
+        super(Player,self).__init__(x,y,aliveImage)
         self.deathImage = pygame.transform.scale(pygame.image.load(dir_path+"/data/New Pixel.png"),(80,100))
         self.killSound = pygame.mixer.Sound(dir_path+"/data/death.wav")
-        super(Player,self).__init__(x,y,aliveImage)
         #is aliveImage the same as image
 
     def move(self,xMovement,yMovement):
@@ -296,7 +315,7 @@ class Bullet(pygame.sprite.Sprite):
         """move the bullet and if the bullet moves out of the screen it kills itself"""
         self.y = self.y -self.direction*self.speed
         self.rect.y = self.rect.y-self.direction*self.speed
-        if self.y ==0 or self.y=1080:
+        if self.y ==0 or self.y==1080:
             self.kill()
 
     def update(self):
