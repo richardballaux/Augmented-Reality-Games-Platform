@@ -189,26 +189,18 @@ class SpaceInvadersController():
     def update(self):
         self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera,0) # Get the coords of controller '0'
         if self.model.organizer.state == "game":
-            if self.model.objectCoordinates[1][0]== -1:
-                if self.model.objectCoordinates[0][0]<self.model.player.x:
+                if self.model.objectCoordinates[0]<self.model.player.x:
                     self.model.player.direction = -1
-                elif self.model.objectCoordinates[0][0]>self.model.player.x:
+                elif self.model.objectCoordinates[0]>self.model.player.x:
                     self.model.player.direction = 1
-            else:
-                if self.model.objectCoordinates[1][0]<self.model.player.x:
-                    self.model.player.direction = -1
-                elif self.model.objectCoordinates[0][0]>self.model.player.x:
-                    self.model.player.direction = 1
-            for event in pygame.event.get():
-                if event.type is pygame.MOUSEBUTTONDOWN:
-                    self.model.playerShoot()
+
+        for event in pygame.event.get():
+            if event.type is pygame.MOUSEBUTTONDOWN:
+                self.model.playerShoot()
 
         if self.model.organizer.state == "menu":
-            if self.model.objectCoordinates[1][0]== -1:
-                self.model.cursor.update(self.model.objectCoordinates[0][0],self.model.objectCoordinates[0][1])
-            else: #if the first controller has -1 as values, the controller is changed two the controller on the right side of the screen
-                self.model.cursor.update(self.model.objectCoordinates[1][0],self.model.objectCoordinates[1][1])
-            # If coordinates are -1, no object has been detected
+                self.model.cursor.update(self.model.objectCoordinates[0],self.model.objectCoordinates[1])
+    
         if self.model.organizer.state == "endgame":
             self.homeScreenButton.draw(self.model.screen)
             self.restartButton.draw(self.model.screen)

@@ -19,7 +19,7 @@ class View():
             #we will probably not use this
             pygame.display.update()
             pass
-        if self.odel.organizer.state == "calibration":
+        if self.model.organizer.state == "calibration":
             pygame.display.update()
             pass
 
