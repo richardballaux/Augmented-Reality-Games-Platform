@@ -82,6 +82,8 @@ class OverallModel():
                     running = False
                     self.organizer.state == "homeScreen"
 
+        if self.organizer.state == "calibrationTest":
+            self.calibrationModel 
 
 
 class MouseController():
