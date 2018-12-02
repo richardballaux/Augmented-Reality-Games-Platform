@@ -5,7 +5,7 @@
 import cv2
 cv2.__version__
 import numpy as np
-import SetColorTest as sct
+import SetColor as sct
 
 def calibrate(resolution, cam, controller):
     global lowerBoundZero

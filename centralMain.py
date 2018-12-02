@@ -20,11 +20,12 @@ class OverallModel():
         self.screenSize = screenSize
         self.width = screenSize[0]
         self.height = screenSize[1]
+        self.closePlatform = False
         self.clock = clock
         self.fps = fps
         self.cursor = Cursor(0,0,20,self.organizer) # Initialize a cursor in coord (0,0) with radius 20
-        self.pongButton = CursorRecognition(30, [100, 200, 200,200],self.organizer) # Make a button for the areaSurveillance with left corner coords (100,200) & length/width = 200
-        self.spaceInvadersButton = CursorRecognition(30, [500,200, 200,200],self.organizer)
+        self.pongButton = CursorRecognition("Pong",30, [100, 200, 200,200],self.organizer) # Make a button for the areaSurveillance with left corner coords (100,200) & length/width = 200
+        self.spaceInvadersButton = CursorRecognition("Space Invaders",30, [500,200, 400,200],self.organizer)
         self.camera = camera
         OR.calibrate(screenSize, self.camera, 0) # Initialize the color for controller '0'
         self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera,0)  # Get the coordinates for controller '0'
@@ -48,6 +49,8 @@ class OverallModel():
                 for event in pygame.event.get():
                     if event.type is pygame.QUIT:
                         running = False
+                        self.spaceInvadersModel.backToHomeScreen = True
+                        self.closePlatform = True
                 if self.pongModel.backToHomeScreen == False: # If backToHomeScreen is false (game is still running), update everything
                     self.pongController.update()
                     self.pongModel.update()
@@ -66,12 +69,10 @@ class OverallModel():
             running = True
             while running:
                 for event in pygame.event.get():
-                    print(event)
                     if event.type is pygame.QUIT:
                         running = False
-                        self.organizer.state == "homeScreen"
                         self.spaceInvadersModel.backToHomeScreen = True
-
+                        self.closePlatform = True
                 if self.spaceInvadersModel.backToHomeScreen == False:
                     self.spaceInvadersController.update()
                     self.spaceInvadersModel.update()
@@ -145,10 +146,11 @@ def Main():
     fakeObject = ObjectRecogController(mainModel)
     running = True
     while running:
+        if mainModel.closePlatform == True:
+            running = False
         for event in pygame.event.get():
             if event.type is pygame.QUIT:
                 running = False
-            #fakeObject.handle_event(event)
         fakeObject.update()
         mainModel.update()
         mainView.draw()

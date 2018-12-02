@@ -47,27 +47,12 @@ class PongView():
             self._draw_background((255, 224, 254))
             menutext = self.myfont.render("Select a speed by hovering over the desired speed", 1, self.ColorBlack) # Message for menu to select speed
             self.screen.blit(menutext, (50,50))
-            # DRAW SQUARES TO CHANGE SPEED OF BALL
-            #Square 1
+            # DRAW BUTTON TO CHANGE SPEED OF BAll
             self.model.speedOneButton.draw(self.screen)
-            number = self.numberfont.render("1", 1, self.ColorBlack)
-            self.screen.blit(number, (int((self.model.width/6)*1),self.model.height/2-115))
-            #Square 2
             self.model.speedTwoButton.draw(self.screen)
-            number = self.numberfont.render("2", 1, self.ColorBlack)
-            self.screen.blit(number, (int((self.model.width/6)*2),self.model.height/2+185))
-            #Square 3
             self.model.speedThreeButton.draw(self.screen)
-            number = self.numberfont.render("3", 1, self.ColorBlack)
-            self.screen.blit(number, (int((self.model.width/6)*3),self.model.height/2-115))
-            #Square 4
             self.model.speedFourButton.draw(self.screen)
-            number = self.numberfont.render("4", 1, self.ColorBlack)
-            self.screen.blit(number, (int((self.model.width/6)*4),self.model.height/2+185))
-            #Square 5
             self.model.speedFiveButton.draw(self.screen)
-            number = self.numberfont.render("5", 1, self.ColorBlack)
-            self.screen.blit(number, (int((self.model.width/6)*5),self.model.height/2-115))
 
             self.model.cursor.draw(self.screen)
             pygame.display.update()
@@ -143,17 +128,17 @@ class PongModel():
 
         self.cursor = Cursor(int(self.width/2),int(self.height/2), cursorRadius,self.organizer)
         #Buttons
-        self.selectSpeedButton = CursorRecognition(30, [50, self.height/2-50, 200,200],self.organizer) #Triggerare in state "menu" - yellow square
-        self.speedOneButton = CursorRecognition(30, [int((self.width/6)*1)-50, int(self.height/2)-150, 150,150],self.organizer) # Number 1 to 5: square to select speed in state "select_speed"
-        self.speedTwoButton = CursorRecognition(30, [int((self.width/6)*2)-50, int(self.height/2)+150, 150,150],self.organizer)
-        self.speedThreeButton = CursorRecognition(30, [int((self.width/6)*3)-50, int(self.height/2)-150, 150,150],self.organizer)
-        self.speedFourButton = CursorRecognition(30, [int((self.width/6)*4)-50, int(self.height/2)+150, 150,150],self.organizer)
-        self.speedFiveButton = CursorRecognition(30, [int((self.width/6)*5)-50, int(self.height/2)-150, 150,150],self.organizer) # Triggers square to repeat the game in state "endgame"
-        self.restartButton = CursorRecognition(30,[int((self.width/6)*5),int((self.width/6)*2),150,150],self.organizer)
-        self.homeScreenButton = CursorRecognition(30,[int((self.width/6)*1),int((self.width/6)*2),150,150],self.organizer)
+        self.selectSpeedButton = CursorRecognition("Select speed",30, [50, self.height/2-50, 200,500],self.organizer) #Triggerare in state "menu" - yellow square
+        self.speedOneButton = CursorRecognition("1",30, [int((self.width/6)*1)-50, int(self.height/2)-150, 150,150],self.organizer) # Number 1 to 5: square to select speed in state "select_speed"
+        self.speedTwoButton = CursorRecognition("2",30, [int((self.width/6)*2)-50, int(self.height/2)+150, 150,150],self.organizer)
+        self.speedThreeButton = CursorRecognition("3",30, [int((self.width/6)*3)-50, int(self.height/2)-150, 150,150],self.organizer)
+        self.speedFourButton = CursorRecognition("4",30, [int((self.width/6)*4)-50, int(self.height/2)+150, 150,150],self.organizer)
+        self.speedFiveButton = CursorRecognition("5",30, [int((self.width/6)*5)-50, int(self.height/2)-150, 150,150],self.organizer) # Triggers square to repeat the game in state "endgame"
+        self.restartButton = CursorRecognition("Restart", 30,[int((self.width/6)*5),int((self.width/6)*2),150,200],self.organizer)
+        self.homeScreenButton = CursorRecognition("Home screen", 30,[int((self.width/6)*1),int((self.width/6)*2),150,250],self.organizer)
         #camera and objectrecognition
         self.camera = camera
-        self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera,0) #gets coordinates of two green objects from the python file ObjectRecogImplementation.py
+        self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera[0],0) #gets coordinates of two green objects from the python file ObjectRecogImplementation.py
 
         #initialize the sprite groups for collision detection
         self.boundaryGroup = pygame.sprite.Group()
