@@ -135,7 +135,7 @@ class PongModel():
         self.speedFiveButton = CursorRecognition("5",30, [int((self.width/6)*5)-50, int(self.height/2)-150, 150,150],self.organizer) # Triggers square to repeat the game in state "endgame"
         self.restartButton = CursorRecognition("Restart", 30,[int((self.width/6)*5),int((self.width/6)*2),200,150],self.organizer)
         self.homeScreenButton = CursorRecognition("Home screen", 30,[int((self.width/6)*1),int((self.width/6)*2),250,150],self.organizer)
-        self.startButton = CursorRecognition("Start", 30,[int((self.width/6)*1),int((self.width/6)*2),100,100],self.organizer)
+        self.startButton = CursorRecognition("Start", 30,[int((self.width/6)*1),int((self.width/6)*2),150,150],self.organizer)
 
         #camera and objectrecognition
         self.camera = camera
