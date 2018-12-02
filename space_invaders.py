@@ -29,7 +29,8 @@ class SpaceInvadersModel():
         self.obstructionSpriteGroup = pygame.sprite.Group()
         self.enemiesXposition = 0 #this keeps track of the current left or right movement of the enemies
         self.enemiesXMovement = 5 #this is the max number of horizontal movement
-        self.enemiesYPosition = 0 #this keeps track of the current vertical movement of the enemies
+        self.moveRight = True
+        self.enemyMoveLooper = 0
         #initialization of all the enemies and adding them to their respective spriteGroups
         for i in range(10):
             enemy = EnemyLevel3(self.enemystartxcoord+self.distanceBetweenEnemiesx*i,self.enemystartycoord,dir_path+"/data/level3monster.png")
@@ -67,8 +68,12 @@ class SpaceInvadersModel():
                 bullet.update()
             for obstr in self.obstructionSpriteGroup:
                 obstr.update()
-            for enemy in self.enemySpriteGroup:
-                enemy.move(self.enemiesXMovement,self.enemiesXposition)
+            if self.enemyMoveLooper == 10:
+                self.moveEnemies()
+                self.enemyMoveLooper=0
+            else:
+                self.enemyMoveLooper +=1
+
 
             bulletbulletCollideDict = pygame.sprite.groupcollide(self.enemyBulletSpriteGroup,self.playerBulletSpriteGroup,True,True)
             bulletAndEnemyCollideDict = pygame.sprite.groupcollide(self.playerBulletSpriteGroup,self.enemySpriteGroup,True,True)
@@ -97,6 +102,25 @@ class SpaceInvadersModel():
     def playerShoot(self):
         playerbullet = Bullet(10,1,self.player.x,self.player.y)
         playerbullet.add(self.playerBulletSpriteGroup)
+
+    def moveEnemies(self):
+        if self.moveRight:
+            self.enemiesXposition +=1
+            for enemy in self.enemySpriteGroup:
+                enemy.move(10,0)
+        else:
+            self.enemiesXposition -=1
+            for enemy in self.enemySpriteGroup:
+                enemy.move(-10,0)
+
+        if self.enemiesXposition>self.enemiesXMovement:
+            self.moveRight = False
+        if self.enemiesXposition ==0:
+            self.moveRight = True
+
+        if self.enemiesXposition == self.enemiesXMovement:
+            for enemy in self.enemySpriteGroup:
+                enemy.move(0,1)
 
 
 class SpaceInvadersView():
@@ -220,21 +244,11 @@ class Enemy(Player):
         super(Player,self).__init__(x,y,aliveImage)
         #is aliveImage the same as image
 
-
-    def update(self):
-        self.move()
-
-    def move(self,enemiesXMovement,enemiesXposition):
-        # TODO: give the following attributes of the model to the enemy
-        if enemiesXposition >= enemiesXMovement:
-            self.x = self.x-25
-            self.rect.x = self.x-25
-        else:
-            self.x = self.x+25
-            self.rect.x = self.rect.x+25
-        if enemiesXposition == enemiesXMovement:
-            self.y = self.y + 25
-            self.rect.y = self.rect.y + 25
+    def move(self,xMovement,yMovement):
+        self.x = self.x +xMovement
+        self.rect.x = self.rect.x + xMovement
+        self.y = self.y +yMovement
+        self.rect.y = self.rect.y + yMovement
 
     def die(self):
         #play deathSound
