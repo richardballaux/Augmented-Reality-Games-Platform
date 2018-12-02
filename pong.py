@@ -138,7 +138,7 @@ class PongModel():
         self.homeScreenButton = CursorRecognition("Home screen", 30,[int((self.width/6)*1),int((self.width/6)*2),150,250],self.organizer)
         #camera and objectrecognition
         self.camera = camera
-        self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera,0) #gets coordinates of two green objects from the python file ObjectRecogImplementation.py
+        self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera[0],0) #gets coordinates of two green objects from the python file ObjectRecogImplementation.py
 
         #initialize the sprite groups for collision detection
         self.boundaryGroup = pygame.sprite.Group()
