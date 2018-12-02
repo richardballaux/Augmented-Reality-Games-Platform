@@ -24,8 +24,8 @@ class OverallModel():
         self.clock = clock
         self.fps = fps
         self.cursor = Cursor(0,0,20,self.organizer) # Initialize a cursor in coord (0,0) with radius 20
-        self.pongButton = CursorRecognition(30, [100, 200, 200,200],self.organizer) # Make a button for the areaSurveillance with left corner coords (100,200) & length/width = 200
-        self.spaceInvadersButton = CursorRecognition(30, [500,200, 200,200],self.organizer)
+        self.pongButton = CursorRecognition("Pong",30, [100, 200, 200,200],self.organizer) # Make a button for the areaSurveillance with left corner coords (100,200) & length/width = 200
+        self.spaceInvadersButton = CursorRecognition("Space Invaders",30, [500,200, 400,200],self.organizer)
         self.camera = camera
         OR.calibrate(screenSize, self.camera, 0) # Initialize the color for controller '0'
         self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera,0)  # Get the coordinates for controller '0'
@@ -62,7 +62,7 @@ class OverallModel():
 
         if self.organizer.state == "spaceInvaders":
             self.spaceInvadersPhaseKeeper = Organizer() #create state machine for inside the pong game
-            self.spaceInvadersPhaseKeeper.state = "game"
+            self.spaceInvadersPhaseKeeper.state = "menu"
             self.spaceInvadersModel = SpaceInvadersModel(self.screen,self.camera,self.spaceInvadersPhaseKeeper)
             self.spaceInvadersView = SpaceInvadersView(self.spaceInvadersModel)
             self.spaceInvadersController = SpaceInvadersController(self.spaceInvadersModel)
@@ -137,7 +137,7 @@ def Main():
     camera = OR.setup(screenSize) # Initialize a camera via the object recognition in openCV
     organizer = Organizer() # initialize an Organizer object
     #We start the game in the organizer state
-    organizer.state = "spaceInvaders"
+    organizer.state = "homeScreen"
     #initalize all the main classes
     mainModel = OverallModel(organizer,screenSize,camera,clock,fps)
     mainView = View(screenSize, mainModel)

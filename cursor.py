@@ -27,12 +27,18 @@ class CursorRecognition():
     counter_limit -- int, the limit for when "something" should be triggered
     area -- list of form: same as pygame draw rectangle - [upper left corner x, upper left corner y, length in x direction, length in y direction]
     """
-    def __init__(self, counter_limit, area,organizer):
+    def __init__(self, text,counter_limit, area,organizer):
+        self.text=text
         self.counter = 0 #Counter for areaSurveillance
         self.limit = counter_limit  # Time it should take to trigger (?)
         self.input = area
         self.triggerArea = [self.input[0], self.input[1]+self.input[3], self.input[0]+self.input[2], self.input[1]]
         self.organizer = organizer
+        self.myfont = pygame.font.SysFont("monospace", 42)
+        self.numberfont = pygame.font.SysFont("monospace", 85, bold=True) #font is used for numbers in "select_speed" state
+        self.ColorGreen = (0,250,0)
+        self.ColorBlack = (0,0,0)
+        self.ColorYellow = (250,250,0)
 
     def areaSurveillance(self, cursor,change_state_to, object_to_change, attribute_of_object, change_attribute_to):
         """With a specific cursor as an input, change the attribute of an object to a specific value
@@ -59,4 +65,6 @@ class CursorRecognition():
 
     def draw(self,screen):
         #create a button with areaSurveillance and give it a draw function so it is easier to draw it on the same position and witht the same size
-        pygame.draw.rect(screen,(250,250,0),pygame.Rect(self.input[0],self.input[1],self.input[2],self.input[3]))
+        pygame.draw.rect(screen,self.ColorYellow,pygame.Rect(self.input[0],self.input[1],self.input[2],self.input[3]))
+        textMaker = self.myfont.render(self.text, 1, self.ColorGreen)
+        screen.blit(textMaker,(self.input[0]+50,self.input[1]))

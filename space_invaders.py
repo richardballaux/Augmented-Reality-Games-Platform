@@ -50,9 +50,9 @@ class SpaceInvadersModel():
 
         self.cursor = Cursor(0,0,20,self.organizer)
         #creating the buttons that this game will have
-        self.startGameButton = CursorRecognition(30, [500, 500, 200,200],self.organizer)
-        self.homeScreenButton = CursorRecognition(30, [500,500, 500,150],self.organizer)
-        self.restartButton = CursorRecognition(30, [500,700, 150,150],self.organizer) # Triggers square to repeat the game in state "endgame"
+        self.startGameButton = CursorRecognition("Start",30, [500, 500, 200,200],self.organizer)
+        self.homeScreenButton = CursorRecognition("Home Screen",30, [500,500, 500,150],self.organizer)
+        self.restartButton = CursorRecognition("Restart",30, [500,700, 150,150],self.organizer) # Triggers square to repeat the game in state "endgame"
 
     def update(self):
         """update all the components of the model:
@@ -67,11 +67,13 @@ class SpaceInvadersModel():
                 bullet.update()
             for obstr in self.obstructionSpriteGroup:
                 obstr.update()
-            # for enemy in self.enemySpriteGroup:
-            #     enemy.update()
+            for enemy in self.enemySpriteGroup:
+                enemy.move(self.enemiesXMovement,self.enemiesXposition)
 
             bulletbulletCollideDict = pygame.sprite.groupcollide(self.enemyBulletSpriteGroup,self.playerBulletSpriteGroup,True,True)
             bulletAndEnemyCollideDict = pygame.sprite.groupcollide(self.playerBulletSpriteGroup,self.enemySpriteGroup,True,True)
+            for element in bulletAndEnemyCollideDict:
+                self.score.add(bulletAndEnemyCollideDict[element][0].received_points_when_killed)
             # TODO: change the picture of the enemy to dead for some amount of loops
             bulletAndObstructionCollideDict = pygame.sprite.groupcollide(self.enemyBulletSpriteGroup,self.obstructionSpriteGroup,True,False)
             for element in bulletAndObstructionCollideDict:
@@ -118,6 +120,7 @@ class SpaceInvadersView():
                 bullet.draw(self.model.screen)
             for obstruction in self.model.obstructionSpriteGroup:
                 obstruction.draw(self.model.screen)
+            self.model.score.draw(self.model.screen)
 
 
         if self.model.organizer.state == "menu":
@@ -146,7 +149,6 @@ class SpaceInvadersView():
             #draw the highscore of other people
 
         pygame.display.update()
-
 
     def draw_background(self,screen): # draw the camera image to the background
         self.model.screen.fill(self.ColorBlack)
@@ -222,15 +224,15 @@ class Enemy(Player):
     def update(self):
         self.move()
 
-    def move(self):
+    def move(self,enemiesXMovement,enemiesXposition):
         # TODO: give the following attributes of the model to the enemy
-        if self.enemiesXposition >= self.enemiesXMovement:
+        if enemiesXposition >= enemiesXMovement:
             self.x = self.x-25
             self.rect.x = self.x-25
         else:
             self.x = self.x+25
             self.rect.x = self.rect.x+25
-        if self.enemiesXposition == self.enemiesXMovement:
+        if enemiesXposition == enemiesXMovement:
             self.y = self.y + 25
             self.rect.y = self.rect.y + 25
 
@@ -263,11 +265,13 @@ class Bullet(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.rect =self.image.get_rect()
-        self.rect.center = [self.x-30,self.y-40]
+        self.rect.center = [self.x,self.y]
 
     def move(self):
         self.y = self.y -self.direction*self.speed
         self.rect.y = self.rect.y-self.direction*self.speed
+        if self.y ==0:
+            self.kill()
     #-collision(with enemy or player    or  with other bullet)
 
     def update(self):
@@ -314,11 +318,12 @@ class Score():
 
     def __init__(self):
         self.totalPoints = 0
+        self.myfont = pygame.font.SysFont("monospace", 42,bold = True) #Font that is used in states "game" and "select_speed" to prompt the user
+        self.ColorBlack = (0,0,0)
 
-    def update(self):
-        #add the points from the killed enemies to the score
-        pass
+    def add(self,pointsToAdd):
+        self.totalPoints += pointsToAdd
 
     def draw(self,screen):
-        #draw a number to the screen
-        pass
+        textMaker = self.myfont.render(str(self.totalPoints),1,self.ColorBlack)
+        screen.blit(textMaker,(1500,50))
