@@ -37,9 +37,9 @@ class PongView():
 
         if self.model.organizer.state == "menu": # Draw start screen
             self._draw_background()
-            pygame.draw.rect(self.screen, (250,250,0), pygame.Rect(50, self.model.height/2-50, 200,200))
             menutext = self.myfont.render("Keep your cursor in the square to start the game", 1, self.ColorGreen)
             self.screen.blit(menutext, (50,50))
+            self.model.startButton.draw(self.model.screen)
             self.model.cursor.draw(self.screen)
             pygame.display.update()
 
@@ -136,6 +136,8 @@ class PongModel():
         self.speedFiveButton = CursorRecognition("5",30, [int((self.width/6)*5)-50, int(self.height/2)-150, 150,150],self.organizer) # Triggers square to repeat the game in state "endgame"
         self.restartButton = CursorRecognition("Restart", 30,[int((self.width/6)*5),int((self.width/6)*2),200,150],self.organizer)
         self.homeScreenButton = CursorRecognition("Home screen", 30,[int((self.width/6)*1),int((self.width/6)*2),250,150],self.organizer)
+        self.startButton = CursorRecognition("Start", 30,[int((self.width/6)*1),int((self.width/6)*2),100,100],self.organizer)
+
         #camera and objectrecognition
         self.camera = camera
         OR.calibrate([self.width, self.height], self.camera, 1) # Initialize the color for controller '1'
