@@ -30,21 +30,17 @@ class PongView():
 
         newSurface = pygame.surfarray.make_surface(self.model.cameraImage) # Reads the stored camera image and makes a surface out of it
         self.screen.blit(newSurface,(0,0)) # Make background of the sufrace (so it becomes live video)
-        pygame.display.update()
 
     def draw(self):
         """draws corresponding to the state of organizer.state the different organizer settings or game"""
-
+        self._draw_background()
         if self.model.organizer.state == "menu": # Draw start screen
-            self._draw_background()
             menutext = self.myfont.render("Keep your cursor in the square to start the game", 1, self.ColorGreen)
             self.screen.blit(menutext, (50,50))
             self.model.startButton.draw(self.model.screen)
             self.model.cursor.draw(self.screen)
-            pygame.display.update()
 
-        if self.model.organizer.state == "select_speed":
-            self._draw_background((255, 224, 254))
+        elif self.model.organizer.state == "select_speed":
             menutext = self.myfont.render("Select a speed by hovering over the desired speed", 1, self.ColorBlack) # Message for menu to select speed
             self.screen.blit(menutext, (50,50))
             # DRAW BUTTON TO CHANGE SPEED OF BAll
@@ -55,16 +51,12 @@ class PongView():
             self.model.speedFiveButton.draw(self.screen)
 
             self.model.cursor.draw(self.screen)
-            pygame.display.update()
 
-        if self.model.organizer.state == "pong_game":
-            self._draw_background()
+        elif self.model.organizer.state == "pong_game":
             for component in self.model.components:
                  component.draw(self.screen)
-            pygame.display.update()
 
-        if self.model.organizer.state == "endgame":
-            self._draw_background()
+        elif self.model.organizer.state == "endgame":
             pygame.draw.rect(self.screen, (150,150,0), pygame.Rect(int((self.model.width/6)), int(self.model.height/2)-50, int(self.model.width*4/6),150))
             if self.model.organizer.winner ==1:
                 playertext = self.myfont.render("LEFT PLAYER WON", 1, self.ColorBlack)
@@ -73,7 +65,6 @@ class PongView():
             self.screen.blit(playertext, (int((self.model.width/6)*2),self.model.height/2))
 
             self.model.restartButton.draw(self.screen)
-            self.screen.blit(replayText, (int((self.model.width/6)*5),int((self.model.width/6)*2)))
             self.model.homeScreenButton.draw(self.screen)
             self.model.cursor.draw(self.screen)
             pygame.display.update()
@@ -163,14 +154,14 @@ class PongModel():
         if self.organizer.state == "menu":
             self.selectSpeedButton.areaSurveillance(self.cursor, "select_speed", self.organizer, "state", "select_speed")
 
-        if self.organizer.state == "select_speed": # Set 5 areas to click on, each mapped to a different ball speed
+        elif self.organizer.state == "select_speed": # Set 5 areas to click on, each mapped to a different ball speed
             self.speedOneButton.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 5)
             self.speedTwoButton.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 10)
             self.speedThreeButton.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 15)
             self.speedFourButton.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 22)
             self.speedFiveButton.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 28)
 
-        if self.organizer.state == "pong_game":
+        elif self.organizer.state == "pong_game":
             self.ball.update(self.organizer)
             #first update the position of the ball and then check if there has been a collision
             boundaryBounce = pygame.sprite.spritecollide(self.ball,self.boundaryGroup,False)
@@ -201,7 +192,7 @@ class PongModel():
                 self.ball.rect.y = self.ball.y
                 self.ball.movingDirection=[-1,1]
 
-        if self.organizer.state == "endgame": #this state is entered when one of the players reaches 5 points
+        elif self.organizer.state == "endgame": #this state is entered when one of the players reaches 5 points
             self.restartButton.areaSurveillance(self.cursor, "menu", self.organizer, "state", "menu")
             self.homeScreenButton.areaSurveillance(self.cursor, "True",self, "backToHomeScreen","True")
             self.score.reset()
