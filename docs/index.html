@@ -72,6 +72,14 @@
 								As the last step, we added a score counter to the game, made it show you the winner, and give the player the option to replay the game.<br><br>
 								</p>
 								<span class="image main"><img src="images/pong_game.jpg" alt="" /></span>
+
+								<h3 class="major">More Games! Space Invaders</h3>
+								<p>The whole process of programming became more complicated when we started implementing the second game - <b>space invaders</b>. We were forced to revise our entire architecture. This included creating several files for an organized Model-View-Controller structure, implementing state machines to keep track of where the player is within the game, reorganize our classes with descriptive docstrings to make debugging easier.</p>
+
+								<p>For the space invaders game itself, we used the same color recognition file to track the player’s controller. The player controls the position of the spaceship by moving their controller horizontally and shoots bullets by pressing the space bar.</p>
+
+								<p>One of our problems at that point was that the player had to use a green controller in order to play the game. Consequently, we implemented an initialization screen that saves the color of the object that the player seeks to use as a controller. The player could finally use any colored object to play the game. </p>
+								<span class="image main"><img src="images/spaceinv.jpg" alt="" /></span>
 							</article>
 
 						<!-- Architecture -->
