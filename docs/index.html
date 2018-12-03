@@ -57,19 +57,29 @@
 						<!-- Work -->
 							<article id="work">
 								<h2 class="major">Progress and results</h2>
-								<span class="image main"><img src="images/spaceinv.jpg" alt="" /></span>
+								<span class="image main"><img src="images/code_snippet.png" alt="" /></span>
 								<p>We started our game with the intention to create an air pong game that the player can control via OpenCV, a real-time computer vision library. The first version of the game was split up into two parts: the game and the computer vision controller.</p>
 								<h3 class="major">First Steps - Air Pong Game</h3>
 								<p>This meant that we had two files that would communicate with each other. However, the communication process itself required some design decisions. Since python is an object-oriented programming language, we choose the object-oriented design pattern called <a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">Model-View Controller</a>.</p>
-								<span class="image main"><img src="images/mode_view_controller.JPG" alt="" /></span>
+								<span class="image main"><img src="images/mode_view_controller_2.JPG" alt="" /></span>
 								
 
 								<p>After a few days of coding, we were able to detect the position of the controller the player was holding and change the cursor’s position accordingly. The controller’s color had to be green in order to be detected by the camera. We further implemented a mirrored live video of from computer’s camera as the background of the game.</p>
-								<p>In the beginning, the controller detection just worked for one controller and was relatively slow. An air pong game, however, requires two players. Consequently, we had to come up with a better communication between the model and the controller that would allow us to send coordinates of two controllers. Since the live feed for the background was the same picture that was analyzed to detect the controller, our cursor recognition software had to analyze a comparably large picture. We decided two analyze a much smaller picture for the color detection and feed a bigger camera video to the background.</p>
+								<span class="image main"><img src="images/pong_start.jpg" alt="" /></span>
+								<p>In the beginning, the controller detection just worked for one controller and was relatively slow. An air pong game, however, requires two players. Consequently, we had to come up with a better communication between the model and the controller that would allow us to send coordinates of two controllers. Since the live feed for the background was the same picture that was analyzed to detect the controller, our cursor recognition software had to analyze a comparably large picture. We decided two analyze a much smaller picture for the color detection and feed a bigger camera video to the background to better the performance.</p>
 								<p>To give the player more room to customize the game, we implemented a start page and a small menu. When starting the game, one of the players had to hover over a square to reach the settings. We implemented this step to ensure that the controller was working correctly. In the menu itself, one could choose between five different speeds for the air pong ball by hovering over the desired difficulty.<br>
-								The collision detection between the ball, the paddles, and the barriers in the game itself turned out to be more difficult than expected. <br>
+								The collision detection between the ball, the paddles, and the barriers in the game itself turned out to be more difficult than expected<!--Richard-->. <br>
 								As the last step, we added a score counter to the game, made it show you the winner, and give the player the option to replay the game.<br><br>
-								Picture GAME AIR PONG</p>
+								</p>
+								<span class="image main"><img src="images/pong_game.jpg" alt="" /></span>
+
+								<h3 class="major">More Games! Space Invaders</h3>
+								<p>The whole process of programming became more complicated when we started implementing the second game - <b>space invaders</b>. We were forced to revise our entire architecture. This included creating several files for an organized Model-View-Controller structure, implementing state machines to keep track of where the player is within the game, reorganize our classes with descriptive docstrings to make debugging easier.</p>
+
+								<p>For the space invaders game itself, we used the same color recognition file to track the player’s controller. The player controls the position of the spaceship by moving their controller horizontally and shoots bullets by pressing the space bar.</p>
+
+								<p>One of our problems at that point was that the player had to use a green controller in order to play the game. Consequently, we implemented an initialization screen that saves the color of the object that the player seeks to use as a controller. The player could finally use any colored object to play the game. </p>
+								<span class="image main"><img src="images/spaceinv.jpg" alt="" /></span>
 							</article>
 
 						<!-- Architecture -->
