@@ -89,10 +89,9 @@ class PongView():
 
 class PongModel():
     """encodes a model of the game state
-    windowSize -- This is a list wih the width and the height of the screen size demanded
-    boundaryOffset -- This is the distance between the edges of the screen and the boundary
-    boundaryThickness --  This is the thickness of the boundary in pixels
+    screen --   This is a pygame screen object
     camera --   This is a VideoCapture-object that the getCoords-function needs as input
+    organizer --    This is the internal phaseKeeper object from the Organizer class
     """
     def __init__(self,screen,camera,organizer):
         boundaryOffset = [50,50]

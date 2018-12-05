@@ -13,7 +13,10 @@ import random
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 class SpaceInvadersModel():
-    """This is the model for the space invaders game"""
+    """This is the model for the space invaders game
+    - pygame screen object,
+    - cv2.VideoCapture(0) object
+    - In-game phaseKeeper of the Organizer class"""
     def __init__(self,screen,camera,organizer):
         self.camera = camera
         self.screen = screen
@@ -32,9 +35,10 @@ class SpaceInvadersModel():
         self.enemiesXposition = 0 #this keeps track of the current left or right movement of the enemies
         self.enemiesXMovement = 5 #this is the max number of horizontal movement
         self.moveRight = True
-        self.enemyMoveLooper = 0
+        self.enemyMoveLooper = 0 #this variable keep track of the current number of loops between every enemy movement
 
-        self.enemyShootLooper = 0
+        self.enemyShootLooper = 0 #this variable keep track of the current number of loops until an enemy shoots again
+        self.enemyShootMinimumLooper = 20 #this variable is the minimum amount of loops between enemy shots. this is dependent of the number of enemies left.
         #initialization of all the enemies and adding them to their respective spriteGroups
         for i in range(10):
             enemy = Enemy(self.enemystartxcoord+self.distanceBetweenEnemiesx*i,self.enemystartycoord,dir_path+"/data/level3monster.png",15)
@@ -102,7 +106,6 @@ class SpaceInvadersModel():
                 self.health.gotShot()
 
             #Transitions to the next state:--------------------------------------------------
-            print(self.enemySpriteGroup.sprites())
             if len(self.enemySpriteGroup.sprites()) == 0: #all the enemy are deathSound
                 self.organizer.win = True
                 self.organizer.state = "endgame"
@@ -158,19 +161,23 @@ class SpaceInvadersModel():
             self.enemyMoveLooper +=1
 
     def enemyShoot(self):
-        if self.enemyShootLooper == 20:
+        """Makes the enemies shoot after once every so many loops"""
+        if self.enemyShootLooper == self.enemyShootMinimumLooper:
             enemyList = self.enemySpriteGroup.sprites()
             randomEnemy = random.choice(enemyList)
             enemyBullet = Bullet(10,-1,randomEnemy.x,randomEnemy.y)
             enemyBullet.add(self.enemyBulletSpriteGroup)
-            self.enemyShootLooper = 0
+            #make the frequency of enemy shooting dependent of number of enemies
+            self.enemyShootMinimumLooper = 60-len(enemyList)
+            self.enemyShootLooper = 0 #if one of the enemies shot, set the enemyShootLooper back to zero
             pass
         else:
-            self.enemyShootLooper +=1
+            self.enemyShootLooper +=1 # if none of the enemies didn't shoot this loop, increment the enemyShootLooper
 
 
 class SpaceInvadersView():
-    """This is the view class for the space invaders game"""
+    """This is the view class for the space invaders game
+    model --    object of the SpaceInvadersModel class"""
     def __init__(self,model):
         self.model = model
         self.myfont = pygame.font.SysFont("monospace", 42) #Font that is used in states "game" and "select_speed" to prompt the user
@@ -213,13 +220,14 @@ class SpaceInvadersView():
             if self.model.organizer.win:
                 menutext = self.myfont.render("Congratulations, YOU WON", 1, self.ColorGreen)
                 self.model.screen.blit(menutext, (200,50))
-                self.model.score(self.model.screen)
+                self.model.score.draw(self.model.screen)
             else:
                 menutext = self.myfont.render("Sad, YOU LOST", 1, self.ColorGreen)
                 self.model.screen.blit(menutext, (200,50))
             #draw the two buttons
             self.model.homeScreenButton.draw(self.model.screen)
             self.model.restartButton.draw(self.model.screen)
+            self.model.cursor.draw(self.model.screen)
             #draw the highscore of other people
         pygame.display.update()
 
@@ -229,10 +237,9 @@ class SpaceInvadersView():
         self.model.screen.blit(newSurface,(0,0)) # Make background of the sufrace (so it becomes live video)
 
 class SpaceInvadersController():
-    """This is the controller for the spaceInvaders game"""
+    """This is the controller for the spaceInvaders game
+    model --    object of the SpaceInvadersModel class"""
     def __init__(self,model):
-        """The controller only needs access to the model
-        """
         self.model = model
 
     def update(self):
@@ -247,12 +254,18 @@ class SpaceInvadersController():
         elif self.model.organizer.state == "menu":
                 self.model.cursor.update(self.model.objectCoordinates[0],self.model.objectCoordinates[1])
 
+        elif self.model.organizer.state =="endgame":
+                self.model.cursor.update(self.model.objectCoordinates[0],self.model.objectCoordinates[1])
+
         for event in pygame.event.get():
             if event.type is pygame.MOUSEBUTTONDOWN:
                 self.model.playerShoot()
 
 class Player(pygame.sprite.Sprite):
-    """this is the class of the spaceship"""
+    """this is the class of the spaceship
+    x --    (integer) starting x position of the spaceship
+    y --    (integer) starting y position of the spaceship
+    image --    (string) path of the spaceship image"""
     def __init__(self,x,y,image):
         pygame.sprite.Sprite.__init__(self)
         self.speed = 10
@@ -269,15 +282,20 @@ class Player(pygame.sprite.Sprite):
         self.x = self.x+self.speed*self.direction
 
     def update(self):
-        """update the player, for now this is only moving it"""
+        """update the player"""
         self.move()
 
     def draw(self,screen):
-        """draw image on the screen"""
+        """draw image on the screen
+        screen --   pygame screen object"""
         screen.blit(self.image,(self.x,self.y))
 
 class Enemy(Player):
-    """this is the class of all the enemies (3 different levels)"""
+    """this is the class of all the enemies (3 different levels)
+    x --    (integer) starting x position of the enemy
+    y --    (integer) starting y position of the enemy
+    aliveImage --   (string) path of the alive image of the enemy
+    pointsWhenKilled -- (integer) points the player gets when he kills this enemy"""
     def __init__(self,x,y,aliveImage,pointsWhenKilled):
         super(Enemy,self).__init__(x,y,aliveImage)
         #self.deathImage = pygame.transform.scale(pygame.image.load(dir_path+"/data/New Pixel.png"),(80,100))
