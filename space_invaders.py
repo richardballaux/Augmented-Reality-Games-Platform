@@ -64,6 +64,7 @@ class SpaceInvadersModel():
         self.startGameButton = CursorRecognition("Start",30, [500, 500, 200,200],self.organizer)
         self.homeScreenButton = CursorRecognition("Home Screen",30, [500,500, 300,150],self.organizer)
         self.restartButton = CursorRecognition("Restart",30, [500,700, 200,150],self.organizer)
+        self.stopGameButton = CursorRecognition("STOP",30,[925,50,150,75],self.organizer)
 
     def update(self):
         """This update function is divide for the different states of the organizer
@@ -75,6 +76,7 @@ class SpaceInvadersModel():
             # - the bullets that are in the enemyBulletSpriteGroup and in the playerBulletSpriteGroup
             # - the Obstructions that are in their obstructionSpriteGroup
             # - the enemies in their enemySpriteGroup
+            self.stopGameButton.areaSurveillance(self.cursor,"backToHomeScreen",self,"backToHomeScreen",True)
             self.player.update()
             for bullet in self.playerBulletSpriteGroup:
                 bullet.update()
@@ -190,6 +192,7 @@ class SpaceInvadersView():
         self.draw_background(self.model.screen) #always draw the background first
 
         if self.model.organizer.state == "game":
+            self.mode.stopGameButton.draw(self.model.screen)
             self.model.player.draw(self.model.screen)
             for enemy in self.model.enemySpriteGroup:
                 enemy.draw(self.model.screen)

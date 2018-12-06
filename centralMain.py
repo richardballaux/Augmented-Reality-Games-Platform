@@ -25,6 +25,7 @@ class OverallModel():
         self.cursor = Cursor(0,0,20,self.organizer) # Initialize a cursor in coord (0,0) with radius 20
         self.pongButton = CursorRecognition("Pong",30, [100, 200, 200,200],self.organizer) # Make a button for the areaSurveillance with left corner coords (100,200) & length/width = 200
         self.spaceInvadersButton = CursorRecognition("Space Invaders",30, [500,200, 400,200],self.organizer)
+        self.calibrationButton = CursorRecognition(" Calibrate", 30, [1000,200,300,200],self.organizer)
         self.camera = camera
         OR.calibrate(screenSize, self.camera, 0) # Initialize the color for controller '0'
         self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera,0)  # Get the coordinates for controller '0'
@@ -34,6 +35,7 @@ class OverallModel():
         if self.organizer.state == "homeScreen":
             self.pongButton.areaSurveillance(self.cursor, "pong", self.organizer, "state", "pong")
             self.spaceInvadersButton.areaSurveillance(self.cursor, "spaceInvaders", self.organizer, "state", "spaceInvaders")
+            #TODO add areaSurveillance to calibrationButton
 
         if self.organizer.state == "pong":
             self.pongPhaseKeeper = Organizer()  #create state machine for inside the pong game
@@ -82,7 +84,7 @@ class OverallModel():
                     self.organizer.state == "homeScreen"
 
         if self.organizer.state == "calibrationTest":
-            self.calibrationModel
+            self.calibrationModel = calibrationModel()
 
 
 class MouseController():
@@ -105,7 +107,8 @@ class ObjectRecogController():
         self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera,0)
         self.model.cursor.update(self.model.objectCoordinates[0],self.model.objectCoordinates[1])
         # If coordinates are -1, no object has been detected
-class SpaceInvadersView():
+
+class overallView():
     """this might have the views of all the different screens so we can make an overall UI"""
     def __init__(self,screenSize,model):
         self.screen_size = screenSize
@@ -119,8 +122,8 @@ class SpaceInvadersView():
             #draw squares for buttons for pong and spaceinvaders
             self.model.pongButton.draw(self.model.screen)
             self.model.spaceInvadersButton.draw(self.model.screen)
+            self.model.calibrationButton.draw(self.model.screen)
             self.model.cursor.draw(self.model.screen)
-
         pygame.display.update()
 
     def draw_background(self):
@@ -129,9 +132,6 @@ class SpaceInvadersView():
 
 class Organizer():
     """State machine that regulates whether or not we see the menu or the game
-    The different states are:
-
-
     Instruction for adding a state:
     - You don't need to add a state in the Organizer() class. Just update the docstring to keep the documentation updated
     - Add an if-statement with the state name to the draw() function in the class PlayboardWindowView()
@@ -159,7 +159,7 @@ def Main():
     organizer.state = "homeScreen"
     #initalize all the main classes
     mainModel = OverallModel(organizer,screenSize,camera,clock,fps)
-    mainView = SpaceInvadersView(screenSize, mainModel)
+    mainView = overallView(screenSize, mainModel)
     #mainController = Controller(mainModel)
     #this is the mouse controller
     fakeObject = ObjectRecogController(mainModel)

@@ -53,6 +53,7 @@ class PongView():
             self.model.cursor.draw(self.screen)
 
         elif self.model.organizer.state == "pong_game":
+            self.mode.stopGameButton.draw(self.screen)
             for component in self.model.components:
                  component.draw(self.screen)
 
@@ -127,6 +128,7 @@ class PongModel():
         self.restartButton = CursorRecognition("Restart", 30,[int((self.width/6)*5),int((self.width/6)*2),200,150],self.organizer)
         self.homeScreenButton = CursorRecognition("Home screen", 30,[int((self.width/6)*1),int((self.width/6)*2),250,150],self.organizer)
         self.startButton = CursorRecognition("Start", 30,[int((self.width/6)*1),int((self.width/6)*2),150,150],self.organizer)
+        self.stopGameButton = CursorRecognition("STOP",30,[int(self.width/2),100,100,75],self.organizer)
 
         #camera and objectrecognition
         self.camera = camera
@@ -161,6 +163,7 @@ class PongModel():
             self.speedFiveButton.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 28)
 
         elif self.organizer.state == "pong_game":
+            self.stopGameButton.areaSurveillance(self.cursor, "backToHomeScreen",self,"backToHomeScreen",True)
             self.ball.update(self.organizer)
             #first update the position of the ball and then check if there has been a collision
             boundaryBounce = pygame.sprite.spritecollide(self.ball,self.boundaryGroup,False)
