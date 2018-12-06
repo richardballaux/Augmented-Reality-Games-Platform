@@ -118,6 +118,7 @@ class PongModel():
         self.components = (self.upperboundary,self.lowerboundary,self.ball,self.leftPaddle,self.rightPaddle,self.score)
 
         self.cursor = Cursor(int(self.width/2),int(self.height/2), cursorRadius,self.organizer)
+        self.drawCursor = False
         #Buttons
         self.selectSpeedButton = CursorRecognition("Select speed",30, [50, self.height/2-50, 200,500],self.organizer) #Triggerare in state "menu" - yellow square
         self.speedOneButton = CursorRecognition("1",30, [int((self.width/6)*1)-50, int(self.height/2)-150, 150,150],self.organizer) # Number 1 to 5: square to select speed in state "select_speed"

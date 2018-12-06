@@ -10,6 +10,7 @@ import pygame
 from cursor import Cursor, CursorRecognition
 import ObjectRecogImplementation as OR
 import random
+import time
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 class SpaceInvadersModel():
@@ -56,10 +57,13 @@ class SpaceInvadersModel():
             self.obstructionSpriteGroup.add(obstruction)
 
         self.player = Player(900,900,dir_path+"/data/spaceship.png") #initialize the player with x and y coordinate and the path of the picture
+        self.lastTimeShot = 0 #this variable remembers at what time the player shot last
+        self.timeBetweenShots = 1 # this variable is the minimum time in ..... between shots
         self.score = Score()
         self.health = Health()
 
         self.cursor = Cursor(0,0,20,self.organizer)
+        self.drawCursor = False
         #creating the buttons that this game will have
         self.startGameButton = CursorRecognition("Start",30, [500, 500, 200,200],self.organizer)
         self.homeScreenButton = CursorRecognition("Home Screen",30, [500,500, 300,150],self.organizer)
@@ -108,11 +112,13 @@ class SpaceInvadersModel():
                 self.health.gotShot()
 
             #Transitions to the next state:--------------------------------------------------
-            if len(self.enemySpriteGroup.sprites()) == 0: #all the enemy are deathSound
+            if len(self.enemySpriteGroup.sprites()) == 0: #all the enemy are dead
+                self.player.win()
                 self.organizer.win = True
                 self.organizer.state = "endgame"
 
             elif self.health.healthLevel == 0:
+                self.player.die()
                 self.organizer.win = False
                 self.organizer.state = "endgame"
 
@@ -129,9 +135,10 @@ class SpaceInvadersModel():
     def playerShoot(self):
         """This makes the player shoot from its current position
         """
-        #TODO : make a looper so the player can't shoot constantly
-        playerbullet = Bullet(10,1,self.player.x,self.player.y)
-        playerbullet.add(self.playerBulletSpriteGroup)
+        if (time.time() - self.lastTimeShot)>= self.timeBetweenShots:
+            playerbullet = Bullet(10,1,self.player.x,self.player.y)
+            playerbullet.add(self.playerBulletSpriteGroup)
+            self.lastTimeShot = time.time()
 
     def moveEnemies(self):
         """this function makes the enemies move across the screen starting from left to right and then down
@@ -192,7 +199,7 @@ class SpaceInvadersView():
         self.draw_background(self.model.screen) #always draw the background first
 
         if self.model.organizer.state == "game":
-            self.mode.stopGameButton.draw(self.model.screen)
+            self.model.stopGameButton.draw(self.model.screen)
             self.model.player.draw(self.model.screen)
             for enemy in self.model.enemySpriteGroup:
                 enemy.draw(self.model.screen)
@@ -204,6 +211,8 @@ class SpaceInvadersView():
                 obstruction.draw(self.model.screen)
             self.model.score.draw(self.model.screen)
             self.model.health.draw(self.model.screen)
+            if self.model.drawCursor:
+                self.model.cursor.draw(self.model.screen)
 
 
         elif self.model.organizer.state == "menu":
@@ -249,16 +258,21 @@ class SpaceInvadersController():
         """This update function gets the coordinates from the objectrecognition object and processes it"""
         self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera,0) # Get the coords of controller '0'
         if self.model.organizer.state == "game":
-                if self.model.objectCoordinates[0]<self.model.player.x:
-                    self.model.player.direction = -1
-                elif self.model.objectCoordinates[0]>self.model.player.x:
-                    self.model.player.direction = 1
+            if self.model.objectCoordinates[0]<self.model.player.x:
+                self.model.player.direction = -1
+            elif self.model.objectCoordinates[0]>self.model.player.x:
+                self.model.player.direction = 1
+            if self.model.objectCoordinates[1]<200:
+                self.model.cursor.update(self.model.objectCoordinates[0],self.model.objectCoordinates[1])
+                self.model.drawCursor = True
+            else:
+                self.model.drawCursor = False
 
         elif self.model.organizer.state == "menu":
-                self.model.cursor.update(self.model.objectCoordinates[0],self.model.objectCoordinates[1])
+            self.model.cursor.update(self.model.objectCoordinates[0],self.model.objectCoordinates[1])
 
         elif self.model.organizer.state =="endgame":
-                self.model.cursor.update(self.model.objectCoordinates[0],self.model.objectCoordinates[1])
+            self.model.cursor.update(self.model.objectCoordinates[0],self.model.objectCoordinates[1])
 
         for event in pygame.event.get():
             if event.type is pygame.MOUSEBUTTONDOWN:
@@ -274,6 +288,8 @@ class Player(pygame.sprite.Sprite):
         self.speed = 10
         self.direction = -1 #negative or positive
         self.image = pygame.transform.scale(pygame.image.load(image),(100,120)) #"spaceship.png"
+        self.playerDieSound = pygame.mixer.Sound(dir_path+"/data/playerDie.wav")
+        self.playerWinSound = pygame.mixer.Sound(dir_path+"/data/playerWin.wav")
         self.x = x
         self.y =y
         self.rect = self.image.get_rect()
@@ -292,6 +308,14 @@ class Player(pygame.sprite.Sprite):
         """draw image on the screen
         screen --   pygame screen object"""
         screen.blit(self.image,(self.x,self.y))
+
+    def die(self):
+        """This function plays the die sound of the player"""
+        pygame.mixer.Sound.play(self.playerDieSound)
+
+    def win(self):
+        """This function plays the win sound of the player"""
+        pygame.mixer.Sound.play(self.playerWinSound)
 
 class Enemy(Player):
     """this is the class of all the enemies (3 different levels)
