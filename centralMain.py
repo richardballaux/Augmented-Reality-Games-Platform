@@ -1,6 +1,5 @@
 """This is the file that is ran when you want to start the full AR arcade"""
 
-from view import View
 from pong import PongView, PongModel, PongMouseController, PongObjectRecogController
 from space_invaders import SpaceInvadersView, SpaceInvadersModel, SpaceInvadersController
 import pygame
@@ -106,6 +105,27 @@ class ObjectRecogController():
         self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera,0)
         self.model.cursor.update(self.model.objectCoordinates[0],self.model.objectCoordinates[1])
         # If coordinates are -1, no object has been detected
+class SpaceInvadersView():
+    """this might have the views of all the different screens so we can make an overall UI"""
+    def __init__(self,screenSize,model):
+        self.screen_size = screenSize
+        self.model = model
+        self.model.screen = pygame.display.set_mode(screenSize)
+        pygame.display.set_caption = ("AR-Arcade")
+
+    def draw(self):
+        self.draw_background()
+        if self.model.organizer.state == "homeScreen":
+            #draw squares for buttons for pong and spaceinvaders
+            self.model.pongButton.draw(self.model.screen)
+            self.model.spaceInvadersButton.draw(self.model.screen)
+            self.model.cursor.draw(self.model.screen)
+
+        pygame.display.update()
+
+    def draw_background(self):
+        newSurface = pygame.surfarray.make_surface(self.model.cameraImage) # Reads the stored camera image and makes a surface out of it
+        self.model.screen.blit(newSurface,(0,0)) # Make background of the sufrace (so it becomes live video)
 
 class Organizer():
     """State machine that regulates whether or not we see the menu or the game
@@ -139,7 +159,7 @@ def Main():
     organizer.state = "homeScreen"
     #initalize all the main classes
     mainModel = OverallModel(organizer,screenSize,camera,clock,fps)
-    mainView = View(screenSize, mainModel)
+    mainView = SpaceInvadersView(screenSize, mainModel)
     #mainController = Controller(mainModel)
     #this is the mouse controller
     fakeObject = ObjectRecogController(mainModel)
