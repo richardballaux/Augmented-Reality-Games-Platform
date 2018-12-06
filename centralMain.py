@@ -1,8 +1,9 @@
 """This is the file that is ran when you want to start the full AR arcade"""
 
 from view import View
-from pong import PongView, PongModel, PongMouseController, PongObjectRecogController
+from pong import PongView, PongModel, PongMouseController, PongObjectRecogController  # use everything, but import it like this so we can use the function just normally instead of the need to put the file in front
 from space_invaders import SpaceInvadersView, SpaceInvadersModel, SpaceInvadersController
+from Calibration import CalibrationModel, CalibrationView, CalibrationController
 import pygame
 from pygame.locals import *
 import time
@@ -20,7 +21,7 @@ class OverallModel():
         self.screenSize = screenSize
         self.width = screenSize[0]
         self.height = screenSize[1]
-        self.closePlatform = False
+        self.closePlatform = False   #TODO Comment This
         self.clock = clock
         self.fps = fps
         self.cursor = Cursor(0,0,20,self.organizer) # Initialize a cursor in coord (0,0) with radius 20
@@ -28,6 +29,8 @@ class OverallModel():
         self.spaceInvadersButton = CursorRecognition("Space Invaders",30, [500,200, 400,200],self.organizer)
         self.camera = camera
         OR.calibrate(screenSize, self.camera, 0) # Initialize the color for controller '0'
+
+
         self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera,0)  # Get the coordinates for controller '0'
 
 
@@ -77,14 +80,32 @@ class OverallModel():
                     self.spaceInvadersController.update()
                     self.spaceInvadersModel.update()
                     self.spaceInvadersView.draw()
-                    self.clock.tick(self.fps/2)
+                    self.clock.tick(self.fps/2)  #TODO What is this??
                 else:
                     running = False
                     self.organizer.state == "homeScreen"
 
         if self.organizer.state == "calibrationTest":
-            self.calibrationModel
-
+            self.calibrationPhaseKeeper = Organizer()
+            self.calibrationPhaseKeeper.state = "menu"
+            self.calibrationModel = CalibrationModel(self.screen,self.camera, self.calibrationPhaseKeeper)
+            self.calibrationView = CalibrationView(self.calibrationModel)
+            self.calibrationController = CalibrationController(self.calibrationModel)
+            running = True
+            while running:
+                for event in pygame.event.get():
+                    if event.type is pygame.QUIT:
+                        running = False
+                        self.calibrationModel.backToHomeScreen = True
+                        self.closePlatform = True
+                    if self.calibrationModel.backToHomeScreen == False:
+                        self.calibrationModel.update()
+                        self.calibrationController.update()
+                        self.calibrationView.draw()
+                        self.clock.tick(self.fps/2)
+                    else:
+                        running = False
+                        self.organizer.state = "homeScreen"
 
 class MouseController():
     """handles input from the mouse"""
@@ -121,6 +142,8 @@ class Organizer():
         self.state = "menu"
         self.settings_ballSpeed = 5
         self.settings_cursorColor = (255, 20, 147)
+        self.controllernr = 1
+        self.win
 
 def Main():
     """Update graphics and check for pygame events.
@@ -136,7 +159,7 @@ def Main():
     camera = OR.setup(screenSize) # Initialize a camera via the object recognition in openCV
     organizer = Organizer() # initialize an Organizer object
     #We start the game in the organizer state
-    organizer.state = "homeScreen"
+    organizer.state = "calibrationTest"
     #initalize all the main classes
     mainModel = OverallModel(organizer,screenSize,camera,clock,fps)
     mainView = View(screenSize, mainModel)

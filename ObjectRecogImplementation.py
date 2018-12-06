@@ -21,6 +21,7 @@ def calibrate(resolution, cam, controller):
     else:
         lowerBoundOne=bounds[0:3]
         upperBoundOne=bounds[3:6]
+    
 
 def setup(resolution):
     """

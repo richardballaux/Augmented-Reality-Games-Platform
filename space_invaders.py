@@ -105,17 +105,16 @@ class SpaceInvadersModel():
             #areaSurveillance over the "go back to homeScreen button"
 
     def playerShoot(self):
-    """This makes the player shoot from its current position
-    """
+        """This makes the player shoot from its current position"""
         playerbullet = Bullet(10,1,self.player.x,self.player.y)
         playerbullet.add(self.playerBulletSpriteGroup)
 
     def moveEnemies(self):
-    """this function makes the enemies move accros the screen starting from left to right and then down
-    The enemies are only moved once every 10 loops. So the first thing the function does is checking if the looper is 10.
-    If so then it moves the enemies. If not then it increments the looper by one.
-    So the enemies move left and right for 5 steps (self.enemiesXMovement) of 10 pixels each.
-    """
+        """this function makes the enemies move accros the screen starting from left to right and then down
+        The enemies are only moved once every 10 loops. So the first thing the function does is checking if the looper is 10.
+        If so then it moves the enemies. If not then it increments the looper by one.
+        So the enemies move left and right for 5 steps (self.enemiesXMovement) of 10 pixels each.
+        """
         if self.enemyMoveLooper == 10:
             if self.moveRight:
                 self.enemiesXposition +=1
@@ -296,7 +295,7 @@ class Bullet(pygame.sprite.Sprite):
         """move the bullet and if the bullet moves out of the screen it kills itself"""
         self.y = self.y -self.direction*self.speed
         self.rect.y = self.rect.y-self.direction*self.speed
-        if self.y ==0 or self.y=1080:
+        if self.y ==0 or self.y==1080:
             self.kill()
 
     def update(self):
