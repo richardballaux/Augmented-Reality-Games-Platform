@@ -139,6 +139,7 @@ class PongModel():
     def update(self):
         """updates all the components the model has dependent on what state Organizer.state is in"""
         if self.organizer.state == "menu":
+            print("check")
             self.selectSpeedButton.areaSurveillance(self.cursor, "select_speed", self.organizer, "state", "select_speed")
             self.homeScreenButton.areaSurveillance(self.cursor,"menu",self,"backToHomeScreen",True)
 

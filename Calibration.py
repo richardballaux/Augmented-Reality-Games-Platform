@@ -2,6 +2,7 @@ import os
 import pygame
 from cursor import Cursor, CursorRecognition
 import ObjectRecogImplementation as OR
+import time
 
 class CalibrationModel():
     """This is the model for the calibration test after the color calibration"""
@@ -12,26 +13,32 @@ class CalibrationModel():
         self.organizer = organizer
         self.firstCheck = False
         self.cursor = Cursor(0,0,20,self.organizer)
-        self.upperLeftButton = CursorRecognition("1",30, [10,10,200,200],self.organizer)
-        self.upperRightButton = CursorRecognition("2",30, [1850-210, 10, 200, 200], self.organizer)
-        self.lowerLeftButton = CursorRecognition("3", 30, [10, 1080-210, 200, 200], self.organizer)
-        self.lowerRightButton = CursorRecognition("4", 30, [1850-210, 1080-210,200,200], self.organizer) # I hate hardcoding, resolution is 1850,1080
+        self.upperLeftButton = CursorRecognition("1",30, [50,50,200,200],self.organizer)
+        self.upperRightButton = CursorRecognition("2",30, [1850-250, 50, 200, 200], self.organizer)
+        self.lowerLeftButton = CursorRecognition("3", 30,[1850-250, 1080-250,200,200], self.organizer)
+        self.lowerRightButton = CursorRecognition("4", 30,[50, 1080-250, 200, 200] , self.organizer) # I hate hardcoding, resolution is 1850,1080
         self.controllernr = controllernr
         self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera,0)  # Get the coordinates for controller '0'
+        self.allowedTime = 20
+        self.startTime = time.time()
+        self.elapsedTime = time.time()
+        self.timer = self.elapsedTime - self.startTime
 
 
     def update(self):
-
-        if self.organizer.state == "first":
+        self.elapsedTime = time.time()
+        self.timer = self.elapsedTime - self.startTime
+        if self.timer > self.allowedTime:
+            self.backToHomeScreen = True
+        elif self.organizer.state == "first":
             self.upperLeftButton.areaSurveillance(self.cursor,"second",self.organizer,"firstCheck","True")
         elif self.organizer.state == "second":
             self.upperRightButton.areaSurveillance(self.cursor,"third", self.organizer, "state", "third")
         elif self.organizer.state == "third":
             self.lowerLeftButton.areaSurveillance(self.cursor, "fourth", self.organizer, "state", "fourth")
         elif self.organizer.state == "fourth":
-            self.lowerRightButton.areaSurveillance(self.cursor, "backToHomeScreen", self.organizer, "state", "backToHomeScreen")
-        elif self.organizer.state == "backToHomeScreen":
-            self.backToHomeScreen = True
+            self.lowerRightButton.areaSurveillance(self.cursor, "fourth", self, "backToHomeScreen", "True")
+
 
 class CalibrationView():
     """This is the view class for the CalibrationTest"""
@@ -67,6 +74,8 @@ class CalibrationView():
             self.model.lowerLeftButton.draw(self.model.screen, self.colorGreen)
             self.model.lowerRightButton.draw(self.model.screen)
 
+        timer = self.numberfont.render(str(int(self.model.allowedTime-self.model.timer)), 6, self.colorGreen)
+        self.model.screen.blit(timer, (900,400))
         instructions = self.myfont.render("Hover over all the squares before the time runs out", 1, self.colorGreen)
         self.model.screen.blit(instructions, (400,20))
         self.model.cursor.draw(self.model.screen)
