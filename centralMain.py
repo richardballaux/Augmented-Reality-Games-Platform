@@ -46,8 +46,8 @@ class OverallModel():
         if self.organizer.state == "homeScreen":
             self.pongButton.areaSurveillance(self.cursor, "pong", self.organizer, "state", "pong")
             self.spaceInvadersButton.areaSurveillance(self.cursor, "spaceInvaders", self.organizer, "state", "spaceInvaders")
-            self.calibrationButton.areaSurveillance(self.cursor,"calibrationTest",self.organizer,"state","calibrationTest")
             self.closeButton.areaSurveillance(self.cursor,"homeScreen",self,"closePlatform","True")
+            self.calibrationButton.areaSurveillance(self.cursor,"calibrationTest",self.organizer,"state","calibrationTest")
 
         elif self.organizer.state == "pong":
             self.pongPhaseKeeper = Organizer()  #create state machine for inside the pong game
