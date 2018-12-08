@@ -54,7 +54,7 @@ class OverallModel():
                 for event in pygame.event.get():
                     if event.type is pygame.QUIT:
                         running = False
-                        self.spaceInvadersModel.backToHomeScreen = True
+                        self.pongModel.backToHomeScreen = True
                         self.closePlatform = True
                 if self.pongModel.backToHomeScreen == False: # If backToHomeScreen is false (game is still running), update everything
                     self.pongController.update()

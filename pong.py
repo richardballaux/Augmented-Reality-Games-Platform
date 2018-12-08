@@ -49,11 +49,12 @@ class PongView():
             self.model.speedThreeButton.draw(self.screen)
             self.model.speedFourButton.draw(self.screen)
             self.model.speedFiveButton.draw(self.screen)
-
             self.model.cursor.draw(self.screen)
 
         elif self.model.organizer.state == "pong_game":
             self.mode.stopGameButton.draw(self.screen)
+            if self.model.drawCursor:
+                self.model.cursor.draw(self.screen)
             for component in self.model.components:
                  component.draw(self.screen)
 
@@ -68,7 +69,8 @@ class PongView():
             self.model.restartButton.draw(self.screen)
             self.model.homeScreenButton.draw(self.screen)
             self.model.cursor.draw(self.screen)
-            pygame.display.update()
+
+        pygame.display.update()
 
 # class Organizer():
 #     """State machine that regulates whether or not we see the menu or the game
@@ -118,6 +120,7 @@ class PongModel():
         self.components = (self.upperboundary,self.lowerboundary,self.ball,self.leftPaddle,self.rightPaddle,self.score)
 
         self.cursor = Cursor(int(self.width/2),int(self.height/2), cursorRadius,self.organizer)
+        self.drawCursor = False
         #Buttons
         self.selectSpeedButton = CursorRecognition("Select speed",30, [50, self.height/2-50, 200,500],self.organizer) #Triggerare in state "menu" - yellow square
         self.speedOneButton = CursorRecognition("1",30, [int((self.width/6)*1)-50, int(self.height/2)-150, 150,150],self.organizer) # Number 1 to 5: square to select speed in state "select_speed"
@@ -206,11 +209,11 @@ class PongMouseController():
 
     def handle_event(self,event):
         if event.type == MOUSEMOTION:
-            if organizer.state == "menu" or "select_speed" or "endgame":
+            if self.model.organizer.state == "menu" or "select_speed" or "endgame":
                 self.model.objectCoordinatesRight, self.model.cameraImage = OR.getCoords(self.model.camera,0)
                 self.model.cursor.update(event.pos[0], event.pos[1])
 
-            if organizer.state == "pong_game":
+            if self.model.organizer.state == "pong_game":
                 self.model.objectCoordinatesRight, self.model.cameraImage = OR.getCoords(self.model.camera,0)
                 self.model.rightPaddle.update(event.pos[1]-self.model.rightPaddle.height/2.0)
                 self.model.leftPaddle.update(event.pos[0]-self.model.leftPaddle.height/2.0)
@@ -222,15 +225,31 @@ class PongObjectRecogController():
         self.model = model
 
     def update(self):
-        self.model.objectCoordinatesRight, self.model.cameraImage = OR.getCoords(self.model.camera,0)
-        self.model.cursor.update(self.model.objectCoordinatesRight[0],self.model.objectCoordinatesRight[1])
+        if self.model.organizer.state == "menu": # in the menu the input comes from one controller
+            self.model.objectCoordinatesRight, self.model.cameraImage = OR.getCoords(self.model.camera,0)
+            self.model.cursor.update(self.model.objectCoordinatesRight[0],self.model.objectCoordinatesRight[1])
 
-        self.model.objectCoordinatesLeft = OR.getCoords(self.model.camera,1)
-        self.model.cursor.update(self.model.objectCoordinatesLeft[0],self.model.objectCoordinatesLeft[1])
-        # If coordinates are -1, no object has been detected
-        self.model.leftPaddle.update(self.model.objectCoordinatesLeft[1]-self.model.leftPaddle.height/2.0)
-        self.model.rightPaddle.update(self.model.objectCoordinatesRight[1]-self.model.rightPaddle.height/2.0)
+        elif self.model.organizer.state == "pong_game":
+            self.model.objectCoordinatesRight, self.model.cameraImage = OR.getCoords(self.model.camera,0) #get the coordinates for the right player
+            self.model.rightPaddle.update(self.model.objectCoordinatesRight[1]-self.model.rightPaddle.height/2.0) #update the right paddle with the right coordinates
 
+            self.model.objectCoordinatesLeft = OR.getCoords(self.model.camera,1) # get the coordinates for the left player
+            self.model.leftPaddle.update(self.model.objectCoordinatesRight[1]-self.model.rightPaddle.height/2.0) #update the left paddle with the left coordinates
+
+            if self.model.objectCoordinatesRight[0]>800 and self.model.objectCoordinatesRight[0]<1100:
+                #if the right controller is in the center of the screen then update the cursor with the right coordinates and make it able to draw
+                self.model.cursor.update(self.model.objectCoordinatesRight[0],self.model.objectCoordinatesRight[1])
+                self.model.drawCursor = True
+            elif self.model.objectCoordinatesLeft[0]>800 and self.model.objectCoordinatesLeft[0]<1100:
+                # if the left controller is in the center of the screen then update the cursor with the left coordinates and make it able to draw
+                self.model.cursor.update(self.model.objectCoordinatesLeft[0],self.model.objectCoordinatesLeft[1])
+                self.model.drawCursor = True
+            else: #if none of the controllers is in the center of the screen then don't draw the cursor
+                self.model.drawCursor = False
+
+        elif self.model.organizer.state == "endgame":
+            self.model.objectCoordinatesRight, self.model.cameraImage = OR.getCoords(self.model.camera,0)
+            self.model.cursor.update(self.model.objectCoordinatesRight[0],self.model.objectCoordinatesRight[1])
 
 class Ball(pygame.sprite.Sprite):
     """this is the ball that bounces on the walls, the paddles and that you try to get in the goal of the other player
