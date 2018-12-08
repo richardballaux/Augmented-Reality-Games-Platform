@@ -37,7 +37,7 @@ class OverallModel():
         self.calibrationButton = CursorRecognition(" Calibrate", 30, [1000,200,300,200],self.organizer)
         self.closeButton = CursorRecognition("CLOSE",30,[1500,50,200,150],self.organizer)
         self.camera = camera
-        OR.calibrate(screenSize, self.camera, 0) # Initialize the color for controller '0'
+        OR.calibrate(self.screenSize, self.camera, 0) # Initialize the color for controller '0'
         self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera,0)  # Get the coordinates for controller '0'
 
 
@@ -114,7 +114,8 @@ class OverallModel():
                     self.clock.tick(self.fps/2)
                 else:
                     calibrationRunning = False
-                    self.organizer.state = "homeScreen"
+                    OR.calibrate(self.screenSize, self.camera, self.controllernr)
+                    self.organizer.state = "calibrationTest"
 
 class MouseController():
     """handles input from the mouse"""
@@ -185,8 +186,8 @@ def Main():
     organizer = Organizer() # initialize an Organizer object
     #We start the game in the organizer state
 
-    #TODO organizer.state = "calibrationTest"
-    organizer.state = "homeScreen"
+    organizer.state = "calibrationTest"
+    #TODO organizer.state = "homeScreen"
     #initalize all the main classes
     mainModel = OverallModel(organizer,screenSize,camera,clock,fps)
     mainView = overallView(screenSize, mainModel)
