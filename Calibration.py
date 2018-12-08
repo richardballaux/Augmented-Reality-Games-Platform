@@ -15,11 +15,12 @@ class CalibrationModel():
         self.upperLeftButton = CursorRecognition("1",30, [10,10,200,200],self.organizer)
         self.controllernr = controllernr
 
+
     def update(self):
 
         self.upperLeftButton.areaSurveillance(self.cursor,"calibration",self,"firstCheck","True")
 
-        if firstCheck == True:
+        if self.firstCheck == True:
             self.backToHomeScreen = True
 
 class CalibrationView():
@@ -29,19 +30,23 @@ class CalibrationView():
         self.myfont = pygame.font.SysFont("monospace", 42) #Font that is used in states "game" and "select_speed" to prompt the user
         self.numberfont = pygame.font.SysFont("monospace", 85, bold=True) #font is used for numbers in "select_speed" state
         self.ColorGreen = (0,250,0)
+        self.ColorBlack = (0,0,0)
+
 
     def draw(self):
         self.draw_background(self.model.screen)
-        if self.firstCheck == True:
+        if self.model.firstCheck == True:
             self.model.upperLeftButton.draw(self.model.screen, self.ColorGreen)
         else:
             self.model.upperLeftButton.draw(self.model.screen)
         instructions = self.myfont.render("Hover over all the squares before the time runs out", 1, self.ColorGreen)
         self.model.screen.blit(instructions, (400,20))
         pygame.display.update()
+        self.model.cursor.draw(self.model.screen)
 
     def draw_background(self,screen): # draw the camera image to the background
         self.model.screen.fill(self.ColorBlack)
+        print("check")
         newSurface = pygame.surfarray.make_surface(self.model.cameraImage) # Reads the stored camera image and makes a surface out of it
         self.model.screen.blit(newSurface,(0,0)) # Make background of the sufrace (so it becomes live video)
         pygame.display.update()
@@ -52,4 +57,4 @@ class CalibrationController():
 
     def update(self):
         self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera,0)
-        self.model.cursor.update(self.model.objsectCoordinates[0], self.model.objectCoordinates[1])
+        self.model.cursor.update(self.model.objectCoordinates[0], self.model.objectCoordinates[1])

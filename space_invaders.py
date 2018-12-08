@@ -127,22 +127,14 @@ class SpaceInvadersModel():
             #areaSurveillance over the "go back to homeScreen button"
 
     def playerShoot(self):
-<<<<<<< HEAD
         """This makes the player shoot from its current position"""
-=======
-        """This makes the player shoot from its current position
-        """
-        #TODO : make a looper so the player can't shoot constantly
->>>>>>> master
+
         playerbullet = Bullet(10,1,self.player.x,self.player.y)
         playerbullet.add(self.playerBulletSpriteGroup)
 
     def moveEnemies(self):
-<<<<<<< HEAD
-        """this function makes the enemies move accros the screen starting from left to right and then down
-=======
+
         """this function makes the enemies move across the screen starting from left to right and then down
->>>>>>> master
         The enemies are only moved once every 10 loops. So the first thing the function does is checking if the looper is 10.
         If so then it moves the enemies. If not then it increments the looper by one.
         So the enemies move left and right for 5 steps (self.enemiesXMovement) of 10 pixels each.

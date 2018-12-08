@@ -1,11 +1,7 @@
 """This is the file that is ran when you want to start the full AR arcade"""
 
-<<<<<<< HEAD
-from view import View
+
 from pong import PongView, PongModel, PongMouseController, PongObjectRecogController  # use everything, but import it like this so we can use the function just normally instead of the need to put the file in front
-=======
-from pong import PongView, PongModel, PongMouseController, PongObjectRecogController
->>>>>>> master
 from space_invaders import SpaceInvadersView, SpaceInvadersModel, SpaceInvadersController
 from Calibration import CalibrationModel, CalibrationView, CalibrationController
 import pygame
@@ -92,10 +88,10 @@ class OverallModel():
                     self.organizer.state == "homeScreen"
 
         if self.organizer.state == "calibrationTest":
-<<<<<<< HEAD
             self.calibrationPhaseKeeper = Organizer()
             self.calibrationPhaseKeeper.state = "menu"
-            self.calibrationModel = CalibrationModel(self.screen,self.camera, self.calibrationPhaseKeeper)
+            self.controllernr = 0
+            self.calibrationModel = CalibrationModel(self.screen,self.camera, self.calibrationPhaseKeeper, self.controllernr)
             self.calibrationView = CalibrationView(self.calibrationModel)
             self.calibrationController = CalibrationController(self.calibrationModel)
             running = True
@@ -113,10 +109,6 @@ class OverallModel():
                     else:
                         running = False
                         self.organizer.state = "homeScreen"
-=======
-            self.calibrationModel = calibrationModel()
-
->>>>>>> master
 
 class MouseController():
     """handles input from the mouse"""
@@ -173,7 +165,7 @@ class Organizer():
         self.settings_ballSpeed = 5
         self.settings_cursorColor = (255, 20, 147)
         self.controllernr = 1
-        self.win
+        self.win = False
 
 def Main():
     """Update graphics and check for pygame events.
