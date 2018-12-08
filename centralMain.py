@@ -89,7 +89,7 @@ class OverallModel():
 
         if self.organizer.state == "calibrationTest":
             self.calibrationPhaseKeeper = Organizer()
-            self.calibrationPhaseKeeper.state = "menu"
+            self.calibrationPhaseKeeper.state = "calibration"
             self.controllernr = 0
             self.calibrationModel = CalibrationModel(self.screen,self.camera, self.calibrationPhaseKeeper, self.controllernr)
             self.calibrationView = CalibrationView(self.calibrationModel)
@@ -181,7 +181,7 @@ def Main():
     camera = OR.setup(screenSize) # Initialize a camera via the object recognition in openCV
     organizer = Organizer() # initialize an Organizer object
     #We start the game in the organizer state
-    organizer.state = "calibrationTest"
+    organizer.state = "homeScreen"
     #initalize all the main classes
     mainModel = OverallModel(organizer,screenSize,camera,clock,fps)
     mainView = overallView(screenSize, mainModel)

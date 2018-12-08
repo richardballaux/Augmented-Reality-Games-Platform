@@ -23,6 +23,7 @@ class CalibrationModel():
         if self.firstCheck == True:
             self.backToHomeScreen = True
 
+
 class CalibrationView():
     """This is the view class for the CalibrationTest"""
     def __init__(self,model):
@@ -41,20 +42,17 @@ class CalibrationView():
             self.model.upperLeftButton.draw(self.model.screen)
         instructions = self.myfont.render("Hover over all the squares before the time runs out", 1, self.ColorGreen)
         self.model.screen.blit(instructions, (400,20))
-        pygame.display.update()
         self.model.cursor.draw(self.model.screen)
+        pygame.display.update()
 
     def draw_background(self,screen): # draw the camera image to the background
-        self.model.screen.fill(self.ColorBlack)
-        print("check")
         newSurface = pygame.surfarray.make_surface(self.model.cameraImage) # Reads the stored camera image and makes a surface out of it
         self.model.screen.blit(newSurface,(0,0)) # Make background of the sufrace (so it becomes live video)
-        pygame.display.update()
 
 class CalibrationController():
     def __init__(self,model):
         self.model = model
 
     def update(self):
-        self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera,0)
+        self.model.objectCoordinates, self.model.cameraImage = OR.getCoords(self.model.camera,self.model.controllernr)
         self.model.cursor.update(self.model.objectCoordinates[0], self.model.objectCoordinates[1])
