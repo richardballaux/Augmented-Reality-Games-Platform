@@ -142,6 +142,7 @@ class SpaceInvadersModel():
             self.lastTimeShot = time.time()
 
     def moveEnemies(self):
+
         """this function makes the enemies move across the screen starting from left to right and then down
         The enemies are only moved once every 10 loops. So the first thing the function does is checking if the looper is 10.
         If so then it moves the enemies. If not then it increments the looper by one.
