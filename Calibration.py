@@ -6,10 +6,11 @@ import time
 
 class CalibrationModel():
     """This is the model for the calibration test after the color calibration"""
-    def __init__(self,screen,camera, organizer, controllernr):
+    def __init__(self,screen,camera, organizer, controllernr, lastState):
         self.camera = camera
         self.screen = screen
-        self.backToHomeScreen = False
+        self.lastState = lastState
+        self.backToLastState = False
         self.backToCalibration = False
         self.organizer = organizer
         self.firstCheck = False
@@ -38,7 +39,7 @@ class CalibrationModel():
         elif self.organizer.state == "third":
             self.lowerRightButton.areaSurveillance(self.cursor, "fourth", self.organizer, "state", "fourth")
         elif self.organizer.state == "fourth":
-            self.lowerLeftButton.areaSurveillance(self.cursor, "fourth", self, "backToHomeScreen", True)
+            self.lowerLeftButton.areaSurveillance(self.cursor, "fourth", self, "backToLastState", True)
 
 
 class CalibrationView():

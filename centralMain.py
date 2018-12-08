@@ -38,7 +38,9 @@ class OverallModel():
         self.closeButton = CursorRecognition("CLOSE",30,[1500,50,200,150],self.organizer)
         self.camera = camera
         OR.calibrate(self.screenSize, self.camera, 0) # Initialize the color for controller '0'
+        organizer.state = "calibrationTest"
         self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera,0)  # Get the coordinates for controller '0'
+        self.controllernr = 0
 
 
     def update(self):
@@ -96,8 +98,7 @@ class OverallModel():
         elif self.organizer.state == "calibrationTest":
             self.calibrationPhaseKeeper = Organizer()
             self.calibrationPhaseKeeper.state = "first"
-            self.controllernr = 0
-            self.calibrationModel = CalibrationModel(self.screen,self.camera, self.calibrationPhaseKeeper, self.controllernr)
+            self.calibrationModel = CalibrationModel(self.screen,self.camera, self.calibrationPhaseKeeper, self.controllernr, self.organizer.lastState)
             self.calibrationView = CalibrationView(self.calibrationModel)
             self.calibrationController = CalibrationController(self.calibrationModel)
             calibrationRunning = True
@@ -116,9 +117,11 @@ class OverallModel():
                     calibrationRunning = False
                     OR.calibrate(self.screenSize, self.camera, self.controllernr)
                     self.organizer.state = "calibrationTest"
-                if self.calibrationModel.backToHomeScreen == True:
+                if self.calibrationModel.backToLastState == True:
                     calibrationRunning = False
-                    self.organizer.state = "homeScreen"
+                    self.organizer.state = self.calibrationModel.lastState
+
+            self.lastState = self.organizer.state
 
 class MouseController():
     """handles input from the mouse"""
@@ -173,8 +176,9 @@ class Organizer():
         self.state = "menu"
         self.settings_ballSpeed = 5
         self.settings_cursorColor = (255, 20, 147)
-        self.controllernr = 1
         self.win = False
+        self.lastState = "homeScreen"
+
 
 def Main():
     """
@@ -189,8 +193,8 @@ def Main():
     organizer = Organizer() # initialize an Organizer object
     #We start the game in the organizer state
 
-    organizer.state = "calibrationTest"
-    #TODO organizer.state = "homeScreen"
+
+    organizer.state = "homeScreen"
     #initalize all the main classes
     mainModel = OverallModel(organizer,screenSize,camera,clock,fps)
     mainView = overallView(screenSize, mainModel)

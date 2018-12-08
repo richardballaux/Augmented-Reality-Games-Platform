@@ -93,7 +93,6 @@ def getCoords(cam,controller):
         lowerBound = lowerBoundOne
         upperBound = upperBoundOne
     # create the Mask, look for the object in this color range
-    print(upperBound)
     mask=cv2.inRange(imgHSV,lowerBound,upperBound)
     # Delete all the noise in the image
     maskOpen=cv2.morphologyEx(mask,cv2.MORPH_OPEN,kernelOpen)
