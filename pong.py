@@ -140,7 +140,7 @@ class PongModel():
         """updates all the components the model has dependent on what state Organizer.state is in"""
         if self.organizer.state == "menu":
             self.selectSpeedButton.areaSurveillance(self.cursor, "select_speed", self.organizer, "state", "select_speed")
-            self.homeScreenButton.areaSurveillance(self.cursor,"menu",self,"backToHomeScreen","True")
+            self.homeScreenButton.areaSurveillance(self.cursor,"menu",self,"backToHomeScreen",True)
 
         elif self.organizer.state == "select_speed": # Set 5 areas to click on, each mapped to a different ball speed
             self.speedOneButton.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 5)
@@ -183,7 +183,7 @@ class PongModel():
 
         elif self.organizer.state == "endgame": #this state is entered when one of the players reaches 5 points
             self.restartButton.areaSurveillance(self.cursor, "menu", self.organizer, "state", "menu")
-            self.homeScreenButton.areaSurveillance(self.cursor, "menu",self, "backToHomeScreen","True")
+            self.homeScreenButton.areaSurveillance(self.cursor, "menu",self, "backToHomeScreen",True)
             self.score.reset()
 
 class PongMouseController():
