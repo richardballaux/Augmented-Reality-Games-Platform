@@ -30,8 +30,6 @@ class OverallModel():
         self.calibrationButton = CursorRecognition(" Calibrate", 30, [1000,200,300,200],self.organizer)
         self.camera = camera
         OR.calibrate(screenSize, self.camera, 0) # Initialize the color for controller '0'
-
-
         self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera,0)  # Get the coordinates for controller '0'
 
 
@@ -41,19 +39,17 @@ class OverallModel():
             self.spaceInvadersButton.areaSurveillance(self.cursor, "spaceInvaders", self.organizer, "state", "spaceInvaders")
             #TODO add areaSurveillance to calibrationButton
 
-        if self.organizer.state == "pong":
+        elif self.organizer.state == "pong":
             self.pongPhaseKeeper = Organizer()  #create state machine for inside the pong game
             self.pongPhaseKeeper.state = "menu" # First phase of the game in the state machine is the menu
             self.pongModel = PongModel(self.screen,self.camera,self.pongPhaseKeeper)
-            #TODO give existing screen to newly initialized view, because i think pygame can't handle multiple screens
-            #TODO Kill the old screen?
             self.pongView = PongView(self.pongModel)
             self.pongController = PongObjectRecogController(self.pongModel)
-            running = True
-            while running: # The program will stay in this while loop while running pong, until it gets closed
+            pongRunning = True
+            while pongRunning: # The program will stay in this while loop while running pong, until it gets closed
                 for event in pygame.event.get():
                     if event.type is pygame.QUIT:
-                        running = False
+                        pongRunning = False
                         self.pongModel.backToHomeScreen = True
                         self.closePlatform = True
                 if self.pongModel.backToHomeScreen == False: # If backToHomeScreen is false (game is still running), update everything
@@ -62,20 +58,20 @@ class OverallModel():
                     self.pongView.draw()
                     self.clock.tick(self.fps/2)
                 else:                                   # if backToHomeScreen is true (game ended, program got closed), stop the while loop and go back to the homeScreen state
-                    running = False
+                    pongRunning = False
                     self.organizer.state == "homeScreen"
 
-        if self.organizer.state == "spaceInvaders":
+        elif self.organizer.state == "spaceInvaders":
             self.spaceInvadersPhaseKeeper = Organizer() #create state machine for inside the pong game
             self.spaceInvadersPhaseKeeper.state = "menu"
             self.spaceInvadersModel = SpaceInvadersModel(self.screen,self.camera,self.spaceInvadersPhaseKeeper)
             self.spaceInvadersView = SpaceInvadersView(self.spaceInvadersModel)
             self.spaceInvadersController = SpaceInvadersController(self.spaceInvadersModel)
-            running = True
-            while running:
+            spaceRunning = True
+            while spaceRunning:
                 for event in pygame.event.get():
                     if event.type is pygame.QUIT:
-                        running = False
+                        spaceRunning = False
                         self.spaceInvadersModel.backToHomeScreen = True
                         self.closePlatform = True
                 if self.spaceInvadersModel.backToHomeScreen == False:
@@ -84,31 +80,31 @@ class OverallModel():
                     self.spaceInvadersView.draw()
                     self.clock.tick(self.fps/2)  #TODO What is this??
                 else:
-                    running = False
+                    spaceRunning = False
                     self.organizer.state == "homeScreen"
 
         if self.organizer.state == "calibrationTest":
             self.calibrationPhaseKeeper = Organizer()
-            self.calibrationPhaseKeeper.state = "calibration"
+            self.calibrationPhaseKeeper.state = "first"
             self.controllernr = 0
             self.calibrationModel = CalibrationModel(self.screen,self.camera, self.calibrationPhaseKeeper, self.controllernr)
             self.calibrationView = CalibrationView(self.calibrationModel)
             self.calibrationController = CalibrationController(self.calibrationModel)
-            running = True
-            while running:
+            calibrationRunning = True
+            while calibrationRunning:
                 for event in pygame.event.get():
                     if event.type is pygame.QUIT:
-                        running = False
+                        calibrationRunning = False
                         self.calibrationModel.backToHomeScreen = True
                         self.closePlatform = True
-                    if self.calibrationModel.backToHomeScreen == False:
-                        self.calibrationModel.update()
-                        self.calibrationController.update()
-                        self.calibrationView.draw()
-                        self.clock.tick(self.fps/2)
-                    else:
-                        running = False
-                        self.organizer.state = "homeScreen"
+                if self.calibrationModel.backToHomeScreen == False:
+                    self.calibrationController.update()
+                    self.calibrationModel.update()
+                    self.calibrationView.draw()
+                    self.clock.tick(self.fps/2)
+                else:
+                    calibrationRunning = False
+                    self.organizer.state = "homeScreen"
 
 class MouseController():
     """handles input from the mouse"""
@@ -181,20 +177,20 @@ def Main():
     camera = OR.setup(screenSize) # Initialize a camera via the object recognition in openCV
     organizer = Organizer() # initialize an Organizer object
     #We start the game in the organizer state
-    organizer.state = "homeScreen"
+    organizer.state = "calibrationTest"
     #initalize all the main classes
     mainModel = OverallModel(organizer,screenSize,camera,clock,fps)
     mainView = overallView(screenSize, mainModel)
     #mainController = Controller(mainModel)
     #this is the mouse controller
     fakeObject = ObjectRecogController(mainModel)
-    running = True
-    while running:
+    overallRunning = True
+    while overallRunning:
         if mainModel.closePlatform == True:
-            running = False
+            overallRunning = False
         for event in pygame.event.get():
             if event.type is pygame.QUIT:
-                running = False
+                overallRunning = False
         fakeObject.update()
         mainModel.update()
         mainView.draw()

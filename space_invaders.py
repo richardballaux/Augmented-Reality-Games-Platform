@@ -66,7 +66,7 @@ class SpaceInvadersModel():
         self.drawCursor = False
         #creating the buttons that this game will have
         self.startGameButton = CursorRecognition("Start",30, [500, 500, 200,200],self.organizer)
-        self.homeScreenButton = CursorRecognition("Home Screen",30, [500,500, 300,150],self.organizer)
+        self.homeScreenButton = CursorRecognition("Home Screen",30, [400,500, 500,150],self.organizer)
         self.restartButton = CursorRecognition("Restart",30, [500,700, 200,150],self.organizer)
         self.stopGameButton = CursorRecognition("STOP",30,[925,50,150,75],self.organizer)
 
@@ -125,9 +125,11 @@ class SpaceInvadersModel():
         elif self.organizer.state == "menu": #this state is the first state when we enter this game
             #areaSurveillance over the start button of the game
             self.startGameButton.areaSurveillance(self.cursor, "game", self.organizer, "state", "game")
+            self.homeScreenButton.areaSurveillance(self.cursor,"menu",self,"backToHomeScreen","True")
+            print("backToHomeScreen:",self.backToHomeScreen, "organizer state: ", self.organizer.state)
 
         elif self.organizer.state == "endgame": #this state occurs when the game ends
-            self.homeScreenButton.areaSurveillance(self.cursor, "True", self, "backToHomeScreen", "True")
+            self.homeScreenButton.areaSurveillance(self.cursor, "menu", self, "backToHomeScreen", "True")
             self.restartButton.areaSurveillance(self.cursor, "menu",self.organizer, "state", "menu")
             #areaSurveillance over the "restart button" of the game
             #areaSurveillance over the "go back to homeScreen button"
@@ -221,6 +223,7 @@ class SpaceInvadersView():
             #draw button to start the game
             #maybe also draw the highscore would be cool
             self.model.startGameButton.draw(self.model.screen)
+            self.model.homeScreenButton.draw(self.model.screen)
             menutext = self.myfont.render("Keep your cursor in the square to start the game", 1, self.ColorGreen)
             self.model.screen.blit(menutext, (50,50))
             instructions = self.myfont.render("Instructions: ", 1, self.ColorGreen)
@@ -299,7 +302,8 @@ class Player(pygame.sprite.Sprite):
 
     def move(self):
         """moves the spaceship with one times the speed"""
-        self.x = self.x+self.speed*self.direction
+        self.x = self.x + self.speed * self.direction
+        self.rect.x = self.rect.x + self.speed*self.direction
 
     def update(self):
         """update the player"""
