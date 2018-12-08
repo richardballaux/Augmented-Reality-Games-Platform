@@ -107,7 +107,7 @@ class OverallModel():
                         calibrationRunning = False
                         self.calibrationModel.backToHomeScreen = True
                         self.closePlatform = True
-                if self.calibrationModel.backToHomeScreen == False:
+                if self.calibrationModel.backToCalibration == False:
                     self.calibrationController.update()
                     self.calibrationModel.update()
                     self.calibrationView.draw()
@@ -116,6 +116,9 @@ class OverallModel():
                     calibrationRunning = False
                     OR.calibrate(self.screenSize, self.camera, self.controllernr)
                     self.organizer.state = "calibrationTest"
+                if self.calibrationModel.backToHomeScreen == True:
+                    calibrationRunning = False
+                    self.organizer.state = "homeScreen"
 
 class MouseController():
     """handles input from the mouse"""

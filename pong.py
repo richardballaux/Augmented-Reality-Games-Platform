@@ -216,10 +216,12 @@ class PongObjectRecogController():
 
         elif self.model.organizer.state == "pong_game":
             self.model.objectCoordinatesRight, self.model.cameraImage = OR.getCoords(self.model.camera,0) #get the coordinates for the right player
-            self.model.rightPaddle.update(self.model.objectCoordinatesRight[1]-self.model.rightPaddle.height/2.0) #update the right paddle with the right coordinates
+            if len(self.model.objectCoordinatesRight) != 0:
+                self.model.rightPaddle.update(self.model.objectCoordinatesRight[1]-self.model.rightPaddle.height/2.0) #update the right paddle with the right coordinates
 
             self.model.objectCoordinatesLeft = OR.getCoords(self.model.camera,1) # get the coordinates for the left player
-            self.model.leftPaddle.update(self.model.objectCoordinatesRight[1]-self.model.rightPaddle.height/2.0) #update the left paddle with the left coordinates
+            if len(self.model.objectCoordinatesLeft) != 0:
+                self.model.leftPaddle.update(self.model.objectCoordinatesLeft[1]-self.model.leftPaddle.height/2.0) #update the left paddle with the left coordinates
 
             if self.model.objectCoordinatesRight[0]>800 and self.model.objectCoordinatesRight[0]<1100:
                 #if the right controller is in the center of the screen then update the cursor with the right coordinates and make it able to draw

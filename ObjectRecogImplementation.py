@@ -6,7 +6,8 @@ import cv2
 cv2.__version__
 import numpy as np
 import SetColor as sct
-centerCoords = (0,0)
+centerCoordsZero = (0,0)
+centerCoordsOne = (0,0)
 
 def calibrate(resolution, cam, controller):
     global lowerBoundZero
@@ -21,7 +22,7 @@ def calibrate(resolution, cam, controller):
     else:
         lowerBoundOne=bounds[0:3]
         upperBoundOne=bounds[3:6]
-    
+
 
 def setup(resolution):
     """
@@ -69,13 +70,15 @@ def getCoords(cam,controller):
     kernelOpen=np.ones((5,5))
     kernelClose=np.ones((20,20))
 
+
     # Get the video data
     ret, orImg=cam.read()
 
     # Resize the frame, to have not too many pixels and flip the image.
     orImg=cv2.resize(orImg,(horRes,vertRes))
     global img
-    global centerCoords
+    global centerCoordsZero
+    global centerCoordsOne
     img = cv2.flip(orImg, 1)
     backGroundImage = cv2.cvtColor(np.rot90(orImg),cv2.COLOR_BGR2RGB)
 
@@ -90,6 +93,7 @@ def getCoords(cam,controller):
         lowerBound = lowerBoundOne
         upperBound = upperBoundOne
     # create the Mask, look for the object in this color range
+    print(upperBound)
     mask=cv2.inRange(imgHSV,lowerBound,upperBound)
     # Delete all the noise in the image
     maskOpen=cv2.morphologyEx(mask,cv2.MORPH_OPEN,kernelOpen)
@@ -106,12 +110,15 @@ def getCoords(cam,controller):
         coords.append(center)
         widthList.append(w)
     if len(widthList) > 0:
-        centerCoords = coords[widthList.index(max(widthList))]
+        if controller ==0:
+            centerCoordsZero = coords[widthList.index(max(widthList))]
+        else:
+            centerCoordsOne = coords[widthList.index(max(widthList))]
     #cv2.circle(img,center,int(rad),(0,22,0),2)
     if controller == 0:
-        return centerCoords,backGroundImage  # return coords and camera image for the main Controller
+        return centerCoordsZero,backGroundImage  # return coords and camera image for the main Controller
     else:
-        return centerCoords #return just the coords, camera is provided via the first controller
+        return centerCoordsOne #return just the coords, camera is provided via the first controller
 
 
 # test code to see if the functions work

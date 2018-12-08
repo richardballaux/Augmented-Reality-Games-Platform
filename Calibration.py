@@ -10,34 +10,35 @@ class CalibrationModel():
         self.camera = camera
         self.screen = screen
         self.backToHomeScreen = False
+        self.backToCalibration = False
         self.organizer = organizer
         self.firstCheck = False
         self.cursor = Cursor(0,0,20,self.organizer)
-        self.upperLeftButton = CursorRecognition("1",30, [50,50,200,200],self.organizer)
-        self.upperRightButton = CursorRecognition("2",30, [1850-250, 50, 200, 200], self.organizer)
-        self.lowerLeftButton = CursorRecognition("3", 30,[1850-250, 1080-250,200,200], self.organizer)
-        self.lowerRightButton = CursorRecognition("4", 30,[50, 1080-250, 200, 200] , self.organizer) # I hate hardcoding, resolution is 1850,1080
+        self.upperLeftButton = CursorRecognition("1",20, [50,50,200,200],self.organizer)
+        self.upperRightButton = CursorRecognition("2",20, [1850-250, 50, 200, 200], self.organizer)
+        self.lowerRightButton = CursorRecognition("3", 20,[1850-250, 1080-250,200,200], self.organizer)
+        self.lowerLeftButton = CursorRecognition("4", 20,[50, 1080-250, 200, 200] , self.organizer) # I hate hardcoding, resolution is 1850,1080
         self.controllernr = controllernr
         self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera,0)  # Get the coordinates for controller '0'
-        self.allowedTime = 20
-        self.startTime = time.time()
-        self.elapsedTime = time.time()
-        self.timer = self.elapsedTime - self.startTime
+        self.allowedTime = 15   # Time to complete the calibration
+        self.startTime = time.time()   # Starttime when the program gets initialized
+        self.elapsedTime = time.time() # gets updated every loop
+        self.timer = self.elapsedTime - self.startTime # Time left
 
 
     def update(self):
         self.elapsedTime = time.time()
         self.timer = self.elapsedTime - self.startTime
         if self.timer > self.allowedTime:
-            self.backToHomeScreen = True
+            self.backToCalibration = True
         elif self.organizer.state == "first":
-            self.upperLeftButton.areaSurveillance(self.cursor,"second",self.organizer,"firstCheck","True")
+            self.upperLeftButton.areaSurveillance(self.cursor,"second",self.organizer,"state","second")
         elif self.organizer.state == "second":
             self.upperRightButton.areaSurveillance(self.cursor,"third", self.organizer, "state", "third")
         elif self.organizer.state == "third":
-            self.lowerLeftButton.areaSurveillance(self.cursor, "fourth", self.organizer, "state", "fourth")
+            self.lowerRightButton.areaSurveillance(self.cursor, "fourth", self.organizer, "state", "fourth")
         elif self.organizer.state == "fourth":
-            self.lowerRightButton.areaSurveillance(self.cursor, "fourth", self, "backToHomeScreen", "True")
+            self.lowerLeftButton.areaSurveillance(self.cursor, "fourth", self, "backToHomeScreen", True)
 
 
 class CalibrationView():
@@ -71,8 +72,9 @@ class CalibrationView():
         elif self.model.organizer.state == "fourth":
             self.model.upperLeftButton.draw(self.model.screen,self.colorGreen)
             self.model.upperRightButton.draw(self.model.screen,self.colorGreen)
-            self.model.lowerLeftButton.draw(self.model.screen, self.colorGreen)
-            self.model.lowerRightButton.draw(self.model.screen)
+            self.model.lowerLeftButton.draw(self.model.screen)
+            self.model.lowerRightButton.draw(self.model.screen, self.colorGreen)
+
 
         timer = self.numberfont.render(str(int(self.model.allowedTime-self.model.timer)), 6, self.colorGreen)
         self.model.screen.blit(timer, (900,400))
