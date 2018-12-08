@@ -157,6 +157,7 @@ class PongModel():
         """updates all the components the model has dependent on what state Organizer.state is in"""
         if self.organizer.state == "menu":
             self.selectSpeedButton.areaSurveillance(self.cursor, "select_speed", self.organizer, "state", "select_speed")
+            self.homeScreenButton.areaSurveillance(self.cursor,"menu",self,"backToHomeScreen","True")
 
         elif self.organizer.state == "select_speed": # Set 5 areas to click on, each mapped to a different ball speed
             self.speedOneButton.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 5)
@@ -166,7 +167,7 @@ class PongModel():
             self.speedFiveButton.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 28)
 
         elif self.organizer.state == "pong_game":
-            self.stopGameButton.areaSurveillance(self.cursor, "backToHomeScreen",self,"backToHomeScreen",True)
+            self.stopGameButton.areaSurveillance(self.cursor, "menu",self.organizer,"state","menu")
             self.ball.update(self.organizer)
             #first update the position of the ball and then check if there has been a collision
             boundaryBounce = pygame.sprite.spritecollide(self.ball,self.boundaryGroup,False)
@@ -188,7 +189,7 @@ class PongModel():
                 self.ball.rect.y = self.ball.y
                 self.ball.movingDirection=[1,1] #Makes the ball go to right down again
 
-            if self.ball.x > self.width-5: #when ball goes in the right goal
+            elif self.ball.x > self.width-5: #when ball goes in the right goal
                 self.score.update(0)       #update scores(give player 1 a point)
                 pygame.mixer.Sound.play(self.deathSound)
                 self.ball.x = int(4*self.width/5)
@@ -199,7 +200,7 @@ class PongModel():
 
         elif self.organizer.state == "endgame": #this state is entered when one of the players reaches 5 points
             self.restartButton.areaSurveillance(self.cursor, "menu", self.organizer, "state", "menu")
-            self.homeScreenButton.areaSurveillance(self.cursor, "True",self, "backToHomeScreen","True")
+            self.homeScreenButton.areaSurveillance(self.cursor, "menu",self, "backToHomeScreen","True")
             self.score.reset()
 
 class PongMouseController():

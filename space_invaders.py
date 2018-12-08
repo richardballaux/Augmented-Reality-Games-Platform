@@ -66,8 +66,8 @@ class SpaceInvadersModel():
         self.drawCursor = False
         #creating the buttons that this game will have
         self.startGameButton = CursorRecognition("Start",30, [500, 500, 200,200],self.organizer)
-        self.homeScreenButton = CursorRecognition("Home Screen",30, [400,500, 500,150],self.organizer)
-        self.restartButton = CursorRecognition("Restart",30, [500,700, 200,150],self.organizer)
+        self.homeScreenButton = CursorRecognition("Home Screen",30, [700,500, 400,150],self.organizer)
+        self.restartButton = CursorRecognition("Restart",30, [500,700, 250,150],self.organizer)
         self.stopGameButton = CursorRecognition("STOP",30,[925,50,150,75],self.organizer)
 
     def update(self):
@@ -80,7 +80,7 @@ class SpaceInvadersModel():
             # - the bullets that are in the enemyBulletSpriteGroup and in the playerBulletSpriteGroup
             # - the Obstructions that are in their obstructionSpriteGroup
             # - the enemies in their enemySpriteGroup
-            self.stopGameButton.areaSurveillance(self.cursor,"backToHomeScreen",self,"backToHomeScreen",True)
+            self.stopGameButton.areaSurveillance(self.cursor,"menu",self.organizer,"state","menu")
             self.player.update()
             for bullet in self.playerBulletSpriteGroup:
                 bullet.update()
@@ -126,9 +126,8 @@ class SpaceInvadersModel():
             #areaSurveillance over the start button of the game
             self.startGameButton.areaSurveillance(self.cursor, "game", self.organizer, "state", "game")
             self.homeScreenButton.areaSurveillance(self.cursor,"menu",self,"backToHomeScreen","True")
-            print("backToHomeScreen:",self.backToHomeScreen, "organizer state: ", self.organizer.state)
 
-        elif self.organizer.state == "endgame": #this state occurs when the game ends
+        elif self.organizer.state == "endgame": #this state occurs when the game is done
             self.homeScreenButton.areaSurveillance(self.cursor, "menu", self, "backToHomeScreen", "True")
             self.restartButton.areaSurveillance(self.cursor, "menu",self.organizer, "state", "menu")
             #areaSurveillance over the "restart button" of the game
@@ -265,11 +264,17 @@ class SpaceInvadersController():
                 self.model.player.direction = -1
             elif self.model.objectCoordinates[0]>self.model.player.x:
                 self.model.player.direction = 1
+
             if self.model.objectCoordinates[1]<200:
                 self.model.cursor.update(self.model.objectCoordinates[0],self.model.objectCoordinates[1])
                 self.model.drawCursor = True
+            elif self.model.objectCoordinates[1]<800:
+                self.model.playerShoot()
+                self.model.drawCursor = True
             else:
                 self.model.drawCursor = False
+
+
 
         elif self.model.organizer.state == "menu":
             self.model.cursor.update(self.model.objectCoordinates[0],self.model.objectCoordinates[1])
@@ -277,9 +282,9 @@ class SpaceInvadersController():
         elif self.model.organizer.state =="endgame":
             self.model.cursor.update(self.model.objectCoordinates[0],self.model.objectCoordinates[1])
 
-        for event in pygame.event.get():
-            if event.type is pygame.MOUSEBUTTONDOWN:
-                self.model.playerShoot()
+        # for event in pygame.event.get():
+        #     if event.type is pygame.MOUSEBUTTONDOWN:
+        #         self.model.playerShoot()
 
 class Player(pygame.sprite.Sprite):
     """this is the class of the spaceship

@@ -26,6 +26,7 @@ class OverallModel():
         self.pongButton = CursorRecognition("Pong",30, [100, 200, 200,200],self.organizer) # Make a button for the areaSurveillance with left corner coords (100,200) & length/width = 200
         self.spaceInvadersButton = CursorRecognition("Space Invaders",30, [500,200, 400,200],self.organizer)
         self.calibrationButton = CursorRecognition(" Calibrate", 30, [1000,200,300,200],self.organizer)
+        self.closeButton = CursorRecognition("CLOSE",30,[1500,50,200,150],self.organizer)
         self.camera = camera
         OR.calibrate(screenSize, self.camera, 0) # Initialize the color for controller '0'
         self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera,0)  # Get the coordinates for controller '0'
@@ -36,6 +37,7 @@ class OverallModel():
             self.pongButton.areaSurveillance(self.cursor, "pong", self.organizer, "state", "pong")
             self.spaceInvadersButton.areaSurveillance(self.cursor, "spaceInvaders", self.organizer, "state", "spaceInvaders")
             #TODO add areaSurveillance to calibrationButton
+            self.closeButton.areaSurveillance(self.cursor,"homeScreen",self,"closePlatform","True")
 
         elif self.organizer.state == "pong":
             self.pongPhaseKeeper = Organizer()  #create state machine for inside the pong game
@@ -57,7 +59,7 @@ class OverallModel():
                     self.clock.tick(self.fps/2)
                 else:                                   # if backToHomeScreen is true (game ended, program got closed), stop the while loop and go back to the homeScreen state
                     pongRunning = False
-                    self.organizer.state == "homeScreen"
+                    self.organizer.state = "homeScreen"
 
         elif self.organizer.state == "spaceInvaders":
             self.spaceInvadersPhaseKeeper = Organizer() #create state machine for inside the pong game
@@ -79,7 +81,7 @@ class OverallModel():
                     self.clock.tick(self.fps/2)
                 else:
                     spaceRunning = False
-                    self.organizer.state == "homeScreen"
+                    self.organizer.state = "homeScreen"
 
         elif self.organizer.state == "calibrationTest":
             self.calibrationModel = calibrationModel()
@@ -121,6 +123,7 @@ class overallView():
             self.model.pongButton.draw(self.model.screen)
             self.model.spaceInvadersButton.draw(self.model.screen)
             self.model.calibrationButton.draw(self.model.screen)
+            self.model.closeButton.draw(self.model.screen)
             self.model.cursor.draw(self.model.screen)
         pygame.display.update()
 
