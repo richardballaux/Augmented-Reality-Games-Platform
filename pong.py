@@ -37,7 +37,8 @@ class PongView():
         if self.model.organizer.state == "menu": # Draw start screen
             menutext = self.myfont.render("Keep your cursor in the square to start the game", 1, self.ColorGreen)
             self.screen.blit(menutext, (50,50))
-            self.model.startButton.draw(self.model.screen)
+            self.model.selectSpeedButton.draw(self.model.screen)
+            self.model.homeScreenButton.draw(self.model.screen)
             self.model.cursor.draw(self.screen)
 
         elif self.model.organizer.state == "select_speed":
@@ -52,7 +53,7 @@ class PongView():
             self.model.cursor.draw(self.screen)
 
         elif self.model.organizer.state == "pong_game":
-            self.mode.stopGameButton.draw(self.screen)
+            self.model.stopGameButton.draw(self.screen)
             if self.model.drawCursor:
                 self.model.cursor.draw(self.screen)
             for component in self.model.components:
@@ -72,23 +73,6 @@ class PongView():
 
         pygame.display.update()
 
-# class Organizer():
-#     """State machine that regulates whether or not we see the menu or the game
-#     The different states are:
-#     - "menu"
-#     - "select_speed"
-#     - "pong_game"
-#     - "endgame"
-#
-#     Instruction for adding a state:
-#     - You don't need to add a state in the organizer() class. Just update the docstring to keep the documentation updated
-#     - Add an if-statement with the state name to the draw() function in the class PlayboardWindowView()
-#     - Add an if-statement with the state name t0 the handle_event() function in the class ArPongMouseController()
-#     """
-#     def __init__(self):
-#         self.state = "menu"
-#         self.settings_ballSpeed = 5
-#         self.settings_cursorColor = (255, 20, 147)
 
 class PongModel():
     """encodes a model of the game state
@@ -122,16 +106,15 @@ class PongModel():
         self.cursor = Cursor(int(self.width/2),int(self.height/2), cursorRadius,self.organizer)
         self.drawCursor = False
         #Buttons
-        self.selectSpeedButton = CursorRecognition("Select speed",30, [50, self.height/2-50, 200,500],self.organizer) #Triggerare in state "menu" - yellow square
+        self.selectSpeedButton = CursorRecognition("Select speed",30, [50, self.height/2-50, 200,100],self.organizer) #Triggerare in state "menu" - yellow square
         self.speedOneButton = CursorRecognition("1",30, [int((self.width/6)*1)-50, int(self.height/2)-150, 150,150],self.organizer) # Number 1 to 5: square to select speed in state "select_speed"
         self.speedTwoButton = CursorRecognition("2",30, [int((self.width/6)*2)-50, int(self.height/2)+150, 150,150],self.organizer)
         self.speedThreeButton = CursorRecognition("3",30, [int((self.width/6)*3)-50, int(self.height/2)-150, 150,150],self.organizer)
         self.speedFourButton = CursorRecognition("4",30, [int((self.width/6)*4)-50, int(self.height/2)+150, 150,150],self.organizer)
         self.speedFiveButton = CursorRecognition("5",30, [int((self.width/6)*5)-50, int(self.height/2)-150, 150,150],self.organizer) # Triggers square to repeat the game in state "endgame"
         self.restartButton = CursorRecognition("Restart", 30,[int((self.width/6)*5),int((self.width/6)*2),200,150],self.organizer)
-        self.homeScreenButton = CursorRecognition("Home screen", 30,[int((self.width/6)*1),int((self.width/6)*2),250,150],self.organizer)
-        self.startButton = CursorRecognition("Start", 30,[int((self.width/6)*1),int((self.width/6)*2),150,150],self.organizer)
-        self.stopGameButton = CursorRecognition("STOP",30,[int(self.width/2),100,100,75],self.organizer)
+        self.homeScreenButton = CursorRecognition("Home screen", 30,[int((self.width/6)*2),int((self.width/6)*2),350,150],self.organizer)
+        self.stopGameButton = CursorRecognition("STOP",30,[int(self.width/2-90),100,180,75],self.organizer)
 
         #camera and objectrecognition
         self.camera = camera
@@ -158,7 +141,7 @@ class PongModel():
         if self.organizer.state == "menu":
             print("check")
             self.selectSpeedButton.areaSurveillance(self.cursor, "select_speed", self.organizer, "state", "select_speed")
-            self.homeScreenButton.areaSurveillance(self.cursor,"menu",self,"backToHomeScreen","True")
+            self.homeScreenButton.areaSurveillance(self.cursor,"menu",self,"backToHomeScreen",True)
 
         elif self.organizer.state == "select_speed": # Set 5 areas to click on, each mapped to a different ball speed
             self.speedOneButton.areaSurveillance(self.cursor, "pong_game", self.organizer, "settings_ballSpeed", 5)
@@ -201,7 +184,7 @@ class PongModel():
 
         elif self.organizer.state == "endgame": #this state is entered when one of the players reaches 5 points
             self.restartButton.areaSurveillance(self.cursor, "menu", self.organizer, "state", "menu")
-            self.homeScreenButton.areaSurveillance(self.cursor, "menu",self, "backToHomeScreen","True")
+            self.homeScreenButton.areaSurveillance(self.cursor, "menu",self, "backToHomeScreen",True)
             self.score.reset()
 
 class PongMouseController():
@@ -250,6 +233,10 @@ class PongObjectRecogController():
                 self.model.drawCursor = False
 
         elif self.model.organizer.state == "endgame":
+            self.model.objectCoordinatesRight, self.model.cameraImage = OR.getCoords(self.model.camera,0)
+            self.model.cursor.update(self.model.objectCoordinatesRight[0],self.model.objectCoordinatesRight[1])
+
+        elif self.model.organizer.state =="select_speed":
             self.model.objectCoordinatesRight, self.model.cameraImage = OR.getCoords(self.model.camera,0)
             self.model.cursor.update(self.model.objectCoordinatesRight[0],self.model.objectCoordinatesRight[1])
 

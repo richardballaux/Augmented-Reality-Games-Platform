@@ -28,7 +28,7 @@ class OverallModel():
         self.screenSize = screenSize
         self.width = screenSize[0]
         self.height = screenSize[1]
-        self.closePlatform = False   #TODO Comment This
+        self.closePlatform = False   #The main while loop looks if this is true or false to break out of the while loop
         self.clock = clock
         self.fps = fps
         self.cursor = Cursor(0,0,20,self.organizer) # Initialize a cursor in coord (0,0) with radius 20
@@ -46,8 +46,8 @@ class OverallModel():
         if self.organizer.state == "homeScreen":
             self.pongButton.areaSurveillance(self.cursor, "pong", self.organizer, "state", "pong")
             self.spaceInvadersButton.areaSurveillance(self.cursor, "spaceInvaders", self.organizer, "state", "spaceInvaders")
+            self.closeButton.areaSurveillance(self.cursor,"homeScreen",self,"closePlatform",True)
             self.calibrationButton.areaSurveillance(self.cursor,"calibrationTest",self.organizer,"state","calibrationTest")
-            self.closeButton.areaSurveillance(self.cursor,"homeScreen",self,"closePlatform","True")
 
         elif self.organizer.state == "pong":
             self.pongPhaseKeeper = Organizer()  #create state machine for inside the pong game
@@ -93,7 +93,7 @@ class OverallModel():
                     spaceRunning = False
                     self.organizer.state = "homeScreen"
 
-        if self.organizer.state == "calibrationTest":
+        elif self.organizer.state == "calibrationTest":
             self.calibrationPhaseKeeper = Organizer()
             self.calibrationPhaseKeeper.state = "first"
             self.controllernr = 0
@@ -194,14 +194,14 @@ def Main():
     overallRecogController = ObjectRecogController(mainModel)
     overallRunning = True
     while overallRunning:
+        overallRecogController.update()
+        mainModel.update()
+        mainView.draw()
         if mainModel.closePlatform == True:
             overallRunning = False
         for event in pygame.event.get():
             if event.type is pygame.QUIT:
                 overallRunning = False
-        overallRecogController.update()
-        mainModel.update()
-        mainView.draw()
         clock.tick(fps)
 
 if __name__ == '__main__':

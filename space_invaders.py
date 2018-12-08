@@ -125,10 +125,10 @@ class SpaceInvadersModel():
         elif self.organizer.state == "menu": #this state is the first state when we enter this game
             #areaSurveillance over the start button of the game
             self.startGameButton.areaSurveillance(self.cursor, "game", self.organizer, "state", "game")
-            self.homeScreenButton.areaSurveillance(self.cursor,"menu",self,"backToHomeScreen","True")
+            self.homeScreenButton.areaSurveillance(self.cursor,"menu",self,"backToHomeScreen",True)
 
         elif self.organizer.state == "endgame": #this state occurs when the game is done
-            self.homeScreenButton.areaSurveillance(self.cursor, "menu", self, "backToHomeScreen", "True")
+            self.homeScreenButton.areaSurveillance(self.cursor, "menu", self, "backToHomeScreen", True)
             self.restartButton.areaSurveillance(self.cursor, "menu",self.organizer, "state", "menu")
             #areaSurveillance over the "restart button" of the game
             #areaSurveillance over the "go back to homeScreen button"
