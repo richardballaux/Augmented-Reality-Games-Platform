@@ -13,16 +13,25 @@ class CalibrationModel():
         self.firstCheck = False
         self.cursor = Cursor(0,0,20,self.organizer)
         self.upperLeftButton = CursorRecognition("1",30, [10,10,200,200],self.organizer)
+        self.upperRightButton = CursorRecognition("2",30, [1850-210, 10, 200, 200], self.organizer)
+        self.lowerLeftButton = CursorRecognition("3", 30, [10, 1080-210, 200, 200], self.organizer)
+        self.lowerRightButton = CursorRecognition("4", 30, [1850-210, 1080-210,200,200], self.organizer) # I hate hardcoding, resolution is 1850,1080
         self.controllernr = controllernr
+        self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera,0)  # Get the coordinates for controller '0'
 
 
     def update(self):
 
-        self.upperLeftButton.areaSurveillance(self.cursor,"calibration",self,"firstCheck","True")
-
-        if self.firstCheck == True:
+        if self.organizer.state == "first":
+            self.upperLeftButton.areaSurveillance(self.cursor,"second",self.organizer,"firstCheck","True")
+        elif self.organizer.state == "second":
+            self.upperRightButton.areaSurveillance(self.cursor,"third", self.organizer, "state", "third")
+        elif self.organizer.state == "third":
+            self.lowerLeftButton.areaSurveillance(self.cursor, "fourth", self.organizer, "state", "fourth")
+        elif self.organizer.state == "fourth":
+            self.lowerRightButton.areaSurveillance(self.cursor, "backToHomeScreen", self.organizer, "state", "backToHomeScreen")
+        elif self.organizer.state == "backToHomeScreen":
             self.backToHomeScreen = True
-
 
 class CalibrationView():
     """This is the view class for the CalibrationTest"""
@@ -30,17 +39,35 @@ class CalibrationView():
         self.model = model
         self.myfont = pygame.font.SysFont("monospace", 42) #Font that is used in states "game" and "select_speed" to prompt the user
         self.numberfont = pygame.font.SysFont("monospace", 85, bold=True) #font is used for numbers in "select_speed" state
-        self.ColorGreen = (0,250,0)
-        self.ColorBlack = (0,0,0)
+        self.colorGreen = (0,250,0)
+        self.colorBlack = (0,0,0)
 
 
     def draw(self):
+        """Draws the view of the calibration state, depending on the phase"""
         self.draw_background(self.model.screen)
-        if self.model.firstCheck == True:
-            self.model.upperLeftButto.draw(self.model.screen, self.ColorGreen)
-        else:
+        if self.model.organizer.state == "first":
             self.model.upperLeftButton.draw(self.model.screen)
-        instructions = self.myfont.render("Hover over all the squares before the time runs out", 1, self.ColorGreen)
+            self.model.upperRightButton.draw(self.model.screen)
+            self.model.lowerLeftButton.draw(self.model.screen)
+            self.model.lowerRightButton.draw(self.model.screen)
+        elif self.model.organizer.state == "second":
+            self.model.upperLeftButton.draw(self.model.screen, self.colorGreen)
+            self.model.upperRightButton.draw(self.model.screen)
+            self.model.lowerLeftButton.draw(self.model.screen)
+            self.model.lowerRightButton.draw(self.model.screen)
+        elif self.model.organizer.state == "third":
+            self.model.upperLeftButton.draw(self.model.screen, self.colorGreen)
+            self.model.upperRightButton.draw(self.model.screen, self.colorGreen)
+            self.model.lowerLeftButton.draw(self.model.screen)
+            self.model.lowerRightButton.draw(self.model.screen)
+        elif self.model.organizer.state == "fourth":
+            self.model.upperLeftButton.draw(self.model.screen,self.colorGreen)
+            self.model.upperRightButton.draw(self.model.screen,self.colorGreen)
+            self.model.lowerLeftButton.draw(self.model.screen, self.colorGreen)
+            self.model.lowerRightButton.draw(self.model.screen)
+
+        instructions = self.myfont.render("Hover over all the squares before the time runs out", 1, self.colorGreen)
         self.model.screen.blit(instructions, (400,20))
         self.model.cursor.draw(self.model.screen)
         pygame.display.update()
