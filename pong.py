@@ -136,7 +136,6 @@ class PongModel():
         #camera and objectrecognition
         self.camera = camera
         OR.calibrate([self.width, self.height], self.camera, 1) # Initialize the color for controller '1'
-        print("check")
         self.objectCoordinatesRight, self.cameraImage = OR.getCoords(self.camera,0) #gets coordinates of the two objects from the python file ObjectRecogImplementation.py
         self.objectCoordinatesLeft = OR.getCoords(self.camera,1)
         #initialize the sprite groups for collision detection
@@ -157,6 +156,7 @@ class PongModel():
     def update(self):
         """updates all the components the model has dependent on what state Organizer.state is in"""
         if self.organizer.state == "menu":
+            print("check")
             self.selectSpeedButton.areaSurveillance(self.cursor, "select_speed", self.organizer, "state", "select_speed")
             self.homeScreenButton.areaSurveillance(self.cursor,"menu",self,"backToHomeScreen","True")
 

@@ -12,10 +12,10 @@ class CalibrationModel():
         self.organizer = organizer
         self.firstCheck = False
         self.cursor = Cursor(0,0,20,self.organizer)
-        self.upperLeftButton = CursorRecognition("1",30, [10,10,200,200],self.organizer)
-        self.upperRightButton = CursorRecognition("2",30, [1850-210, 10, 200, 200], self.organizer)
-        self.lowerLeftButton = CursorRecognition("3", 30, [10, 1080-210, 200, 200], self.organizer)
-        self.lowerRightButton = CursorRecognition("4", 30, [1850-210, 1080-210,200,200], self.organizer) # I hate hardcoding, resolution is 1850,1080
+        self.upperLeftButton = CursorRecognition("1",30, [50,50,200,200],self.organizer)
+        self.upperRightButton = CursorRecognition("2",30, [1850-250, 50, 200, 200], self.organizer)
+        self.lowerLeftButton = CursorRecognition("3", 30,[1850-250, 1080-250,200,200], self.organizer)
+        self.lowerRightButton = CursorRecognition("4", 30,[50, 1080-250, 200, 200] , self.organizer) # I hate hardcoding, resolution is 1850,1080
         self.controllernr = controllernr
         self.objectCoordinates, self.cameraImage = OR.getCoords(self.camera,0)  # Get the coordinates for controller '0'
 
