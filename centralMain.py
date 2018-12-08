@@ -180,7 +180,9 @@ def Main():
     camera = OR.setup(screenSize) # Initialize a camera via the object recognition in openCV
     organizer = Organizer() # initialize an Organizer object
     #We start the game in the organizer state
-    organizer.state = "calibrationTest"
+
+    #TODO organizer.state = "calibrationTest"
+    organizer.state = "homeScreen"
     #initalize all the main classes
     mainModel = OverallModel(organizer,screenSize,camera,clock,fps)
     mainView = overallView(screenSize, mainModel)

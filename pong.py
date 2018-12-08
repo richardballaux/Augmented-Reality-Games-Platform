@@ -136,6 +136,7 @@ class PongModel():
         #camera and objectrecognition
         self.camera = camera
         OR.calibrate([self.width, self.height], self.camera, 1) # Initialize the color for controller '1'
+        print("check")
         self.objectCoordinatesRight, self.cameraImage = OR.getCoords(self.camera,0) #gets coordinates of the two objects from the python file ObjectRecogImplementation.py
 
         #initialize the sprite groups for collision detection
