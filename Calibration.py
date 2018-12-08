@@ -37,7 +37,7 @@ class CalibrationView():
     def draw(self):
         self.draw_background(self.model.screen)
         if self.model.firstCheck == True:
-            self.model.upperLeftButton.draw(self.model.screen, self.ColorGreen)
+            self.model.upperLeftButto.draw(self.model.screen, self.ColorGreen)
         else:
             self.model.upperLeftButton.draw(self.model.screen)
         instructions = self.myfont.render("Hover over all the squares before the time runs out", 1, self.ColorGreen)

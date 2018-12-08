@@ -33,11 +33,11 @@ def calibrateColor(resolution, camera):
             for i in range(3):                 # Save the max values of HSV
                 if hsvRoi[:,:,i].max() > colorRange[i+3]:
                     colorRange[i+3] = hsvRoi[:,:,i].max()
-            cv2.imshow("cam",img)
+            cv2.imshow("Calibration Screen",img)
         elif time.time()-startTime<6:
             cv2.rectangle(img, rectangle[0],rectangle[1],(0,0,255),2)  # Draw a red rectangle for the scanning area
             cv2.putText(img,str(int(time.time()-startTime)),(int(resolution[0]/25),int(resolution[1]/5)), font, int(resolution[0]/300),(255,255,255),2)  # Displays the time
-            cv2.imshow("cam",img)
+            cv2.imshow("Calibration Screen",img)
         if  time.time() - startTime > 9: # Breaks the while loop and the program
             running = False
             cv2.destroyAllWindows()
