@@ -16,6 +16,13 @@ from cursor import Cursor, CursorRecognition
 
 
 class OverallModel():
+    """This is the class for the model that runs the homeScreen and the other games inside of it
+    - organizer --  object of the organizer class. This keeps track of the state
+    - screenSize -- list containing width and height of the desired screen size of the screen
+    - camera -- cv.2 VideoCapture(0) object
+    - clock --  a pygame clock
+    - fps --    frames per second to run the pygame
+    """
     def __init__(self, organizer,screenSize,camera,clock,fps):
         self.organizer = organizer
         self.screenSize = screenSize
@@ -35,10 +42,11 @@ class OverallModel():
 
 
     def update(self):
+        """updates all the components of the model corresponding to their state"""
         if self.organizer.state == "homeScreen":
             self.pongButton.areaSurveillance(self.cursor, "pong", self.organizer, "state", "pong")
             self.spaceInvadersButton.areaSurveillance(self.cursor, "spaceInvaders", self.organizer, "state", "spaceInvaders")
-            #TODO add areaSurveillance to calibrationButton
+            self.calibrationButton.areaSurveillance(self.cursor,"calibrationTest",self.organizer,"state","calibrationTest")
             self.closeButton.areaSurveillance(self.cursor,"homeScreen",self,"closePlatform","True")
 
         elif self.organizer.state == "pong":
@@ -130,7 +138,7 @@ class ObjectRecogController():
         # If coordinates are -1, no object has been detected
 
 class overallView():
-    """this might have the views of all the different screens so we can make an overall UI"""
+    """This is the view class for the OverallModel, it writes all those components to the screen"""
     def __init__(self,screenSize,model):
         self.screen_size = screenSize
         self.model = model
@@ -149,15 +157,13 @@ class overallView():
         pygame.display.update()
 
     def draw_background(self):
+        """draws the last taken camera image to the screen as a background"""
         newSurface = pygame.surfarray.make_surface(self.model.cameraImage) # Reads the stored camera image and makes a surface out of it
         self.model.screen.blit(newSurface,(0,0)) # Make background of the sufrace (so it becomes live video)
 
 class Organizer():
-    """State machine that regulates whether or not we see the menu or the game
-    Instruction for adding a state:
-    - You don't need to add a state in the Organizer() class. Just update the docstring to keep the documentation updated
-    - Add an if-statement with the state name to the draw() function in the class PlayboardWindowView()
-    - Add an if-statement with the state name t0 the handle_event() function in the class ArPongMouseController()
+    """State machine that regulates the states in the different models. We use one organizer for the OverallModel and his overallView.
+    Next every seperate game/application has its own Organizer called phaseKeeper.
     """
     def __init__(self):
         self.state = "menu"
@@ -167,10 +173,8 @@ class Organizer():
         self.win = False
 
 def Main():
-    """Update graphics and check for pygame events.
-    model -- an object of the type ArPongModel()
-    view -- an object of the type PlayboardWindowView()
-    controller -- an object ArPongMouseController()
+    """
+    Start this function to start the platform. This initializes the OverallModel and its view and its conroller.
     """
     pygame.init()
     pygame.mixer.init() #the mixer is for the playing the music
@@ -186,9 +190,7 @@ def Main():
     #initalize all the main classes
     mainModel = OverallModel(organizer,screenSize,camera,clock,fps)
     mainView = overallView(screenSize, mainModel)
-    #mainController = Controller(mainModel)
-    #this is the mouse controller
-    fakeObject = ObjectRecogController(mainModel)
+    overallRecogController = ObjectRecogController(mainModel)
     overallRunning = True
     while overallRunning:
         if mainModel.closePlatform == True:
@@ -196,7 +198,7 @@ def Main():
         for event in pygame.event.get():
             if event.type is pygame.QUIT:
                 overallRunning = False
-        fakeObject.update()
+        overallRecogController.update()
         mainModel.update()
         mainView.draw()
         clock.tick(fps)

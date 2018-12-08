@@ -66,8 +66,8 @@ class SpaceInvadersModel():
         self.drawCursor = False
         #creating the buttons that this game will have
         self.startGameButton = CursorRecognition("Start",30, [500, 500, 200,200],self.organizer)
-        self.homeScreenButton = CursorRecognition("Home Screen",30, [700,500, 400,150],self.organizer)
-        self.restartButton = CursorRecognition("Restart",30, [500,700, 250,150],self.organizer)
+        self.homeScreenButton = CursorRecognition("Home Screen",30, [900,500, 350,150],self.organizer)
+        self.restartButton = CursorRecognition("Restart",30, [500,500, 250,150],self.organizer)
         self.stopGameButton = CursorRecognition("STOP",30,[925,50,150,75],self.organizer)
 
     def update(self):
@@ -266,7 +266,7 @@ class SpaceInvadersController():
             elif self.model.objectCoordinates[0]>self.model.player.x:
                 self.model.player.direction = 1
 
-            if self.model.objectCoordinates[1]<200:
+            if self.model.objectCoordinates[1]<100:
                 self.model.cursor.update(self.model.objectCoordinates[0],self.model.objectCoordinates[1])
                 self.model.drawCursor = True
             elif self.model.objectCoordinates[1]<800:
@@ -276,16 +276,11 @@ class SpaceInvadersController():
                 self.model.drawCursor = False
 
 
-
         elif self.model.organizer.state == "menu":
             self.model.cursor.update(self.model.objectCoordinates[0],self.model.objectCoordinates[1])
 
         elif self.model.organizer.state =="endgame":
             self.model.cursor.update(self.model.objectCoordinates[0],self.model.objectCoordinates[1])
-
-        # for event in pygame.event.get():
-        #     if event.type is pygame.MOUSEBUTTONDOWN:
-        #         self.model.playerShoot()
 
 class Player(pygame.sprite.Sprite):
     """this is the class of the spaceship
@@ -341,16 +336,27 @@ class Enemy(Player):
         #is aliveImage the same as image
 
     def move(self,xMovement,yMovement):
+        """moves the enemy with a given x and y distance
+        - xMovement --  integer to move enemy in x direction
+        - yMovement --  integer to move enemy in y direction
+        """
         self.x = self.x +xMovement
         self.rect.x = self.rect.x + xMovement
         self.y = self.y +yMovement
         self.rect.y = self.rect.y + yMovement
 
     def die(self):
+        """This function is called when the enemy dies"""
         pygame.mixer.Sound.play(self.killSound)
         self.kill()
 
 class Bullet(pygame.sprite.Sprite):
+    """This is the Bullet class
+    - speed --  integer, this defines the speed in pixels per loop
+    - direction -- -1 for downward movement 1 for upward movement
+    - x --  starting x position in pixels
+    - y --  starting y position in pixels
+    """
     def __init__(self,speed,direction,x,y):
         pygame.sprite.Sprite.__init__(self)
         self.speed=speed
@@ -372,13 +378,17 @@ class Bullet(pygame.sprite.Sprite):
         self.move()
 
     def draw(self,screen):
-        """draws the Bullet image to the screen"""
+        """draws the Bullet image to the screen dependent on the direction draws it facing upward or downward"""
         if self.direction == -1:
             screen.blit(pygame.transform.rotate(self.image,180),(self.x,self.y))
         else:
             screen.blit(self.image,(self.x,self.y))
 
 class Obstruction(pygame.sprite.Sprite):
+    """this is the obstuction class
+    - x --   x position of the obstruction
+    - y --   y position of the obstuction
+    """
     def __init__(self,x,y):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
@@ -430,6 +440,7 @@ class Score():
         screen.blit(textMaker,(1500,50))
 
 class Health():
+    """This is the health class, this keeps track of the shields the player still has and draws the according amount to the screen"""
     def __init__(self):
         self.healthLevel = 3
         self.shieldImage = pygame.transform.scale(pygame.image.load(dir_path+"/data/shield.jpg"),(50,50))
@@ -438,9 +449,11 @@ class Health():
         self.myfont = pygame.font.SysFont("monospace", 42)
 
     def gotShot(self):
+        """This function is called when the player gets shot by an enemy and as a result loses a shield"""
         self.healthLevel -= 1
 
     def draw(self,screen):
+        """This function draws the shield of the player to the screen. This is dependent on the number shield he still has left"""
         textMaker = self.myfont.render("HEALTH: ", 1, (0,0,0))
         screen.blit(textMaker,(self.x,self.y))
         for i in range(self.healthLevel):
