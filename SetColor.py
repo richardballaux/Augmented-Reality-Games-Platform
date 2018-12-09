@@ -21,8 +21,10 @@ def calibrateColor(resolution, camera):
         img = cv2.flip(img, 1)                               # Flip it
         roi = img[rectangle[0][1]:rectangle[1][1],rectangle[0][0]:rectangle[1][0]] # Defines the region of interest ROI
         hsvRoi = cv2.cvtColor(roi,cv2.COLOR_BGR2HSV)
-        cv2.putText(img,"Calibrate your controller", (int(resolution[0]/10), int(resolution[1]/5)), font, int(resolution[0]/500),(0,150,200),2)
-        cv2.putText(img,"Hold the object in the rectangle....", (int(resolution[0]/10), int(resolution[1]/3.5)), font, int(resolution[0]/500),(0,20,160),2)
+        cv2.putText(img,"Choose an object with a color different from your background", (int(resolution[0]/10), int(resolution[1]/5)), font, int(resolution[0]/800),(0,150,200),2)
+        cv2.putText(img,"Hold the object in the rectangle so we can scan the color", (int(resolution[0]/10), int(resolution[1]/3.5)), font, int(resolution[0]/800),(0,20,160),2)
+        cv2.putText(img,"It starts scanning the color when the rectangle is green", (int(resolution[0]/10), int(resolution[1]/2.5)), font, int(resolution[0]/800),(0,20,160),2)
+
 
         if time.time()-startTime>6 and time.time()-startTime<9:          # Between 3 and 5 secs
             cv2.putText(img,str(int(time.time()-startTime)),(int(resolution[0]/25),int(resolution[1]/5)), font, int(resolution[0]/300),(0,255,0),2)  # Displays the time

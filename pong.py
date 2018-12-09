@@ -23,11 +23,8 @@ class PongView():
         self.ColorBlack = (0,0,0)
 
 
-    def _draw_background(self, color = (0,0,0)):
-        """draw background with plain Color
-        color -- RGB format (R,G,B), values from 0 to 255, default color is black"""
-        self.screen.fill(color)
-
+    def _draw_background(self):
+        """draw the last taken camera image to the background"""
         newSurface = pygame.surfarray.make_surface(self.model.cameraImage) # Reads the stored camera image and makes a surface out of it
         self.screen.blit(newSurface,(0,0)) # Make background of the sufrace (so it becomes live video)
 
@@ -35,14 +32,18 @@ class PongView():
         """draws corresponding to the state of organizer.state the different organizer settings or game"""
         self._draw_background()
         if self.model.organizer.state == "menu": # Draw start screen
-            menutext = self.myfont.render("Keep your cursor in the square to start the game", 1, self.ColorGreen)
+            menutext = self.myfont.render("Keep your cursor in the square to select the speed of the ball", 1, self.ColorGreen)
             self.screen.blit(menutext, (50,50))
+            instructions = self.myfont.render("Move your controller up and down to move you paddle", 1, self.ColorGreen)
+            self.screen.blit(instructions, (50,100))
+            more = self.myfont.render("Bounce of the ball to score in your opponents goal", 1, self.ColorGreen)
+            self.screen.blit(more, (50,100))
             self.model.selectSpeedButton.draw(self.model.screen)
             self.model.homeScreenButton.draw(self.model.screen)
             self.model.cursor.draw(self.screen)
 
         elif self.model.organizer.state == "select_speed":
-            menutext = self.myfont.render("Select a speed by hovering over the desired speed", 1, self.ColorBlack) # Message for menu to select speed
+            menutext = self.myfont.render("Select a speed by hovering over the desired speed (1 is  very slow, 5 is very fast)", 1, self.ColorBlack) # Message for menu to select speed
             self.screen.blit(menutext, (50,50))
             # DRAW BUTTON TO CHANGE SPEED OF BAll
             self.model.speedOneButton.draw(self.screen)
@@ -60,7 +61,7 @@ class PongView():
                  component.draw(self.screen)
 
         elif self.model.organizer.state == "endgame":
-            pygame.draw.rect(self.screen, (150,150,0), pygame.Rect(int((self.model.width/6)), int(self.model.height/2)-50, int(self.model.width*4/6),150))
+            pygame.draw.rect(self.screen, (61, 139, 171), pygame.Rect(int((self.model.width/6)), int(self.model.height/2)-50, int(self.model.width*4/6),150))
             if self.model.organizer.winner ==1:
                 playertext = self.myfont.render("LEFT PLAYER WON", 1, self.ColorBlack)
             if self.model.organizer.winner ==2:
