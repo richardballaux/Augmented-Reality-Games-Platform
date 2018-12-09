@@ -40,21 +40,10 @@ class SpaceInvadersModel():
 
         self.enemyShootLooper = 0 #this variable keep track of the current number of loops until an enemy shoots again
         self.enemyShootMinimumLooper = 20 #this variable is the minimum amount of loops between enemy shots. this is dependent of the number of enemies left.
-        #initialization of all the enemies and adding them to their respective spriteGroups
-        for i in range(10):
-            enemy = Enemy(self.enemystartxcoord+self.distanceBetweenEnemiesx*i,self.enemystartycoord,dir_path+"/data/level3monster.png",15)
-            self.enemySpriteGroup.add(enemy)
-        for i in range(10):
-            enemy = Enemy(self.enemystartxcoord+self.distanceBetweenEnemiesx*i,self.enemystartycoord+self.distanceBetweenEnemiesy,dir_path+"/data/level2monster.png",10)
-            self.enemySpriteGroup.add(enemy)
-        for i in range(10):
-            for j in range(2,4):
-                enemy = Enemy(self.enemystartxcoord+self.distanceBetweenEnemiesx*i,self.enemystartycoord+self.distanceBetweenEnemiesy*j,dir_path+"/data/level1monster.png",5)
-                self.enemySpriteGroup.add(enemy)
-        #initialization of the obstructinos at there fixed spot and adding them to the obstructionSpriteGroup
-        for i in range(3):
-            obstruction = Obstruction(300+500*i,700)
-            self.obstructionSpriteGroup.add(obstruction)
+
+        self.generateEnemiesAndObstructions() #in this function all the enemies and obstructions are generated. We do it this way to be able to reuse is when a user wants to restart the game
+
+        self.haveToResetGame = False
 
         self.player = Player(900,900,dir_path+"/data/spaceship.png") #initialize the player with x and y coordinate and the path of the picture
         self.lastTimeShot = 0 #this variable remembers at what time the player shot last
@@ -124,7 +113,10 @@ class SpaceInvadersModel():
 
         elif self.organizer.state == "menu": #this state is the first state when we enter this game
             #areaSurveillance over the start button of the game
-            self.startGameButton.areaSurveillance(self.cursor, "game", self.organizer, "state", "game")
+            self.startGameButton.areaSurveillance(self.cursor, "game", self, "haveToResetGame", True)
+            if self.haveToResetGame:
+                self.resetGame()
+                self.haveToResetGame = False
             self.homeScreenButton.areaSurveillance(self.cursor,"menu",self,"backToHomeScreen",True)
 
         elif self.organizer.state == "endgame": #this state occurs when the game is done
@@ -142,7 +134,6 @@ class SpaceInvadersModel():
             self.lastTimeShot = time.time()
 
     def moveEnemies(self):
-
         """this function makes the enemies move across the screen starting from left to right and then down
         The enemies are only moved once every 10 loops. So the first thing the function does is checking if the looper is 10.
         If so then it moves the enemies. If not then it increments the looper by one.
@@ -185,6 +176,34 @@ class SpaceInvadersModel():
         else:
             self.enemyShootLooper +=1 # if none of the enemies didn't shoot this loop, increment the enemyShootLooper
 
+    def generateEnemiesAndObstructions(self):
+        """This function generates all the enemies and obstructions and puts them into their respective spriteGroups"""
+        #initialization of all the enemies and adding them to their respective spriteGroups
+        for i in range(10):
+            enemy = Enemy(self.enemystartxcoord+self.distanceBetweenEnemiesx*i,self.enemystartycoord,dir_path+"/data/level3monster.png",15)
+            self.enemySpriteGroup.add(enemy)
+        for i in range(10):
+            enemy = Enemy(self.enemystartxcoord+self.distanceBetweenEnemiesx*i,self.enemystartycoord+self.distanceBetweenEnemiesy,dir_path+"/data/level2monster.png",10)
+            self.enemySpriteGroup.add(enemy)
+        for i in range(10):
+            for j in range(2,4):
+                enemy = Enemy(self.enemystartxcoord+self.distanceBetweenEnemiesx*i,self.enemystartycoord+self.distanceBetweenEnemiesy*j,dir_path+"/data/level1monster.png",5)
+                self.enemySpriteGroup.add(enemy)
+        #initialization of the obstructinos at there fixed spot and adding them to the obstructionSpriteGroup
+        for i in range(3):
+            obstruction = Obstruction(300+500*i,700)
+            self.obstructionSpriteGroup.add(obstruction)
+
+    def resetGame(self):
+        """This function resets the whole game back to zero"""
+        #first make all the spriteGroups empty before refilling them again.
+        self.enemySpriteGroup.empty()
+        self.enemyBulletSpriteGroup.empty()
+        self.obstructionSpriteGroup.empty()
+        self.playerBulletSpriteGroup.empty()
+        self.generateEnemiesAndObstructions()
+        self.score.reset()
+        self.health.reset()
 
 class SpaceInvadersView():
     """This is the view class for the space invaders game
@@ -195,6 +214,7 @@ class SpaceInvadersView():
         self.numberfont = pygame.font.SysFont("monospace", 85, bold=True) #font is used for numbers in "select_speed" state
         self.ColorGreen = (0,250,0)
         self.ColorBlack = (0,0,0)
+        self.ColorRed = (165, 0, 0)
 
     def draw(self):
         """draws the corresponding state of the spaceInvadersPhaseKeeper of the game to the screen"""
@@ -202,6 +222,7 @@ class SpaceInvadersView():
 
         if self.model.organizer.state == "game":
             self.model.stopGameButton.draw(self.model.screen)
+            pygame.draw.rect(self.model.screen,pygame.Color(135, 0, 0),pygame.Rect(30,700,1800,2)) #the user has to go above this line to shoot
             self.model.player.draw(self.model.screen)
             for enemy in self.model.enemySpriteGroup:
                 enemy.draw(self.model.screen)
@@ -213,7 +234,7 @@ class SpaceInvadersView():
                 obstruction.draw(self.model.screen)
             self.model.score.draw(self.model.screen)
             self.model.health.draw(self.model.screen)
-            if self.model.drawCursor:
+            if self.model.drawCursor: #only draw the cursor when he is above a certain line to get to the stop button
                 self.model.cursor.draw(self.model.screen)
 
 
@@ -226,7 +247,13 @@ class SpaceInvadersView():
             menutext = self.myfont.render("Keep your cursor in the square to start the game", 1, self.ColorGreen)
             self.model.screen.blit(menutext, (50,50))
             instructions = self.myfont.render("Instructions: ", 1, self.ColorGreen)
-            self.model.screen.blit(instructions, (100,100))
+            self.model.screen.blit(instructions, (50,100))
+            moreInstructions = self.myfont.render("Move your controller left and right to move your spaceship.", 1, self.ColorRed)
+            self.model.screen.blit(moreInstructions, (50,150))
+            evenMoreInstructions = self.myfont.render("To shoot hold your controller above the dark red line.", 1, self.ColorRed)
+            self.model.screen.blit(evenMoreInstructions, (50,200))
+            goodLuck = self.myfont.render("Try not to shoot your own obstructions   GOOD LUCK", 1, self.ColorRed)
+            self.model.screen.blit(goodLuck, (50,250))
             self.model.cursor.draw(self.model.screen)
 
 
@@ -238,7 +265,7 @@ class SpaceInvadersView():
                 self.model.score.draw(self.model.screen)
             else:
                 menutext = self.myfont.render("Sad, YOU LOST", 1, self.ColorGreen)
-                self.model.screen.blit(menutext, (200,50))
+                self.model.screen.blit(menutext, (350,900))
             #draw the two buttons
             self.model.homeScreenButton.draw(self.model.screen)
             self.model.restartButton.draw(self.model.screen)
@@ -266,14 +293,14 @@ class SpaceInvadersController():
             elif self.model.objectCoordinates[0]>self.model.player.x:
                 self.model.player.direction = 1
 
-            if self.model.objectCoordinates[1]<100:
+            if self.model.objectCoordinates[1]<80:
                 self.model.cursor.update(self.model.objectCoordinates[0],self.model.objectCoordinates[1])
-                self.model.drawCursor = True
-            elif self.model.objectCoordinates[1]<800:
-                self.model.playerShoot()
                 self.model.drawCursor = True
             else:
                 self.model.drawCursor = False
+
+            if self.model.objectCoordinates[1]<650:
+                self.model.playerShoot()
 
 
         elif self.model.organizer.state == "menu":
@@ -434,6 +461,10 @@ class Score():
         """add points from a killed enemy to the score"""
         self.totalPoints += pointsToAdd
 
+    def reset(self):
+        """This function resets the score back to zero"""
+        self.totalPoints = 0
+
     def draw(self,screen):
         """draw the score to the screen"""
         textMaker = self.myfont.render(str(self.totalPoints),1,self.ColorBlack)
@@ -451,6 +482,10 @@ class Health():
     def gotShot(self):
         """This function is called when the player gets shot by an enemy and as a result loses a shield"""
         self.healthLevel -= 1
+
+    def reset(self):
+        """This function resets the healt back to three"""
+        self.healthLevel = 3
 
     def draw(self,screen):
         """This function draws the shield of the player to the screen. This is dependent on the number shield he still has left"""
