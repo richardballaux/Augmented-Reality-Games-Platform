@@ -46,6 +46,8 @@ class SpaceInvadersModel():
         self.haveToResetGame = False
 
         self.player = Player(900,900,dir_path+"/data/spaceship.png") #initialize the player with x and y coordinate and the path of the picture
+        self.enemyShootSound = pygame.mixer.Sound(dir_path +"/data/shoot.wav")
+        self.playerShootSound = pygame.mixer.Sound(dir_path +"/data/playerShoot.wav")
         self.lastTimeShot = 0 #this variable remembers at what time the player shot last
         self.timeBetweenShots = 1 # this variable is the minimum time in ..... between shots
         self.score = Score()
@@ -131,6 +133,7 @@ class SpaceInvadersModel():
         if (time.time() - self.lastTimeShot)>= self.timeBetweenShots:
             playerbullet = Bullet(10,1,self.player.x,self.player.y)
             playerbullet.add(self.playerBulletSpriteGroup)
+            pygame.mixer.Sound.play(self.playerShootSound)
             self.lastTimeShot = time.time()
 
     def moveEnemies(self):
@@ -172,7 +175,8 @@ class SpaceInvadersModel():
             #make the frequency of enemy shooting dependent of number of enemies
             self.enemyShootMinimumLooper = 60-len(enemyList)
             self.enemyShootLooper = 0 #if one of the enemies shot, set the enemyShootLooper back to zero
-            pass
+            pygame.mixer.Sound.play(self.enemyShootSound)
+
         else:
             self.enemyShootLooper +=1 # if none of the enemies didn't shoot this loop, increment the enemyShootLooper
 
