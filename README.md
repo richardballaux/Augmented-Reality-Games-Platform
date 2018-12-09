@@ -3,19 +3,22 @@
 
 
 ## Our Games Platform
+![alt text](https://github.com/sd18fall/Augmented-Reality-Games-Platform/blob/master/docs/images/cursor_close.jpg "Cursor Recognition With Green Object")
+
 This program is a games platform that uses your camera so you can play our games with an object that you are holding in your hands. It uses computer vision, OpenCV, to track an object that you are using as the games controller. For your convenience, you can set the color of the controller-object yourself. 
 
 At the moment, you can play two games on our platform: __Air Pong__ and __Space Invaders__
 
-![alt text](https://github.com/sd18fall/Augmented-Reality-Games-Platform/blob/master/docs/images/cursor_close.jpg "Cursor recognition with green object")
 
-### Pong Game
+### Air Pong Game
+![alt text](https://github.com/sd18fall/Augmented-Reality-Games-Platform/blob/master/docs/images/pong_slim.jpg "Air Pong Game")
 Air Pong is a two-player game. Each player needs a controller in form of a colorful object that is being recognized by your computer's camera.
 To select the settings, one of the two players needs to hover with their 'controller' over the corresponding setting they are trying to change. After having selected all necessary settings for the game and the game itself, the game starts automatically.
 
 Each player controls the height of their paddle with their controller by changing the height of the green object they are holding.
 
 ### Space Invaders
+![alt text](https://github.com/sd18fall/Augmented-Reality-Games-Platform/blob/master/docs/images/invaders_group.jpg "Space Invaders Game")
 This game is a one-player game and designed in the style of the well-known Space Invaders game. With your controller, you can change the horizontal postion of your spaceship in order to shoot your enemies, monsters. Hold your controller higher in order to move it above the right line and trigger your spaceship’s gun. There are also more instruction in the game. We hope you’ll survive the battle!
 
 ## How to run and install
