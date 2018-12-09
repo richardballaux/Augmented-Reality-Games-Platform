@@ -482,10 +482,13 @@ class Health():
         self.x = 20
         self.y=20
         self.myfont = pygame.font.SysFont("monospace", 42)
+        self.playerLoosesShieldSound = pygame.mixer.Sound(dir_path+"/data/playerLoosesLife.wav")
+
 
     def gotShot(self):
         """This function is called when the player gets shot by an enemy and as a result loses a shield"""
         self.healthLevel -= 1
+        pygame.mixer.Sound.play(self.playerLoosesShieldSound)
 
     def reset(self):
         """This function resets the healt back to three"""

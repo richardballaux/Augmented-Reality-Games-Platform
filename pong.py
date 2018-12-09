@@ -37,7 +37,7 @@ class PongView():
             instructions = self.myfont.render("Move your controller up and down to move you paddle", 1, self.ColorGreen)
             self.screen.blit(instructions, (50,100))
             more = self.myfont.render("Bounce of the ball to score in your opponents goal", 1, self.ColorGreen)
-            self.screen.blit(more, (50,100))
+            self.screen.blit(more, (50,150))
             self.model.selectSpeedButton.draw(self.model.screen)
             self.model.homeScreenButton.draw(self.model.screen)
             self.model.cursor.draw(self.screen)
@@ -107,22 +107,22 @@ class PongModel():
         self.cursor = Cursor(int(self.width/2),int(self.height/2), cursorRadius,self.organizer)
         self.drawCursor = False
         #Buttons
-        self.selectSpeedButton = CursorRecognition("Select speed",30, [50, self.height/2-50, 200,100],self.organizer) #Triggerare in state "menu" - yellow square
+        self.selectSpeedButton = CursorRecognition("Select speed",30, [200, self.height/2-50, 360,100],self.organizer) #Triggerare in state "menu" - yellow square
         self.speedOneButton = CursorRecognition("1",30, [int((self.width/6)*1)-50, int(self.height/2)-150, 150,150],self.organizer) # Number 1 to 5: square to select speed in state "select_speed"
         self.speedTwoButton = CursorRecognition("2",30, [int((self.width/6)*2)-50, int(self.height/2)+150, 150,150],self.organizer)
         self.speedThreeButton = CursorRecognition("3",30, [int((self.width/6)*3)-50, int(self.height/2)-150, 150,150],self.organizer)
         self.speedFourButton = CursorRecognition("4",30, [int((self.width/6)*4)-50, int(self.height/2)+150, 150,150],self.organizer)
         self.speedFiveButton = CursorRecognition("5",30, [int((self.width/6)*5)-50, int(self.height/2)-150, 150,150],self.organizer) # Triggers square to repeat the game in state "endgame"
         self.restartButton = CursorRecognition("Restart", 30,[int((self.width/6)*5),int((self.width/6)*2),200,150],self.organizer)
-        self.homeScreenButton = CursorRecognition("Home screen", 30,[int((self.width/6)*2),int((self.width/6)*2),350,150],self.organizer)
+        self.homeScreenButton = CursorRecognition("Home screen", 30,[200,int((self.width/6)*2),350,150],self.organizer)
         self.stopGameButton = CursorRecognition("STOP",30,[int(self.width/2-90),100,180,75],self.organizer)
 
         #camera and objectrecognition
         self.camera = camera
         OR.calibrate([self.width, self.height], self.camera, 1) # Initialize the color for second controller '1'
-        mainModel.controllernr=1
-        mainModel.organizer.state == "calibrationTest"
-        mainModel.controllernr = 0
+        # mainModel.controllernr=1
+        # mainModel.organizer.state == "calibrationTest"
+        # mainModel.controllernr = 0
 
         self.objectCoordinatesRight, self.cameraImage = OR.getCoords(self.camera,0) #gets coordinates of the two objects from the python file ObjectRecogImplementation.py
         self.objectCoordinatesLeft = OR.getCoords(self.camera,1)
