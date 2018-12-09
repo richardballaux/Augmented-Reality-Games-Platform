@@ -34,16 +34,16 @@ class PongView():
         if self.model.organizer.state == "menu": # Draw start screen
             menutext = self.myfont.render("Keep your cursor in the square to select the speed of the ball", 1, self.ColorGreen)
             self.screen.blit(menutext, (50,50))
-            instructions = self.myfont.render("Move your controller up and down to move you paddle", 1, self.ColorGreen)
+            instructions = self.myfont.render("Move your controller up and down to move your paddle", 1, self.ColorGreen)
             self.screen.blit(instructions, (50,100))
-            more = self.myfont.render("Bounce of the ball to score in your opponents goal", 1, self.ColorGreen)
+            more = self.myfont.render("Try to keep the ball out of your goal", 1, self.ColorGreen)
             self.screen.blit(more, (50,150))
             self.model.selectSpeedButton.draw(self.model.screen)
             self.model.homeScreenButton.draw(self.model.screen)
             self.model.cursor.draw(self.screen)
 
         elif self.model.organizer.state == "select_speed":
-            menutext = self.myfont.render("Select a speed by hovering over the desired speed (1 is  very slow, 5 is very fast)", 1, self.ColorBlack) # Message for menu to select speed
+            menutext = self.myfont.render("Select a speed by hovering over the desired square (1 is  very slow, 5 is very fast)", 1, self.ColorBlack) # Message for menu to select speed
             self.screen.blit(menutext, (50,50))
             # DRAW BUTTON TO CHANGE SPEED OF BAll
             self.model.speedOneButton.draw(self.screen)
@@ -115,7 +115,7 @@ class PongModel():
         self.speedFiveButton = CursorRecognition("5",30, [int((self.width/6)*5)-50, int(self.height/2)-150, 150,150],self.organizer) # Triggers square to repeat the game in state "endgame"
         self.restartButton = CursorRecognition("Restart", 30,[int((self.width/6)*5),int((self.width/6)*2),200,150],self.organizer)
         self.homeScreenButton = CursorRecognition("Home screen", 30,[200,int((self.width/6)*2),350,150],self.organizer)
-        self.stopGameButton = CursorRecognition("STOP",30,[int(self.width/2-90),100,180,75],self.organizer)
+        self.stopGameButton = CursorRecognition("STOP",30,[int(self.width/2-90),100,180,100],self.organizer)
 
         #camera and objectrecognition
         self.camera = camera
