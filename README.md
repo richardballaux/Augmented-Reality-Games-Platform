@@ -7,6 +7,8 @@ This program is a games platform that uses your camera so you can play our games
 
 At the moment, you can play two games on our platform: __Air Pong__ and __Space Invaders__
 
+![alt text](https://github.com/sd18fall/Augmented-Reality-Games-Platform/blob/master/docs/images/cursor_close.jpg "Cursor recognition with green object")
+
 ### Pong Game
 Air Pong is a two-player game. Each player needs a controller in form of a colorful object that is being recognized by your computer's camera.
 To select the settings, one of the two players needs to hover with their 'controller' over the corresponding setting they are trying to change. After having selected all necessary settings for the game and the game itself, the game starts automatically.
