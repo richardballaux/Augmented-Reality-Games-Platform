@@ -50,5 +50,5 @@ Our website is right [here](https://sd18fall.github.io/Augmented-Reality-Games-P
 ## Our Platform! This Is What It Looks Like!
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=8q39Rc6IwFo
 " target="_blank"><img src="http://img.youtube.com/vi/8q39Rc6IwFo/0.jpg" 
-alt="COOL VIDEO" width="240" height="180" border="10" /></a>
+alt="COOL VIDEO" width="480" height="360" border="10" /></a>
 
