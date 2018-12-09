@@ -248,7 +248,7 @@ class SpaceInvadersView():
             #maybe also draw the highscore would be cool
             self.model.startGameButton.draw(self.model.screen)
             self.model.homeScreenButton.draw(self.model.screen)
-            pygame.draw.rect(self.model.screen,pygame.Color(0, 0, 0),pygame.Rect(30,300,1800,250)) #the user has to go above this line to shoot
+            pygame.draw.rect(self.model.screen,pygame.Color(0, 0, 0),pygame.Rect(30,30,1800,300)) #the user has to go above this line to shoot
             menutext = self.myfont.render("Keep your cursor in the square to start the game", 1, self.ColorGreen)
             self.model.screen.blit(menutext, (50,50))
             instructions = self.myfont.render("Instructions: ", 1, self.ColorGreen)
@@ -269,8 +269,8 @@ class SpaceInvadersView():
                 self.model.screen.blit(menutext, (200,50))
                 self.model.score.draw(self.model.screen)
             else:
-                menutext = self.myfont.render("Sad, YOU LOST", 1, self.ColorGreen)
-                self.model.screen.blit(menutext, (350,900))
+                menutext = self.myfont.render("Sad, YOU LOST", 1, self.ColorRed)
+                self.model.screen.blit(menutext, (900,350))
             #draw the two buttons
             self.model.homeScreenButton.draw(self.model.screen)
             self.model.restartButton.draw(self.model.screen)
