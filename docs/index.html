@@ -51,9 +51,9 @@
 							<article id="our_game">
 								<h2 class="major">Our Games</h2>
 								<span class="image main"><img src="images/pic01.jpg" alt="" /></span>
-								<p>Our games platform consists of two games, <b>space invaders</b> and <b>air pong</b>, that you can control with a colored object of 
+								<p>Our games platform consists of two old-school revamped games, <b>space invaders</b> and <b>air pong</b>, that you can control with a colored object of
 									your choice via your laptop’s camera. Just choose a colored object, keep it in the red square to initialize your
-									controller color, and start playing one of the two games. To control your spaceship or air pong padel, move your
+									controller color, and start playing one of the two games. To control your spaceship or air pong paddle, move your
 									controller with your hand. The program will detect its position and visualize your motion accordingly.</p>
 								<p>Have fun playing our game!</p>
 							</article>
@@ -62,64 +62,66 @@
 							<article id="work">
 								<h2 class="major">Progress and results</h2>
 								<span class="image main"><img src="images/code_snippet.png" alt="" /></span>
-								<p>We started our game with the intention to create an air pong game that the player can control via OpenCV, 
-									a real-time computer vision library. The first version of the game was split up into two parts: the 
+								<p>We started our game with the intention to create an air pong game that the player can control via OpenCV,
+									a real-time computer vision library. The first version of the game was split up into two parts: the
 									game and the computer vision controller.</p>
 								<h3 class="major">First Steps - Air Pong Game</h3>
-								<p>This meant that we had two files that would communicate with each other. However, the communication process 
-									itself required some design decisions. Since Python is an object-oriented programming language, we choose 
+								<p>This meant that we had two files that would communicate with each other. However, the communication process
+									itself required some design decisions. Since Python is an object-oriented programming language, we choose
 									the object-oriented design pattern called <a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">Model-View Controller</a>.</p>
 								<span class="image main"><img src="images/mode_view_controller_2.JPG" alt="" /></span>
 
 
-								<p>After a few days of coding, we were able to detect the position of the controller the player was holding 
-									and change the cursor’s position accordingly. The controller’s color had to be green in order to be 
-									detected by the camera. We further implemented a mirrored live video of from computer’s camera as the
+								<p>After a few days of coding, we were able to detect the position of the controller the player was holding
+									and change the cursor’s position accordingly. The controller’s color had to be green in order to be
+									detected by the camera. We further implemented a mirrored live video from the computer’s camera as the
 									background of the game.</p>
 								<span class="image main"><img src="images/pong_start.jpg" alt="" /></span>
-								<p>In the beginning, the controller detection just worked for one controller and was relatively slow. An air
+								<p>In the beginning, the controller detection just worked for one controller and was relatively slow. Air
 									pong game, however, requires two players. Consequently, we had to come up with a better communication
-									between the model and the controller that would allow us to send coordinates of two controllers. Since 
+									between the model and the controller that would allow us to send coordinates of two controllers. Since
 									the live feed for the background was the same picture that was analyzed to detect the controller, our
-									cursor recognition software had to analyze a comparably large picture. We decided two analyze a much 
-									smaller picture for the color detection and feed a bigger camera video to the background to better the 
+									cursor recognition software had to analyze a comparably large picture. We decided two analyze a much
+									smaller picture for the color detection and feed a bigger camera video to the background to better the
 									performance.</p>
-								<p>To give the player more room to customize the game, we implemented a start page and a small menu. When starting 
+								<p>To give the player more room to customize the game, we implemented a start page and a small menu. When starting
 									the game, one of the players had to hover over a square to reach the settings. We implemented this step to
-									ensure that the controller was working correctly. In the menu itself, one could choose between five different 
+									ensure that the controller was working correctly. In the menu itself, one could choose between five different
 									speeds for the air pong ball by hovering over the desired difficulty.<br>
 								The collision detection between the ball, the paddles, and the barriers in the game itself turned out to be more
-									difficult than expected<!--Richard-->. <br>
-								As the last step, we added a score counter to the game, made it show you the winner, and give the player the option 
+									difficult than expected. It tooks us a while to figure out that all the objects that needed to collide, needed to inheret from the "pygame.sprite.Sprite"-class.
+									Next we did a lot of investigation to find out that all the objects that need to collide need to have a "rect"-attribute (and that you cannot
+									forget to update the location of this "rect").<br>
+								As the last step, we added a score counter to the game, made it show the winner.We also give the player the option
 									to replay the game.<br><br>
 								</p>
 								<span class="image main"><img src="images/pong_game.jpg" alt="" /></span>
 
 								<h3 class="major">More Games! Space Invaders</h3>
 								<span class="image main"><img src="images/spaceinv.jpg" alt="" /></span>
-								<p>The whole process of programming became more complicated when we started implementing the second game 
-									- <b>space invaders</b>. We were forced to revise our entire architecture to make it more flexible, 
+								<p>The whole process of programming became more complicated when we started implementing the second game
+									- <b>space invaders</b>. We were forced to revise our entire architecture to make it more flexible,
 									efficient and have a nice, clear code. This included creating several files for an organized
-									Model-View-Controller structure, implementing state machines to keep track of where the player 
+									Model-View-Controller structure, implementing state machines to keep track of where the player
 									is within the game, reorganize our classes with descriptive docstrings to make debugging easier.</p>
 
-								<p>For the space invaders game itself, we used the same color recognition file to track the player’s controller. 
+								<p>For the space invaders game itself, we used the same color recognition file to track the player’s controller.
 									The player controls the position of the spaceship by moving their controller horizontally and shoots bullets
-									by pressing the space bar.</p>
+									by holding your controller above the dark-red line.</p>
 
 								<p>One of our problems at that point was that the player had to use a green controller in order to play the game.
-									Consequently, we started implementing an initialization screen that allows the player to choose an arbitrary 
-									object as a controller. It calibrates and saves the color of the object that the player seeks to use as a 
-									controller. The player could finally use any colored object to play the game. </p>
-								
+									Consequently, we started implementing an initialization screen that allows the player to choose an arbitrary
+									object as a controller. It calibrates and saves the color of the object that the player seeks to use as a
+									controller. The player could finally use any colored object to play the game, as long as the color he uses is not apparent his background. </p>
+
 							</article>
 
 						<!-- Architecture -->
 							<article id="architecture">
 								<h2 class="major">Architectural Characteristics</h2>
 								<span class="image main"><img src="images/pic01.jpg" alt="" /></span>
-								<p>On a grander scale, our game went through two phases: programming the air pong game and adding the space invaders 
-									game. In the first phase, we learned a lot about the structure of a single game. In the second phase, we 
+								<p>On a grander scale, our game went through two phases: programming the air pong game and adding the space invaders
+									game. In the first phase, we learned a lot about the structure of a single game. In the second phase, we
 									restructured our entire architecture to make it more adjustable and easier to enhance. We will try to list
 									a few interesting software design decisions and characteristics that we came up with for our game platform.</p>
 								<h3 class="major">State Machine</h3>
@@ -127,9 +129,9 @@
 									to find a tool that would keep track of the game’s status. Therefore, we decided to implement a state machine.
 									The state machine would simplify the communication between the files and classes.</p>
 								<span class="image main"><img src="images/pong_arch_pic.png" alt="" /></span>
-								<p>How does it work? The state machine is a class object in the main file and contains a <i>state</i> attribute as a
-									string. The states are named such as: “menu”, “game”, “speed” etc. The view class for example constantly updates
-									the view of the game. However, the view, obviously, changes when you are going from the menu to the game. The 
+								<p>How does it work? The state machine is a class object in the main file and contains a <i>state</i> attribute in the form of a
+									string. The states are named such as: “menu”, “game”, “speed”, etc. The View class for example constantly updates
+									the view of the game. However, the view, obviously, changes when you are going from the menu to the game. The
 									view knows about this change by checking what state the state machine is currently in and presenting the correlating
 									view. We check the state with normal if statements.<br>Implementing the state machine added another layer of complexity
 									to our code but did not make it more complicated to read or understand. We consequently made our code more powerful.</p>
@@ -145,10 +147,16 @@
 							<article id="about">
 								<h2 class="major">Leon, Richard, and Viktor</h2>
 								<span class="image main"><img src="images/group_picture_1.jpg" alt="" /></span>
-								<p>We programmed this game as part of the final project for a software design class 
-									at <a href="http://www.olin.edu/">Olin College of Engineering</a>.</p>
+								<p>We programmed this game as part of the final project for a Software Design class
+									at <a href="http://www.olin.edu/">Olin College of Engineering</a> in the fall of 2018.</p>
 								<h3 class="major">Richard Ballaux</h3>
-								<p>Bio here</p>
+								<span class="image main"><img src="images/pictureRichard.png" alt="" /></span>
+								<p>Hi, my name is Richard. I am an exchange student from Belgium. I am in my junior year in Electrical and Software Engineering at Group T in Leuven.
+								I have a decent amount of knowledge in object oriented Java but I wanted to learn more about this very powerful other language called Python.
+								The thing I enjoyed the most about the class as I look from it now that it is almost over, is that we did so many small projects.
+								We did small toolboxes to learn about usefull random skills like file opening, we did mini-projects to learn how to make interactive programs
+								and to get used to the basics of object oriented programming. And last but not least, the final project, I think we made a really cool project 
+								and it was also fun to work on with an awesome team.</p>
 								<ul class="icons">
 									<li><a href="https://www.linkedin.com/in/richard-ballaux/" class="icon fa-linkedin"><span class="label">LinkedIn</span></a></li><br><br><br>
 								<h3 class="major">Viktor Deturck</h3>
@@ -157,13 +165,17 @@
 									am now in my senior year and wanted to do something else, aside from my usual courses.
 									That's why I decided to take Software Design and get to know the wonderful world of
 									programming. I didn't have any noteworthy coding experience on beforehand so I didn't
-									really know what to expect. It was however very interesting and educational and I got 
+									really know what to expect. It was however very interesting and educational and I got
 									used to it pretty quickly. Python is a very easy and forgivable language and with the
 									help of the well thought out structure of the course I became very comfortable with it
 									towards the final project. </p>
 								<h3 class="major">Leon Santen</h3>
 								<span class="image main"><img src="images/leon.jpg" alt="" /></span>
-								<p>I am an international student and member of the class 2021 at Olin College. I am majoring in robotics and doing sustainable design research. I am curious about most engineering fields, learning about their potential and using them as powerfully integrated tools. I think it is crucial that engineers consider the impact they have on the society and environment. Besides my technical interests, I love taking sociology classes at Wellesley College, playing music, DJing, and any social activities.</p>
+								<p>I am an international student and member of the class 2021 at Olin College.
+									I am majoring in robotics and doing sustainable design research.
+									I am curious about most engineering fields, learning about their potential and using them as powerfully integrated tools.
+									I think it is crucial that engineers consider the impact they have on the society and environment.
+									Besides my technical interests, I love taking sociology classes at Wellesley College, playing music, DJing, and any social activities.</p>
 								<ul class="icons">
 									<li><a href="https://www.linkedin.com/in/leonsanten/" class="icon fa-linkedin"><span class="label">LinkedIn</span></a></li><br><br><br>
 							</article>
@@ -172,7 +184,7 @@
 							<article id="media">
 								<h2 class="major">Pics and Vids</h2>
 								<span class="image main"><img src="images/pic01.jpg" alt="" /></span>
-								<p>Our games platform consists of two games, <b>space invaders</b> and <b>air pong</b>, that you can control with a colored object of 
+								<p>Our games platform consists of two games, <b>space invaders</b> and <b>air pong</b>, that you can control with a colored object of
 									your choice via your laptop’s camera. Just choose a colored object, keep it in the red square to initialize your
 									controller color, and start playing one of the two games. To control your spaceship or air pong padel, move your
 									controller with your hand. The program will detect its position and visualize your motion accordingly.</p>
