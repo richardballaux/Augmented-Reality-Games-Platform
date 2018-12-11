@@ -55,7 +55,7 @@ Check out our website to find out about the coding process and our software desi
 Our website is right [here](https://sd18fall.github.io/Augmented-Reality-Games-Platform/#)!
 
 ## Our Platform! This Is What It Looks Like!
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=8q39Rc6IwFo
-" target="_blank"><img src="http://img.youtube.com/vi/8q39Rc6IwFo/0.jpg" 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=C7AMFbWdj-s
+" target="_blank"><img src="http://img.youtube.com/vi/C7AMFbWdj-s/0.jpg" 
 alt="COOL VIDEO" width="480" height="360" border="10" /></a>
 
