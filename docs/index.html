@@ -35,7 +35,7 @@
 							<ul>
 								<li><a href="#our_game">Our Game</a></li>
 								<li><a href="#work">Coding Process</a></li>
-								<li><a href="#architecture">Software</a></li>
+								<li><a href="#architecture">Architecture</a></li>
 								<li><a href="#about">About Us</a></li>
 								<li><a href="#media">Media</a></li>
 								<!--<li><a href="#contact">Contact</a></li>-->
@@ -81,7 +81,7 @@
 									pong game, however, requires two players. Consequently, we had to come up with a better communication
 									between the model and the controller that would allow us to send coordinates of two controllers. Since
 									the live feed for the background was the same picture that was analyzed to detect the controller, our
-									cursor recognition software had to analyze a comparably large picture. We decided two analyze a much
+									cursor recognition software had to analyze a comparably large picture. We decided to analyze a much
 									smaller picture for the color detection and feed a bigger camera video to the background to better the
 									performance.</p>
 								<p>To give the player more room to customize the game, we implemented a start page and a small menu. When starting
@@ -118,28 +118,54 @@
 
 						<!-- Architecture -->
 							<article id="architecture">
-								<h2 class="major">Architectural Characteristics</h2>
+								<h2 class="major">Architectural Overview</h2>
 								<span class="image main"><img src="images/pic01.jpg" alt="" /></span>
 								<p>On a grander scale, our game went through two phases: programming the air pong game and adding the space invaders
 									game. In the first phase, we learned a lot about the structure of a single game. In the second phase, we
-									restructured our entire architecture to make it more adjustable and easier to enhance. We will try to list
+									restructured our entire architecture to make iStateMachinePong.pngt more adjustable and easier to enhance. We will try to list
 									a few interesting software design decisions and characteristics that we came up with for our game platform.</p>
 								<h3 class="major">State Machine</h3>
-								<p>The air pong game became complex quite quickly. Due to the number of classes and layers that our game had we decided
+								<p>The air pong game became complex quite quicklScreenshot state machine.pngy. Due to the number of classes and layers that our game had we decided
 									to find a tool that would keep track of the game’s status. Therefore, we decided to implement a state machine.
 									The state machine would simplify the communication between the files and classes.</p>
 								<span class="image main"><img src="images/pong_arch_pic.png" alt="" /></span>
+								<span class="image main"><img src="Screenshot state machine.png" alt="" /></span>
 								<p>How does it work? The state machine is a class object in the main file and contains a <i>state</i> attribute in the form of a
-									string. The states are named such as: “menu”, “game”, “speed”, etc. The View class for example constantly updates
-									the view of the game. However, the view, obviously, changes when you are going from the menu to the game. The
-									view knows about this change by checking what state the state machine is currently in and presenting the correlating
-									view. We check the state with normal if statements.<br>Implementing the state machine added another layer of complexity
-									to our code but did not make it more complicated to read or understand. We consequently made our code more powerful.</p>
-</p>
-
-
-
-
+									string. The states are named such as: “homeScreen”, “pong”, “calibration”, etc. and are defined by IF-statements. Once
+									in IF-statement, it initializes its own model, view and controller, defined in a seperate file (each state has its
+									own file). It then keeps running in a while loop, each time updating all the components in the seperate file.</p>
+									
+								<span class="image main"><img src="StateMachinePong.png" alt="" /></span>
+								<p>	Every game has its own state machine (hence the 'Organizer' class) to keep track where the player
+									is in the game. With the update() function, it updates the model (where all the things are happening), the view (what needs to be showed on the screen)
+									and the controller (which calls the file that tracks your object), based upon the state it is in. In the seperate file, 
+									all the classes and functions for that game are defined.</p>
+								
+								<h3 class="major">Interesting implementations</h3>
+								
+								<h4 class="major">Area Surveillance</h4>
+								<span class="image main"><img src="CursorRecognition.png" alt="" /></span>
+								<p> 	We made a class CursorRecognition in the cursor.py file with which we can easily create buttons and use areaSurveillance
+									on them. When creating the class, you give it a text, color and time it takes to trigger, after which it can be used 
+									to change variables in the same function. We can for example easily change states in the statemachine after the button
+									has been triggered.</p>
+								
+								<h4 class="major">Color Recognition</h4>
+								<span class="image main"><img src="Calibrating.png" alt="" /></span>
+								<p>	We found some sources that we used for the color recognition and tweaked them to make them our own. The original file searched
+									for all pixels that were green in a certain color range (HSV = Hue, Saturation, Value), found and object and deleted noise. We 
+									then tracked the center of the object to use it for our cursor. This is the basic program that gets called several times a second
+									and returns the coordinates for the cursor. 
+								<span class="image main"><img src="Rectanglecalibration.png" alt="" /></span>
+									We added more functionality by making another program, SetColor.py, that scans the pixels
+									in a rectangle for a certain time and creates a range around it. These values gets passed to the main color recognition program, so we 
+									can track every color we want. Of course you'll have the best results by objects that are not reflecting and not part of your surroundings.
+									After the color has been set, a calibration program runs, that will ask for a new color setting if the player fails to hover over all the
+									buttons in time. </p>
+								<span class="image main"><img src="CalibrateColor.png" alt="" /></span>
+								
+											
+								
 
 							</article>
 
@@ -150,7 +176,7 @@
 								<p>We programmed this game as part of the final project for a Software Design class
 									at <a href="http://www.olin.edu/">Olin College of Engineering</a> in the fall of 2018.</p>
 								<h3 class="major">Richard Ballaux</h3>
-								<span class="image main"><img src="images/pictureRichard.png" alt="" /></span>
+								<span class="image main"><img src="images/pictureRichard.jpg" alt="" /></span>
 								<p>Hi, my name is Richard. I am an exchange student from Belgium. I am in my junior year in Electrical and Software Engineering at Group T in Leuven.
 								I had a decent amount of knowledge in object oriented Java when I started this class, but I wanted to learn more about this very powerful other language called Python.
 								The thing I enjoyed the most about the class as I look from it now that it is almost over, is that we did so many small projects.
@@ -162,7 +188,7 @@
 								<h3 class="major">Viktor Deturck</h3>
 								<span class="image main"><img src="images/picture Vik.png" alt="" /></span>
 								<p>I am an exchange student from Belgium, majoring in Electromechanical Engineering. I
-									am now in my senior year and wanted to do something else, aside from my usual courses.
+									am now in my senior year (class of 2019) and wanted to do something else, aside from my usual courses.
 									That's why I decided to take Software Design and get to know the wonderful world of
 									programming. I didn't have any noteworthy coding experience on beforehand so I didn't
 									really know what to expect. It was however very interesting and educational and I got
