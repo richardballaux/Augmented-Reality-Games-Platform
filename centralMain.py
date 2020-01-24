@@ -188,7 +188,7 @@ def Main():
     pygame.mixer.init() #the mixer is for the playing the music
     clock = pygame.time.Clock()
     fps = 60
-    screenSize = [1850,1080]
+    screenSize = [1400,800]
     camera = OR.setup(screenSize) # Initialize a camera via the object recognition in openCV
     organizer = Organizer() # initialize an Organizer object
     #We start the game in the organizer state

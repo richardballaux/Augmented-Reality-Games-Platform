@@ -28,9 +28,10 @@ This game is meant to be run on a linux system.
 
 ### Install OpenCV  on Linux
 ```
-$ conda update anaconda-navigator
-$ conda update navigator-updater
+
 $ pip install opencv-python
+$ pip install pygame
+$ pip install pillow
 ```
 ### Run Game
 Run game via the terminal. Navigate to the folder the game file is located in.

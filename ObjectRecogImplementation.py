@@ -99,7 +99,7 @@ def getCoords(cam,controller):
     maskClose=cv2.morphologyEx(maskOpen,cv2.MORPH_CLOSE,kernelClose)
 
     maskFinal=maskClose # This is our final image with object in black-white (object is white)
-    im2, conts,h=cv2.findContours(maskFinal.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE) # Finds contours of the object
+    conts, h=cv2.findContours(maskFinal.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE) # Finds contours of the object
     coords = []
     widthList = []
     for i in range(len(conts)):
